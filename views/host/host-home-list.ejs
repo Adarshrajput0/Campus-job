@@ -1,49 +1,48 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="/css/output.css" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/output.css" />
+<%- include('../partials/head') %>
+</head>
 
-  <%- include('../partials/head') %>
-  </head>
+<body
+  class="min-h-screen bg-gradient-to-b from-[#f0fdf4] via-white to-[#f7f7f7] font-sans"
+>
 
-  <body
-    class="min-h-screen bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7] font-sans"
-  >
-
-  <%- include('../partials/header') %>
+<%- include('../partials/header') %>
     
-  <main class="min-h-screen pt-28 px-6 bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7]">
+<main class="min-h-screen pt-28 px-6 bg-gradient-to-b from-[#f0fdf4] via-white to-[#f7f7f7]">
 
   <!-- HERO -->
   <section class="max-w-7xl mx-auto text-center">
     <h1 class="text-5xl md:text-6xl font-extrabold text-[#222] tracking-tight">
-       Host Dashboard
+       Your Task Dashboard
     </h1>
 
     <p class="mt-4 text-lg text-gray-600">
-      Manage your homes, track performance, and create amazing stays.
+      Post small campus tasks, manage requests, and help students earn easily.
     </p>
 
     <!-- STATS -->
     <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="bg-white rounded-2xl shadow-lg p-6 border">
-        <p class="text-gray-500 text-sm">Total Homes</p>
-        <h2 class="text-3xl font-bold text-[#ff385c]"><%= registeredHomes.length %></h2>
+        <p class="text-gray-500 text-sm">Total Tasks</p>
+        <h2 class="text-3xl font-bold text-green-600"><%= registeredHomes.length %></h2>
       </div>
       <div class="bg-white rounded-2xl shadow-lg p-6 border">
-        <p class="text-gray-500 text-sm">Hosting Level</p>
-        <h2 class="text-3xl font-bold text-indigo-600">Super Host ⭐</h2>
+        <p class="text-gray-500 text-sm">Active Tasks</p>
+        <h2 class="text-3xl font-bold text-indigo-600">Ongoing 🔄</h2>
       </div>
       <div class="bg-white rounded-2xl shadow-lg p-6 border">
-        <p class="text-gray-500 text-sm">Performance</p>
-        <h2 class="text-3xl font-bold text-green-600">Excellent</h2>
+        <p class="text-gray-500 text-sm">Completion Rate</p>
+        <h2 class="text-3xl font-bold text-emerald-600">High ✅</h2>
       </div>
     </div>
   </section>
 
-  <!-- HOMES -->
+  <!-- TASK LIST -->
   <section class="mt-16 max-w-7xl mx-auto">
     <h2 class="text-3xl font-bold text-gray-800 mb-10 text-center">
-      Your Listed Homes
+      Your Posted Tasks
     </h2>
 
     <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -54,66 +53,69 @@
                  border border-white/50 shadow-xl hover:shadow-2xl
                  transition-all duration-500 hover:-translate-y-3">
 
-        <!-- glow -->
+        <!-- hover glow -->
         <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition
-                    bg-gradient-to-br from-pink-300/20 via-purple-300/20 to-indigo-300/20"></div>
+                    bg-gradient-to-br from-green-300/20 via-emerald-300/20 to-teal-300/20"></div>
 
         <!-- image -->
         <div class="relative overflow-hidden">
           <img src="<%= home.photo %>" alt="<%= home.houseName %>"
                class="w-full h-60 object-cover transition-transform duration-700 group-hover:scale-110"/>
 
+          <!-- PAYMENT -->
           <span class="absolute top-4 right-4 bg-black/70 text-white px-4 py-1 rounded-full text-sm font-semibold">
-            ₹ <%= home.price %> / night
+            ₹ <%= home.price %>
           </span>
 
+          <!-- RATING -->
           <span class="absolute top-4 left-4 bg-white text-xs font-bold px-3 py-1 rounded-full shadow">
             ⭐ <%= home.rating %>
           </span>
         </div>
 
         <!-- content -->
-        <!-- content -->
-<div class="relative p-6 space-y-3">
+        <div class="relative p-6 space-y-3">
 
-  <h3 class="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition">
-    <%= home.houseName %>
-  </h3>
+          <!-- TASK TITLE -->
+          <h3 class="text-2xl font-bold text-gray-900 group-hover:text-green-600 transition">
+            <%= home.houseName %>
+          </h3>
 
-  <p class="text-black">📍 <%= home.location %></p>
+          <!-- LOCATION -->
+          <p class="text-black">📍 <%= home.location %></p>
 
-  <!-- PROPERTY TYPE + MAX GUESTS -->
-  <div class="flex justify-between text-sm text-gray-700 font-medium">
-    <span>🏠 <%= home.propertytype %></span>
-    <span>👥 Max Guests: <%= home.maxguest %></span>
-  </div>
+          <!-- TASK TYPE + PEOPLE NEEDED -->
+          <div class="flex justify-between text-sm text-gray-700 font-medium">
+            <span>🛠️ <%= home.propertytype %></span>
+            <span>👥 Needed: <%= home.maxguest %></span>
+          </div>
 
-  <!-- DESCRIPTION -->
-  <p class="text-gray-600 text-sm leading-relaxed line-clamp-3">
-    <%= home.description %>
-  </p>
+          <!-- DESCRIPTION -->
+          <p class="text-gray-600 text-sm leading-relaxed line-clamp-3">
+            <%= home.description %>
+          </p>
 
-  <div class="h-px bg-gray-200 my-3"></div>
+          <div class="h-px bg-gray-200 my-3"></div>
 
-  <!-- actions -->
-  <div class="flex items-center justify-between gap-3">
+          <!-- actions -->
+          <div class="flex items-center justify-between gap-3">
 
-    <a href="/edithome/<%=home._id%>?editing=true"
-       class="flex-1 text-center px-5 py-2.5 rounded-full bg-green-600 text-white font-semibold
-              hover:bg-green-700 shadow hover:shadow-lg active:scale-95 transition">
-       Edit
-    </a>
+            <a href="/edithome/<%=home._id%>?editing=true"
+               class="flex-1 text-center px-5 py-2.5 rounded-full bg-green-600 text-white font-semibold
+                      hover:bg-green-700 shadow hover:shadow-lg active:scale-95 transition">
+               Edit Task
+            </a>
 
-    <form action="/delete-home/<%=home._id%>" method="POST" class="flex-1">
-      <button type="submit"
-              class="w-full px-5 py-2.5 rounded-full bg-red-600 text-white font-semibold
-                     hover:bg-red-700 shadow hover:shadow-lg active:scale-95 transition">
-         Delete
-      </button>
-    </form>
+            <form action="/delete-home/<%=home._id%>" method="POST" class="flex-1">
+              <button type="submit"
+                      class="w-full px-5 py-2.5 rounded-full bg-red-600 text-white font-semibold
+                             hover:bg-red-700 shadow hover:shadow-lg active:scale-95 transition">
+                 Delete
+              </button>
+            </form>
 
-  </div>
-</div>
+          </div>
+        </div>
 
       </li>
 
@@ -123,12 +125,10 @@
 
   <!-- FOOTER TEXT -->
   <p class="mt-24 text-center text-lg text-gray-600 max-w-xl mx-auto">
-    Great hosts create unforgettable experiences 🌍
+    Small tasks, real earnings, and helping hands across your campus 🤝
   </p>
 
 </main>
 
-
-    
-  </body>
+</body>
 </html>

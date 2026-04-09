@@ -29,4 +29,6 @@ router.get("/bookings", async (req, res) => {
   });
 });
 
+router.post("/bookings/delete/:id", bookingController.deleteBooking);
+
 module.exports = router;

@@ -1,45 +1,97 @@
 <link rel="stylesheet" href="/css/bookings.css">
 
-<%- include('../partials/header') %>
+<%- include('../partials/header', { 
+  isLoggedIn: isLoggedIn, 
+  user: user 
+}) %>
 
 <div class="booking-page">
 
   <div class="booking-container">
 
-    <h1 class="booking-title">🏡 Your Bookings</h1>
+    <!-- Page Title -->
+    <h1 class="booking-title text-green-700">📋 My Tasks</h1>
 
+    <!-- Empty State -->
+    <% if (bookings.length === 0) { %>
+
+      <div class="text-center mt-20">
+        <h2 class="text-2xl font-semibold text-gray-700">
+          No tasks yet 😕
+        </h2>
+        <p class="text-gray-500 mt-2">
+          Start exploring tasks and apply to earn rewards.
+        </p>
+
+        <a href="/"
+          class="inline-block mt-6 px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition">
+          Explore Tasks
+        </a>
+      </div>
+
+    <% } else { %>
+
+    <!-- Tasks Grid -->
     <div class="booking-grid">
 
       <% bookings.forEach(booking => { %>
 
-        <div class="booking-card">
+        <div class="booking-card hover:shadow-xl transition duration-300">
 
+          <!-- Task Title -->
           <h3 class="booking-home">
-            <%= booking.home.houseName %>
+            <%= booking.home ? booking.home.houseName : "Task removed ❌" %>
           </h3>
 
           <div class="booking-divider"></div>
 
           <div class="booking-details">
 
+            <!-- Start Date -->
             <div class="booking-row">
-              <span class="booking-label">Check-In</span>
-              <span><%= booking.checkInDate.toDateString() %></span>
+              <span class="booking-label">Start Date</span>
+              <span>
+                <%= booking.checkInDate ? booking.checkInDate.toDateString() : "-" %>
+              </span>
             </div>
 
+            <!-- End Date -->
             <div class="booking-row">
-              <span class="booking-label">Check-Out</span>
-              <span><%= booking.checkOutDate.toDateString() %></span>
+              <span class="booking-label">End Date</span>
+              <span>
+                <%= booking.checkOutDate ? booking.checkOutDate.toDateString() : "-" %>
+              </span>
             </div>
 
+            <!-- Reward -->
             <div class="booking-row">
-              <span class="booking-label">Total Price</span>
-              <span class="booking-price">
+              <span class="booking-label">Reward</span>
+              <span class="booking-price text-green-600 font-semibold">
                 ₹ <%= booking.totalPrice %>
               </span>
             </div>
 
+            <!-- Status -->
+            <div class="booking-row">
+              <span class="booking-label">Status</span>
+              <span class="text-sm font-medium text-blue-600">
+                <%= booking.status %>
+              </span>
+            </div>
+
           </div>
+
+          <!-- ✅ DELETE BUTTON -->
+          <% if (booking.home) { %>
+          <form action="/bookings/delete/<%= booking._id %>" method="POST"
+      onsubmit="return confirm('Are you sure you want to remove this task?')">
+
+  <button class="delete-btn">
+    Remove Task
+  </button>
+
+</form>
+          <% } %>
 
         </div>
 
@@ -47,6 +99,44 @@
 
     </div>
 
+    <% } %>
+
   </div>
 
 </div>
+
+<style>
+  .delete-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+
+  border: none;
+  border-radius: 8px;
+
+  background-color: #ef4444; /* clean red */
+  color: white;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Click */
+.delete-btn:active {
+  transform: scale(0.97);
+}
+
+/* Focus */
+.delete-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+}
+</style>

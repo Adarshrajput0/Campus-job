@@ -2,152 +2,235 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/output.css" />
 
-  <%- include('../partials/head') %>
+  <!-- <%- include('../partials/head') %> -->
   </head>
 
   <body
     class="min-h-screen bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7] font-sans"
   >
-<!-- 
-  <%- include('../partials/header') %> -->
+
+  <%- include('../partials/header') %> 
   <%- include('../partials/header', { 
       isLoggedIn: isLoggedIn, 
       user: user 
 }) %>
 
-    <main class="pt-28 pb-16 bg-[#f7f7f7] min-h-screen">
+    <main class="pt-28 pb-16 bg-gray-50 min-h-screen">
   <div class="max-w-6xl mx-auto px-4">
 
-    <!-- Hero Image -->
+   
     <div class="relative rounded-3xl overflow-hidden shadow-xl">
       <img
         src="<%= home.photo %>"
-        alt="<%= home.name %>"
+        alt="<%= home.houseName %>"
         class="w-full h-[420px] object-cover"
       />
 
-      <!-- <img
-  src="<%= home.photo.startsWith('/') ? home.photo : '/' + home.photo.replace(/\\/g, '/') %>"
-  alt="<%= home.houseName %>"
-  class="w-full h-[420px] object-cover" -->
+      <div class="grid grid-cols-3 text-center mt-6 bg-white rounded-xl shadow p-4">
 
+  <div>
+    <p class="text-gray-500 text-xs">Reward</p>
+    <p class="font-semibold text-green-600">₹ <%= home.price %></p>
+  </div>
 
-      
-      <div class="absolute top-6 right-6 bg-black/70 text-white px-5 py-2 rounded-full text-sm font-semibold backdrop-blur">
-        ₹ <%= home.price %> / night
-      </div>
-    </div>
+  <div>
+    <p class="text-gray-500 text-xs">People Needed</p>
+    <p class="font-semibold"><%= home.maxguest %></p>
+  </div>
+
+  <div>
+    <p class="text-gray-500 text-xs">Location</p>
+    <p class="font-semibold"><%= home.location %></p>
+  </div>
+
+</div>
+
+     
+      <div class="absolute top-6 right-6 flex gap-2">
+
+  <span class="bg-green-600 text-white px-4 py-1 rounded-full text-xs font-semibold shadow">
+    💼 Micro Job
+  </span>
+
+  <span class="bg-black/70 text-white px-4 py-1 rounded-full text-xs font-semibold backdrop-blur">
+    ₹ <%= home.price %> reward
+  </span>
+
+</div>
 
     <!-- Content -->
     <div class="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
 
-      <!-- Left Section -->
+      <!-- LEFT -->
       <div class="lg:col-span-2 space-y-6">
 
-        <h1 class="text-3xl md:text-4xl font-bold text-[#222]">
+        <!-- Task Title -->
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900">
           <%= home.houseName %>
         </h1>
 
+        <!-- Rating + Location -->
         <div class="flex items-center gap-4 text-gray-600">
-          <span class="flex items-center gap-1 text-yellow-500 font-semibold">
-            ⭐ <%= home.rating %>
-          </span>
-          <span>•</span>
+          
+          
           <span>📍 <%= home.location %></span>
         </div>
+
+        <div class="flex gap-3 mt-2">
+
+  <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">
+    ⏳ Urgent Requirement
+  </span>
+
+  
+
+</div>
 
         <div class="h-px bg-gray-200"></div>
 
         <!-- Description -->
         <div class="space-y-3">
           <h2 class="text-xl font-semibold text-gray-900">
-            About this place
+            About this task
           </h2>
           <p class="text-gray-600 leading-relaxed">
-            Experience a comfortable and memorable stay at
-            <strong><%= home.houseName %></strong>, located in the beautiful
-            surroundings of <%= home.location %>. This property offers modern
-            amenities, a peaceful environment, and a perfect getaway for
-            couples, families, or solo travelers.
+            <strong><%= home.houseName %></strong> is a campus task posted in 
+            <%= home.location %>. This task requires responsible students who 
+            can complete it efficiently. Check details below and apply if it 
+            matches your skills.
           </p>
         </div>
 
-        <!-- Amenities -->
+        <div class="space-y-3">
+  <h2 class="text-xl font-semibold text-gray-900">
+    What You'll Do
+  </h2>
+
+  <ul class="list-disc pl-5 text-gray-600 text-sm space-y-1">
+    <li>Complete assigned task responsibly</li>
+    <li>Coordinate with task owner</li>
+    <li>Deliver work within timeline</li>
+    <li>Maintain quality and communication</li>
+  </ul>
+</div>
+
+        <!-- Task Details -->
         <div class="space-y-3">
           <h2 class="text-xl font-semibold text-gray-900">
-            Amenities
+            Task Details
           </h2>
+
           <ul class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-gray-600 text-sm">
-            <li>✔ Free Wi-Fi</li>
-            <li>✔ Kitchen</li>
-            <li>✔ Air Conditioning</li>
-            <li>✔ Parking</li>
-            <li>✔ Power Backup</li>
+            <li>🛠 Type: <%= home.propertytype %></li>
+            <li>👥 People Needed: <%= home.maxguest %></li>
+            <li>💰 Reward: ₹ <%= home.price %></li>
+            <li>⭐ Trust Score: <%= home.rating %></li>
+            <li>📍 Location: <%= home.location %></li>
           </ul>
         </div>
 
       </div>
 
-      <!-- Right Booking Card -->
+      <!-- RIGHT CARD -->
       <div class="lg:col-span-1">
         <div class="sticky top-32 bg-white rounded-2xl shadow-xl p-6 space-y-5">
 
+          <div class="bg-gray-50 p-3 rounded-lg text-sm text-gray-600">
+  ✔ Verified Campus Task <br>
+  ✔ Secure Reward System <br>
+  ✔ Trusted by Students
+</div>
+
+          <!-- Reward -->
           <div class="flex items-center justify-between">
             <span class="text-2xl font-bold text-gray-900">
               ₹ <%= home.price %>
             </span>
-            <span class="text-gray-700 text-sm">per night</span>
+            <span class="text-gray-700 text-sm">reward</span>
           </div>
 
           <div class="flex items-center gap-1 text-yellow-500 font-semibold">
             ⭐ <%= home.rating %>
           </div>
+
+          <!-- APPLY FORM (same logic, just UI change) -->
+          <form action="/bookings" method="POST" class="space-y-4">
+
+            <!-- Hidden ID -->
+            <input type="hidden" name="homeId" value="<%= home._id %>" />
+
+            <!-- Start Date -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Start Date
+              </label>
+              <input type="date" name="checkIn" required
+                class="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- End Date -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                End Date
+              </label>
+              <input type="date" name="checkOut" required
+                class="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- People Applying -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Number of People
+              </label>
+              <input type="number" name="guests" min="1" value="1" required
+                class="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- APPLY BUTTON -->
+            <button type="submit"
+              class="w-full py-4 rounded-full
+                     bg-green-600 text-white font-semibold
+                     hover:bg-green-700 transition shadow-md">
+              Apply for Task
+            </button>
+
+            <div class="mt-5 p-4 bg-gray-100 rounded-lg">
+
+  <p class="text-sm text-gray-700">
+    Contact Task Owner
+  </p>
+
+  <% if (home.owner) { %>
+
+    <p class="text-sm">
+      <strong>Email:</strong> <%= home.owner.email %>
+    </p>
+
+    <a href="mailto:<%= home.owner.email %>"
+       class="block mt-2 text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+       Contact via Email
+    </a>
+
+  <% } else { %>
+
+    <p class="text-sm text-gray-500">
+      Contact not available
+    </p>
+
+  <% } %>
+
+</div>
+
+          </form>
+
+          <!-- SAVE -->
           <div>
-
-          
-  <form action="/bookings" method="POST" class="space-y-4">
-
-  <!-- Hidden Home ID -->
-  <input type="hidden" name="homeId" value="<%= home._id %>" />
-
-  <!-- Check In -->
-  <div>
-    <label class="block text-sm font-medium text-gray-700">Check-in</label>
-    <input type="date" name="checkIn" required
-      class="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#FF385C]">
-  </div>
-
-  <!-- Check Out -->
-  <div>
-    <label class="block text-sm font-medium text-gray-700">Check-out</label>
-    <input type="date" name="checkOut" required
-      class="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#FF385C]">
-  </div>
-
-  <!-- Guests -->
-  <div>
-    <label class="block text-sm font-medium text-gray-700">Guests</label>
-    <input type="number" name="guests" min="1" value="1" required
-      class="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#FF385C]">
-  </div>
-
-  <button type="submit"
-    class="w-full py-4 rounded-full
-           bg-[#FF385C] text-white font-semibold
-           hover:bg-[#E31C5F] transition shadow-md">
-    Book Now
-  </button>
-
-</form>
-
-
-          </div>
-          <div>
-            <%- include('../partials/favourite') %>
+            <%- include('../partials/favourite', { home: home }) %>
           </div>
 
+          <!-- Note -->
           <p class="text-center text-sm text-gray-500">
-            You won’t be charged yet
+            You can apply now and coordinate later with the task poster
           </p>
 
         </div>
@@ -156,6 +239,5 @@
     </div>
   </div>
 </main>
-
   </body>
 </html>

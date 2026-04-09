@@ -3,254 +3,213 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Home to Airbnb</title>
-    
+    <title>Post a Task</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
   <body
-    class="min-h-screen bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7] font-sans"
+    class="min-h-screen bg-gradient-to-b from-[#f0fdf4] via-white to-[#f7f7f7] font-sans"
   >
-    <!-- ✅ MAIN PROJECT HEADER (PASTED HERE) -->
+    <!-- HEADER -->
     <header>
       <nav
-        class="w-full fixed top-0 left-0 z-50 backdrop-blur-md bg-[#ff385c]/90 shadow-lg"
+        class="w-full fixed top-0 left-0 z-50 backdrop-blur-md bg-[#16a34a]/90 shadow-lg"
       >
         <div
           class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"
         >
-          <!-- LEFT : LOGO -->
+          <!-- LOGO -->
           <a
             href="/"
-            class="flex items-center gap-2 text-white font-semibold text-lg tracking-wide transition-all duration-300 group"
+            class="flex items-center gap-2 text-white font-semibold text-lg tracking-wide group"
           >
             <svg
               viewBox="0 0 24 24"
               fill="currentColor"
-              class="w-6 h-6 group-hover:scale-110 transition-transform duration-300"
+              class="w-6 h-6 group-hover:scale-110 transition"
             >
               <path
-                d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5s2.5 1.1 2.5 2.5S13.4 11.5 12 11.5z"
+                d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"
               />
             </svg>
-
-            <span class="relative">
-              airbnb
-              <span
-                class="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"
-              ></span>
-            </span>
+            <span>CampusTasks</span>
           </a>
 
-          <!-- RIGHT : NAV ITEMS -->
-          <div class="flex items-center gap-8">
-            <a
-              href="/homes"
-              class="flex items-center gap-2 px-5 py-2 rounded-full font-semibold text-[#ff385c] bg-white hover:bg-[#ffe4e8] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
-            >
-              <span>Homes List</span>
-            </a>
-
-            <a
-              href="/favourites"
-              class="flex items-center gap-2 px-5 py-2 rounded-full font-semibold text-[#ff385c] bg-white hover:bg-[#ffe4e8] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
-            >
-              <span>Favourites</span>
-            </a>
-
-            <a
-              href="/bookings"
-              class="flex items-center gap-2 px-5 py-2 rounded-full font-semibold text-[#ff385c] bg-white hover:bg-[#ffe4e8] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
-            >
-              <span>Bookings</span>
-            </a>
-
-            <a
-              href="/host-home-list"
-              class="flex items-center gap-2 px-5 py-2 rounded-full font-semibold text-[#ff385c] bg-white hover:bg-[#ffe4e8] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
-            >
-              <span>Host Homes</span>
-            </a>
-
-            <a
-              href="/add-home"
-              class="px-5 py-2 rounded-full font-semibold text-[#ff385c] bg-white hover:bg-[#ffe4e8] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
-            >
-              + Add Home
-            </a>
+          <!-- NAV -->
+          <div class="flex items-center gap-6">
+            <a href="/homes" class="nav-btn">Tasks</a>
+            <a href="/favourites" class="nav-btn">Saved</a>
+            <a href="/bookings" class="nav-btn">My Tasks</a>
+            <a href="/host-home-list" class="nav-btn">Dashboard</a>
           </div>
         </div>
       </nav>
     </header>
-   
 
-    <main class="pt-32 pb-20 flex justify-center bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7]">
-  <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-10">
+    <!-- MAIN -->
+    <main class="pt-32 pb-20 flex justify-center">
+      <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-10">
 
-    <!-- Heading -->
-    <div class="text-center mb-10">
-      <h1 class="text-4xl font-semibold text-[#222] mb-3">
-        <%= editing ? "Edit your home" : "Register your home" %>
-      </h1>
-      <p class="text-gray-500 text-sm">
-        Share your beautiful space with travelers around the world.
-      </p>
-    </div>
-
-    <!-- Form -->
-    <form 
-      action="/<%= editing ? "edithome" : "add-home" %>" 
-      method="POST"
-      enctype="multipart/form-data"
-      class="space-y-6"
-    >
-
-      <input type="hidden" name="id" value="<%= editing ? home._id : '' %>" />
-
-      <!-- House Name -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">
-          House name
-        </label>
-        <input
-          type="text"
-          name="houseName"
-          value="<%= editing ? home.houseName : '' %>"
-          placeholder="e.g. Sea View Villa"
-          required
-          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:outline-none"
-        />
-      </div>
-
-      <!-- Price & Rating -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Price per night (₹)
-          </label>
-          <input
-            type="number"
-            name="price"
-            value="<%= editing ? home.price : '' %>"
-            placeholder="e.g. 2500"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:outline-none"
-          />
+        <!-- Heading -->
+        <div class="text-center mb-10">
+          <h1 class="text-4xl font-semibold text-[#222] mb-3">
+            <%= editing ? "Edit your task" : "Post a new task" %>
+          </h1>
+          <p class="text-gray-500 text-sm">
+            Share small tasks and let students help you quickly.
+          </p>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Rating (0 - 5)
-          </label>
-          <input
-            type="number"
-            step="0.1"
-            max="5"
-            name="rating"
-            value="<%= editing ? home.rating : '' %>"
-            placeholder="e.g. 4.5"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:outline-none"
-          />
-        </div>
-        <!-- Max Guests -->
-<div>
-  <label class="block text-sm font-medium text-gray-700 mb-1">
-    Max Guests
-  </label>
-  <input
-    type="number"
-    name="maxguest"
-    min="1"
-    value="<%= editing ? home.maxGuests : '' %>"
-    placeholder="e.g. 4"
-    required
-    class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:outline-none"
-  />
-</div>
-
-<!-- Property Type -->
-<div>
-  <label class="block text-sm font-medium text-gray-700 mb-1">
-    Property Type
-  </label>
-  <select
-    name="propertytype"
-    required
-    class="w-full px-4 py-3 border rounded-lg bg-white focus:ring-2 focus:ring-[#ff385c] focus:outline-none"
-  >
-    <option value="">Select property type</option>
-    <option value="Apartment" <%= editing && home.propertyType === "Apartment" ? "selected" : "" %>>Apartment</option>
-    <option value="Villa" <%= editing && home.propertyType === "Villa" ? "selected" : "" %>>Villa</option>
-    <option value="Cottage" <%= editing && home.propertyType === "Cottage" ? "selected" : "" %>>Cottage</option>
-    <option value="Farmhouse" <%= editing && home.propertyType === "Farmhouse" ? "selected" : "" %>>Farmhouse</option>
-    <option value="Resort" <%= editing && home.propertyType === "Resort" ? "selected" : "" %>>Resort</option>
-    <option value="Hostel" <%= editing && home.propertyType === "Hostel" ? "selected" : "" %>>Hostel</option>
-  </select>
-</div>
-
-
-
-      </div>
-
-      <!-- Location -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">
-          Location
-        </label>
-        <input
-          type="text"
-          name="location"
-          value="<%= editing ? home.location : '' %>"
-          placeholder="e.g. Manali, Himachal Pradesh"
-          required
-          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:outline-none"
-        />
-      </div>
-
-      <!-- Description -->
-<div>
-  <label class="block text-sm font-medium text-gray-700 mb-1">
-    Description
-  </label>
-  <textarea
-    name="description"
-    rows="4"
-    required
-    placeholder="Describe your home, surroundings, and special features..."
-    class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:outline-none resize-none"
-  ><%= editing ? home.description : '' %></textarea>
-</div>
-
-
-      <!-- Photo URL -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">
-          Photo URL
-        </label>
-        <input
-          type="file"
-          name="photo"
-          accept="image/jpg, image/jpeg, image/png"
-        
-          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:outline-none"
-        />
-      </div>
-
-      <!-- Submit Button -->
-      <div class="pt-4">
-        <button
-          type="submit"
-          class="w-full py-3 rounded-lg font-medium text-white bg-gradient-to-r from-[#ff385c] to-[#e31c5f] hover:shadow-lg hover:-translate-y-0.5 transition"
+        <!-- FORM -->
+        <form 
+          action="/<%= editing ? "edithome" : "add-home" %>" 
+          method="POST"
+          enctype="multipart/form-data"
+          class="space-y-6"
         >
-          <%= editing ? "Update Home" : "Publish Home" %>
-        </button>
-      </div>
 
-    </form>
-  </div>
-</main>
+          <input type="hidden" name="id" value="<%= editing ? home._id : '' %>" />
+
+          <!-- TASK TITLE -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Task Title
+            </label>
+            <input
+              type="text"
+              name="houseName"
+              value="<%= editing ? home.houseName : '' %>"
+              placeholder="e.g. Need help with notes printing"
+              required
+              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+            />
+          </div>
+
+          <!-- PAYMENT & RATING -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Payment (₹)
+              </label>
+              <input
+                type="number"
+                name="price"
+                value="<%= editing ? home.price : '' %>"
+                placeholder="e.g. 100"
+                required
+                class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Rating (0 - 5)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                max="5"
+                name="rating"
+                value="<%= editing ? home.rating : '' %>"
+                placeholder="e.g. 4.5"
+                required
+                class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+              />
+            </div>
+
+            <!-- PEOPLE NEEDED -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                People Needed
+              </label>
+              <input
+                type="number"
+                name="maxguest"
+                min="1"
+                value="<%= editing ? home.maxGuests : '' %>"
+                placeholder="e.g. 2"
+                required
+                class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+              />
+            </div>
+
+            <!-- TASK TYPE -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Task Type
+              </label>
+              <select
+                name="propertytype"
+                required
+                class="w-full px-4 py-3 border rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:outline-none"
+              >
+                <option value="">Select task type</option>
+                <option value="Delivery">Delivery</option>
+                <option value="Academic Help">Academic Help</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Tech Help">Tech Help</option>
+                <option value="Design">Design</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- LOCATION -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Location (on campus)
+            </label>
+            <input
+              type="text"
+              name="location"
+              value="<%= editing ? home.location : '' %>"
+              placeholder="e.g. Hostel Block A"
+              required
+              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+            />
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Task Description
+            </label>
+            <textarea
+              name="description"
+              rows="4"
+              required
+              placeholder="Explain what needs to be done clearly..."
+              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none resize-none"
+            ><%= editing ? home.description : '' %></textarea>
+          </div>
+
+          <!-- IMAGE -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Task Image (optional)
+            </label>
+            <input
+              type="file"
+              name="photo"
+              accept="image/jpg, image/jpeg, image/png"
+              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+            />
+          </div>
+
+          <!-- SUBMIT -->
+          <div class="pt-4">
+            <button
+              type="submit"
+              class="w-full py-3 rounded-lg font-medium text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:shadow-lg hover:-translate-y-0.5 transition"
+            >
+              <%= editing ? "Update Task" : "Post Task" %>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </main>
 
   </body>
 </html>

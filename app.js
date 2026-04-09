@@ -69,7 +69,7 @@ app.use(hostRouter);
 
 app.use(errorsController.pageNotFound);
 
-const PORT = 3004;
+const PORT = 3010;
 
 mongoose
   .connect(DB_PATH)

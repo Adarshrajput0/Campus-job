@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home Published • Airbnb Clone</title>
+    <title>Task Posted • CampusTasks</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
   <body
-    class="min-h-screen bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7] font-sans"
+    class="min-h-screen bg-gradient-to-b from-green-50 via-white to-gray-50 font-sans"
   >
     <!-- Navbar -->
     <nav
@@ -17,15 +17,16 @@
       <div
         class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"
       >
+        <!-- Logo -->
         <h2
-          class="text-2xl font-bold text-[#ff385c] tracking-wide cursor-pointer"
+          class="text-2xl font-bold text-green-600 tracking-wide cursor-pointer"
         >
-          Airbnb
+          📍 CampusTasks
         </h2>
 
         <a
           href="/"
-          class="text-sm font-medium text-gray-700 hover:text-[#ff385c] transition"
+          class="text-sm font-medium text-gray-700 hover:text-green-600 transition"
         >
           Home
         </a>
@@ -61,29 +62,29 @@
 
         <!-- Heading -->
         <h1 class="text-4xl font-semibold text-gray-800 mb-3">
-          Home published successfully
+          Task posted successfully 🎉
         </h1>
 
         <!-- Subtext -->
         <p class="text-gray-500 text-sm mb-8 leading-relaxed">
-          Your home is now live and visible to guests. You can manage, edit, or
-          add more homes from your dashboard.
+          Your task is now live on campus. Students can view and apply for it.
+          You can manage or edit your tasks anytime from your dashboard.
         </p>
 
         <!-- Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="/"
-            class="px-6 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-[#ff385c] to-[#e31c5f] hover:shadow-lg hover:-translate-y-0.5 transition"
+            href="/tasks"
+            class="px-6 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:shadow-lg hover:-translate-y-0.5 transition"
           >
-            View all homes
+            View all tasks
           </a>
 
           <a
-            href="/add-home"
+            href="/post-task"
             class="px-6 py-3 rounded-xl font-medium border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
           >
-            Add another home
+            Post another task
           </a>
         </div>
       </div>

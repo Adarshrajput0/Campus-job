@@ -1,141 +1,171 @@
- 
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="/css/output.css" />
 
-    <script src="https://cdn.tailwindcss.com"></script> 
-    <link rel="stylesheet" href="/css/output.css" />>
+<%- include('../partials/head') %>
+</head>
 
-  <%- include('../partials/head') %>
-  </head>
-
-  <body
-    class="min-h-screen bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7] font-sans"
-  >
-
-  <%- include('../partials/header') %>
-
-    
-<main
-  class="min-h-screen flex flex-col items-center pt-28 text-center 
-         bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7]"
+<body
+  class="min-h-screen bg-gradient-to-b from-[#eef2ff] via-white to-[#f7f7f7] font-sans"
 >
-  <!-- HERO SECTION -->
+
+<%- include('../partials/header', { 
+  isLoggedIn: isLoggedIn, 
+  user: user 
+}) %>
+
+<main class="min-h-screen flex flex-col items-center pt-28 text-center">
+
+  <!-- HERO -->
   <div class="max-w-4xl px-4">
-    <h1
-      class="text-5xl md:text-6xl font-extrabold text-[#390ee6] tracking-tight"
-    >
-      Discover your next stay
+    <h1 class="text-5xl md:text-6xl font-extrabold text-indigo-700">
+      Find Campus Micro Jobs
     </h1>
 
     <p class="mt-4 text-lg text-gray-600">
-      Book unique homes, experiences, and unforgettable places around the world.
+      Discover small tasks, freelance gigs, and part-time opportunities within your campus.
     </p>
+  </div>
 
-   
-  <ul
-    class="mt-16 grid grid-cols-1 m:grid-cols-2 lg:grid-cols-3 gap-12 px-6 w-full max-w-7xl"
-  >
+  <!-- STATS -->
+  <div class="mt-12 grid grid-cols-3 gap-6 text-center max-w-3xl">
+    <div>
+      <p class="text-2xl font-bold text-indigo-600">100+</p>
+      <p class="text-sm text-gray-500">Jobs Posted</p>
+    </div>
+
+    <div>
+      <p class="text-2xl font-bold text-green-600">50+</p>
+      <p class="text-sm text-gray-500">Students Earning</p>
+    </div>
+
+    <div>
+      <p class="text-2xl font-bold text-yellow-500">4.8★</p>
+      <p class="text-sm text-gray-500">Avg Rating</p>
+    </div>
+  </div>
+
+  <!-- CATEGORY FILTERS -->
+  <div class="mt-8 flex flex-wrap justify-center gap-3">
+    <span class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">All Jobs</span>
+    <span class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">Delivery</span>
+    <span class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">Tech</span>
+    <span class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">Event</span>
+    <span class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">Cleaning</span>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <% if (registeredHomes.length === 0) { %>
+    <div class="mt-20 text-center">
+      <h2 class="text-2xl font-semibold text-gray-700">
+        No jobs available right now 😕
+      </h2>
+      <p class="text-gray-500 mt-2">
+        Check back later or post your own task!
+      </p>
+    </div>
+  <% } else { %>
+
+  <!-- JOB LIST -->
+  <ul class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-6 w-full max-w-7xl">
+
     <% registeredHomes.forEach(home => { %>
 
-    <li
-      class="group relative rounded-3xl overflow-hidden
-             bg-white/70 backdrop-blur-xl
-             border border-white/40 shadow-xl
-             hover:shadow-2xl transition-all duration-500 hover:-translate-y-3"
-    >
-      <!-- TOP GRADIENT LINE -->
-      <div
-        class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
-      ></div>
+    <li class="group relative rounded-3xl overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
 
       <!-- IMAGE -->
-      <div class="relative overflow-hidden">
+      <div class="relative">
         <img
           src="<%= home.photo %>"
           alt="<%= home.houseName %>"
-          class="w-full h-60 object-cover transition-transform duration-700 group-hover:scale-110"
+          class="w-full h-52 object-cover group-hover:scale-105 transition duration-500"
         />
 
         <!-- PRICE -->
-        <span
-          class="absolute top-4 right-4 bg-black/70 text-white px-4 py-1 rounded-full text-sm font-semibold backdrop-blur-md"
-        >
-          ₹ <%= home.price %> / night
+        <span class="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+          ₹ <%= home.price %>
         </span>
 
-        <!-- FAV BUTTON -->
-        <button
-          class="absolute top-4 left-4 bg-white/80 p-2 rounded-full shadow hover:scale-110 transition"
-        >
-          ❤️
+        <!-- BADGES -->
+        <div class="absolute bottom-4 left-4 flex gap-2">
+          <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs">
+            Open
+          </span>
+          <span class="bg-yellow-400 text-black px-3 py-1 rounded-full text-xs">
+            Urgent
+          </span>
+        </div>
+
+        <!-- SAVE BUTTON -->
+        <button class="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs shadow hover:bg-gray-100">
+          Save
         </button>
       </div>
 
-<div class="p-6 space-y-3 text-left">
-  <h3
-    class="text-2xl font-bold text-gray-800 group-hover:text-indigo-600 transition"
-  >
-    <%= home.houseName %>
-  </h3>
+      <!-- CONTENT -->
+      <div class="p-5 text-left space-y-3">
 
-  <p class="text-gray-500">📍 <%= home.location %></p>
+        <!-- TITLE -->
+        <h3 class="text-xl font-bold text-gray-800 group-hover:text-indigo-600">
+          <%= home.houseName %>
+        </h3>
 
-  <!-- PROPERTY TYPE + GUESTS -->
-  <div class="flex items-center justify-between text-sm text-gray-600">
-    <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
-      🏠 <%= home.propertytype %>
-    </span>
+        <!-- LOCATION -->
+        <p class="text-gray-500 text-sm">
+          📍 <%= home.location %>
+        </p>
 
-    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
-      👥 Max <%= home.maxguest %> guests
-    </span>
-  </div>
+        <!-- TAGS -->
+        <div class="flex justify-between text-xs">
+          <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded">
+            <%= home.propertytype %>
+          </span>
 
-  <!-- DESCRIPTION -->
-  <p class="text-gray-600 text-sm leading-relaxed line-clamp-2">
-    <%= home.description %>
-  </p>
+          <span class="bg-green-100 text-green-700 px-2 py-1 rounded">
+            Needed: <%= home.maxguest %>
+          </span>
+        </div>
 
-  <div class="flex items-center justify-between pt-3">
-    <span class="flex items-center gap-1 text-yellow-500 font-semibold">
-      ⭐ <%= home.rating %>
-    </span>
+        <!-- DESCRIPTION -->
+        <p class="text-gray-600 text-sm line-clamp-2">
+          <%= home.description %>
+        </p>
 
-    <button
-      class="group relative px-6 py-2.5 rounded-full
-             bg-[#FF385C] text-white font-semibold text-sm
-             shadow-md hover:shadow-lg
-             hover:bg-[#E31C5F] active:scale-[0.96]
-             transition-all duration-200"
-    >
-      <span class="flex items-center gap-2">
-        Book now
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-4 h-4 group-hover:translate-x-1 transition"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-      </span>
-    </button>
-  </div>
-</div>
+        <!-- POSTED -->
+        <p class="text-xs text-gray-400">
+          Posted recently
+        </p>
+
+        <!-- FOOTER -->
+        <div class="flex justify-between items-center pt-2">
+          <span class="text-yellow-500 font-semibold text-sm">
+            ⭐ <%= home.rating %>
+          </span>
+        </div>
+
+        <!-- APPLY BUTTON -->
+        <a href="/homes/<%= home._id %>"
+           class="block w-full text-center mt-3 py-2 rounded-lg 
+                  bg-indigo-600 text-white font-medium
+                  hover:bg-indigo-700 transition">
+          View & Apply
+        </a>
+
+      </div>
 
     </li>
 
     <% }) %>
+
   </ul>
+
+  <% } %>
 
   <!-- FOOTER TEXT -->
   <p class="mt-20 text-lg text-gray-600 max-w-xl leading-relaxed">
-     Discover hand-picked homes, premium stays, and trusted hosts only on our platform.
+    Explore flexible campus jobs, earn money, and build skills while studying.
   </p>
+
 </main>
-  </body>
+
+</body>
 </html>
