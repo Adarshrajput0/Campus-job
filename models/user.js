@@ -24,6 +24,14 @@ const userSchema = mongoose.Schema({
       ref: "Home",
     },
   ],
+
+  // Add these inside your userSchema:
+  bio: { type: String, maxlength: 200, default: "" },
+  skills: { type: [String], default: [] },
+  avatar: { type: String, default: "" },
+  rating: { type: Number, default: 0 },
+  totalRatings: { type: Number, default: 0 },
+  completedTasks: { type: Number, default: 0 },
 });
 
 module.exports = mongoose.model("User", userSchema);
