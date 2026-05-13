@@ -1,6 +1,6 @@
 require("dotenv").config();
 const DB_PATH =
-  "mongodb+srv://Adarsh:Adarsh@cluster0.tmsiqs5.mongodb.net/airbnb?appName=Cluster0";
+  "mongodb+srv://root:root@cluster0.mcc5pm2.mongodb.net/job_db?appName=Cluster0";
 
 const path = require("path");
 const express = require("express");
