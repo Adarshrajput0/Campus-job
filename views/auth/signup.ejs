@@ -5,402 +5,426 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Signup</title>
 
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family: "Poppins", sans-serif;
+    :root {
+      --ink: #0d0d0d;
+      --cream: #f5f0e8;
+      --lime: #c8f04a;
+      --muted: #6b6b6b;
+      --border: #e2ddd4;
+      --red: #e53e3e;
     }
 
-    body{
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background: linear-gradient(135deg,#0f172a,#1e293b,#111827);
-      padding:30px;
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      background: var(--cream);
+      padding-top: 64px; /* offset for fixed header */
     }
 
-    .container{
-      width:100%;
-      max-width:520px;
-      background: rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(20px);
-      border-radius:24px;
-      padding:40px;
-      box-shadow:0 20px 50px rgba(0,0,0,0.4);
-      color:white;
+    .page-shell {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 64px);
     }
 
-    .logo{
-      width:80px;
-      height:80px;
-      margin:auto;
-      border-radius:50%;
-      background: linear-gradient(135deg,#3b82f6,#8b5cf6);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      font-size:32px;
-      margin-bottom:20px;
-      box-shadow:0 10px 25px rgba(59,130,246,0.4);
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      background: var(--ink);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 56px 52px;
+      position: relative;
+      overflow: hidden;
+    }
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 380px; height: 380px;
+      background: var(--lime);
+      border-radius: 50%;
+      opacity: 0.07;
+    }
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 240px; height: 240px;
+      background: var(--lime);
+      border-radius: 50%;
+      opacity: 0.05;
     }
 
-    h2{
-      text-align:center;
-      margin-bottom:30px;
-      font-size:32px;
-      font-weight:700;
+    .panel-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(200,240,74,0.1);
+      border: 1px solid rgba(200,240,74,0.22);
+      color: var(--lime);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 7px 14px;
+      border-radius: 100px;
+      width: fit-content;
+    }
+    .pulse {
+      width: 6px; height: 6px;
+      background: var(--lime);
+      border-radius: 50%;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:0.4; transform:scale(1.6); }
     }
 
-    .row{
-      display:flex;
-      gap:15px;
+    .panel-headline {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(2rem, 3vw, 3.2rem);
+      font-weight: 700;
+      color: white;
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+      margin-top: 28px;
+    }
+    .panel-headline em { font-style: normal; color: var(--lime); }
+
+    .panel-sub {
+      color: rgba(255,255,255,0.42);
+      font-size: 0.88rem;
+      line-height: 1.65;
+      margin-top: 14px;
+      max-width: 320px;
     }
 
-    .form-group{
-      margin-bottom:20px;
-      width:100%;
+    .panel-steps { margin-top: 44px; display: flex; flex-direction: column; gap: 18px; }
+    .step { display: flex; align-items: flex-start; gap: 14px; }
+    .step-num {
+      width: 28px; height: 28px; flex-shrink: 0;
+      border-radius: 50%;
+      background: rgba(200,240,74,0.12);
+      border: 1px solid rgba(200,240,74,0.28);
+      color: var(--lime);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.72rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-text { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.5; padding-top: 5px; }
+    .step-text strong { color: rgba(255,255,255,0.85); display: block; font-weight: 500; }
+
+    .panel-footer {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.18);
+      font-family: 'Syne', sans-serif;
+      letter-spacing: 0.06em;
     }
 
-    .form-group label{
-      display:block;
-      margin-bottom:8px;
-      font-size:14px;
-      color:#d1d5db;
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      overflow-y: auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 52px 40px;
+      background: var(--cream);
     }
 
-    .input-box{
-      position:relative;
+    .signup-box {
+      width: 100%;
+      max-width: 420px;
+      animation: fadeUp 0.55s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
-    .input-box i{
-      position:absolute;
-      top:50%;
-      left:15px;
-      transform:translateY(-50%);
-      color:#94a3b8;
-      font-size:15px;
+    .signup-box__header { margin-bottom: 32px; }
+    .signup-box__title {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 2rem; font-weight: 700;
+      color: var(--ink); letter-spacing: -0.02em;
+    }
+    .signup-box__sub { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
+    .signup-box__sub a {
+      color: var(--ink); font-weight: 600;
+      text-decoration: none; border-bottom: 1px solid var(--ink);
     }
 
-    .input-box input{
-      width:100%;
-      padding:15px 15px 15px 45px;
-      border:none;
-      outline:none;
-      border-radius:14px;
-      background: rgba(255,255,255,0.08);
-      color:white;
-      font-size:15px;
-      border:1px solid transparent;
-      transition:0.3s;
+    /* ERROR */
+    .error-alert {
+      background: #fff5f5;
+      border: 1px solid #fed7d7;
+      border-left: 3px solid var(--red);
+      border-radius: 12px;
+      padding: 14px 16px; margin-bottom: 22px;
+      display: flex; gap: 10px; align-items: flex-start;
     }
-
-    .input-box input::placeholder{
-      color:#94a3b8;
+    .error-alert > i { color: var(--red); font-size: 0.85rem; margin-top: 2px; flex-shrink: 0; }
+    .error-alert-body { flex: 1; }
+    .error-header {
+      font-size: 0.8rem; font-weight: 600; color: var(--red);
+      margin-bottom: 6px; font-family: 'Syne', sans-serif; letter-spacing: 0.04em;
     }
+    .error-list { list-style: none; font-size: 0.8rem; color: #c53030; line-height: 1.7; }
 
-    .input-box input:focus{
-      border-color:#60a5fa;
-      background: rgba(255,255,255,0.12);
-      box-shadow:0 0 0 4px rgba(96,165,250,0.2);
+    /* FIELDS */
+    .row { display: flex; gap: 14px; }
+    .field { margin-bottom: 16px; width: 100%; }
+    .field-label {
+      display: block; font-size: 0.74rem; font-weight: 700;
+      color: var(--ink); letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 7px; font-family: 'Syne', sans-serif;
     }
-
-    .radio-box{
-      margin:20px 0;
-      padding:18px;
-      border-radius:16px;
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
+    .input-wrap { position: relative; }
+    .input-wrap i {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%); color: #bbb;
+      font-size: 0.82rem; pointer-events: none; transition: color 0.2s;
     }
-
-    .radio-box strong{
-      display:block;
-      margin-bottom:12px;
-      color:#f1f5f9;
+    .input-wrap input {
+      width: 100%; padding: 13px 14px 13px 40px;
+      border: 1.5px solid var(--border); border-radius: 12px;
+      background: white; font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem; color: var(--ink); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-
-    .radio-box label{
-      margin-right:20px;
-      font-size:15px;
-      color:#dbeafe;
+    .input-wrap input::placeholder { color: #c5c0b8; }
+    .input-wrap input:focus {
+      border-color: var(--ink);
+      box-shadow: 0 0 0 4px rgba(13,13,13,0.06);
     }
+    .input-wrap:focus-within i { color: var(--ink); }
 
-    .radio-box input{
-      margin-right:6px;
-      accent-color:#3b82f6;
+    /* ROLE SELECTOR */
+    .role-label {
+      font-size: 0.74rem; font-weight: 700; color: var(--ink);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      font-family: 'Syne', sans-serif; display: block; margin-bottom: 10px;
     }
-
-    .terms{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:25px;
-      font-size:14px;
-      color:#cbd5e1;
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    .role-option { position: relative; }
+    .role-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .role-card {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      padding: 18px 12px; border: 1.5px solid var(--border); border-radius: 14px;
+      background: white; cursor: pointer;
+      transition: border-color 0.18s, background 0.18s, transform 0.15s;
+      user-select: none;
     }
-
-    .terms input{
-      accent-color:#3b82f6;
-      width:16px;
-      height:16px;
+    .role-card i { font-size: 1.3rem; color: var(--muted); transition: color 0.18s; }
+    .role-card span {
+      font-size: 0.82rem; font-weight: 600; color: var(--muted);
+      font-family: 'Syne', sans-serif; letter-spacing: 0.04em; transition: color 0.18s;
     }
-
-    .terms a{
-      color:#60a5fa;
-      text-decoration:none;
+    .role-option input:checked ~ .role-card {
+      border-color: var(--ink); background: var(--ink);
+      transform: translateY(-2px); box-shadow: 0 6px 16px rgba(13,13,13,0.12);
     }
+    .role-option input:checked ~ .role-card i,
+    .role-option input:checked ~ .role-card span { color: var(--lime); }
 
-    .terms a:hover{
-      text-decoration:underline;
+    /* TERMS */
+    .terms-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 22px; }
+    .terms-row input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: var(--ink);
+      cursor: pointer; margin-top: 2px; flex-shrink: 0;
     }
+    .terms-row span { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .terms-row a { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 1px solid currentColor; }
 
-    .btn{
-      width:100%;
-      padding:16px;
-      border:none;
-      border-radius:14px;
-      background: linear-gradient(135deg,#2563eb,#7c3aed);
-      color:white;
-      font-size:16px;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.3s;
-      box-shadow:0 10px 20px rgba(37,99,235,0.3);
+    /* SUBMIT */
+    .submit-btn {
+      width: 100%; padding: 15px; border: none; border-radius: 13px;
+      background: var(--ink); color: var(--lime);
+      font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; transition: background 0.18s, transform 0.12s;
     }
+    .submit-btn:hover { background: #222; }
+    .submit-btn:active { transform: scale(0.99); }
 
-    .btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 15px 30px rgba(37,99,235,0.45);
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0 0; }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-text { font-size: 0.75rem; color: #bbb; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .page-shell { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 36px 24px; }
     }
-
-    .login-link{
-      text-align:center;
-      margin-top:22px;
-      color:#cbd5e1;
-      font-size:15px;
+    @media (max-width: 400px) {
+      .row { flex-direction: column; gap: 0; }
     }
-
-    .login-link a{
-      color:#60a5fa;
-      text-decoration:none;
-      font-weight:600;
-    }
-
-    .login-link a:hover{
-      text-decoration:underline;
-    }
-
-    .error-alert{
-      background: rgba(239,68,68,0.12);
-      border:1px solid rgba(239,68,68,0.35);
-      padding:18px;
-      border-radius:16px;
-      margin-bottom:22px;
-    }
-
-    .error-header{
-      color:#fca5a5;
-      font-weight:600;
-      margin-bottom:10px;
-    }
-
-    .error-list{
-      padding-left:20px;
-      color:#fecaca;
-      font-size:14px;
-    }
-
-    @media(max-width:600px){
-
-      .container{
-        padding:30px 22px;
-      }
-
-      .row{
-        flex-direction:column;
-        gap:0;
-      }
-
-      h2{
-        font-size:28px;
-      }
-
-    }
-
   </style>
 </head>
 
 <body>
 
-  <div class="container">
+  <%- include('../partials/header') %>
 
-    <div class="logo">
-      <i class="fa-solid fa-house-user"></i>
+  <div class="page-shell">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <div>
+        <span class="panel-eyebrow"><span class="pulse"></span> Join the Platform</span>
+
+        <h2 class="panel-headline">
+          Start earning<br>on <em>your campus</em><br>today.
+        </h2>
+        <p class="panel-sub">
+          Create an account to post tasks, find micro-gigs, and connect with your campus community.
+        </p>
+
+        <div class="panel-steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <p class="step-text"><strong>Create your account</strong>Takes less than a minute.</p>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <p class="step-text"><strong>Pick your role</strong>Join as a Guest or Host.</p>
+          </div>
+          <div class="step">
+            <span class="step-num">3</span>
+            <p class="step-text"><strong>Start earning</strong>Browse jobs and apply instantly.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="panel-footer">© Campus Jobs Platform</p>
     </div>
 
-    <h2>Create Account</h2>
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="signup-box">
 
-    <form action="/signup" method="POST">
-
-      <% if ( errors.length > 0) { %>
-
-      <div class="error-alert">
-
-        <div class="error-header">
-          <i class="fas fa-exclamation-circle"></i>
-          Please fix the following errors
+        <div class="signup-box__header">
+          <h2 class="signup-box__title">Create Account</h2>
+          <p class="signup-box__sub">
+            Already have an account? <a href="/login">Log in</a>
+          </p>
         </div>
 
-        <ul class="error-list">
-          <% errors.slice(0,5).forEach(error => { %>
-            <li><%= error %></li>
-          <% }) %>
-        </ul>
+        <form action="/signup" method="POST">
 
-      </div>
-
-      <% } %>
-
-      <div class="row">
-
-        <div class="form-group">
-          <label>First Name</label>
-
-          <div class="input-box">
-            <i class="fa-solid fa-user"></i>
-
-            <input
-              type="text"
-              name="firstName"
-              value="<%= oldInput.firstName || '' %>"
-              placeholder="John"
-              required
-            />
+          <% if (errors.length > 0) { %>
+          <div class="error-alert">
+            <i class="fas fa-exclamation-circle"></i>
+            <div class="error-alert-body">
+              <p class="error-header">Please fix the following</p>
+              <ul class="error-list">
+                <% errors.slice(0,5).forEach(error => { %>
+                  <li><%= error %></li>
+                <% }) %>
+              </ul>
+            </div>
           </div>
-        </div>
+          <% } %>
 
-        <div class="form-group">
-          <label>Last Name</label>
-
-          <div class="input-box">
-            <i class="fa-solid fa-user"></i>
-
-            <input
-              type="text"
-              name="lastName"
-              value="<%= oldInput.lastName || '' %>"
-              placeholder="Doe"
-              required
-            />
+          <!-- NAME ROW -->
+          <div class="row">
+            <div class="field">
+              <label class="field-label" for="firstName">First Name</label>
+              <div class="input-wrap">
+                <input type="text" id="firstName" name="firstName"
+                  value="<%= oldInput.firstName || '' %>" placeholder="John" required />
+                <i class="fa-solid fa-user"></i>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="lastName">Last Name</label>
+              <div class="input-wrap">
+                <input type="text" id="lastName" name="lastName"
+                  value="<%= oldInput.lastName || '' %>" placeholder="Doe" required />
+                <i class="fa-solid fa-user"></i>
+              </div>
+            </div>
           </div>
-        </div>
 
+          <!-- EMAIL -->
+          <div class="field">
+            <label class="field-label" for="email">Email Address</label>
+            <div class="input-wrap">
+              <input type="email" id="email" name="email"
+                value="<%= oldInput.email || '' %>" placeholder="you@university.edu" required />
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="field">
+            <label class="field-label" for="password">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="password" name="password"
+                placeholder="Create a password" required />
+              <i class="fa-solid fa-lock"></i>
+            </div>
+          </div>
+
+          <!-- CONFIRM PASSWORD -->
+          <div class="field">
+            <label class="field-label" for="confirmPassword">Confirm Password</label>
+            <div class="input-wrap">
+              <input type="password" id="confirmPassword" name="confirmPassword"
+                placeholder="Repeat your password" required />
+              <i class="fa-solid fa-lock"></i>
+            </div>
+          </div>
+
+          <!-- ROLE -->
+          <span class="role-label">I want to register as:</span>
+          <div class="role-grid">
+            <label class="role-option">
+              <input type="radio" name="userType" value="guest"
+                <%= oldInput.userType === 'guest' ? 'checked' : '' %> />
+              <div class="role-card">
+                <i class="fa-solid fa-user-graduate"></i>
+                <span>Guest</span>
+              </div>
+            </label>
+            <label class="role-option">
+              <input type="radio" name="userType" value="host"
+                <%= oldInput.userType === 'host' ? 'checked' : '' %> />
+              <div class="role-card">
+                <i class="fa-solid fa-house-user"></i>
+                <span>Host</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- TERMS -->
+          <div class="terms-row">
+            <input type="checkbox" name="terms" id="terms" required />
+            <span>I agree to the <a href="#">Terms &amp; Conditions</a></span>
+          </div>
+
+          <!-- SUBMIT -->
+          <button type="submit" class="submit-btn">Register →</button>
+
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">Campus Jobs Platform</span>
+            <div class="divider-line"></div>
+          </div>
+
+        </form>
       </div>
-
-      <div class="form-group">
-
-        <label>Email Address</label>
-
-        <div class="input-box">
-          <i class="fa-solid fa-envelope"></i>
-
-          <input
-            type="email"
-            name="email"
-            value="<%= oldInput.email || '' %>"
-            placeholder="email@example.com"
-            required
-          />
-        </div>
-
-      </div>
-
-      <div class="form-group">
-
-        <label>Password</label>
-
-        <div class="input-box">
-          <i class="fa-solid fa-lock"></i>
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-
-      </div>
-
-      <div class="form-group">
-
-        <label>Confirm Password</label>
-
-        <div class="input-box">
-          <i class="fa-solid fa-lock"></i>
-
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm your password"
-            required
-          />
-        </div>
-
-      </div>
-
-      <div class="radio-box">
-
-        <strong>I want to register as:</strong>
-
-        <label>
-          <input
-            type="radio"
-            name="userType"
-            value="guest"
-            <%= oldInput.userType === 'guest' ? 'checked' : '' %>
-          />
-          Guest
-        </label>
-
-        <label>
-          <input
-            type="radio"
-            name="userType"
-            value="host"
-            <%= oldInput.userType === 'host' ? 'checked' : '' %>
-          />
-          Host
-        </label>
-
-      </div>
-
-      <div class="terms">
-
-        <input type="checkbox" name="terms" required />
-
-        <span>
-          I agree to the <a href="#">Terms & Conditions</a>
-        </span>
-
-      </div>
-
-      <button class="btn">
-        Register →
-      </button>
-
-    </form>
-
-    <div class="login-link">
-      Already have an account?
-      <a href="/login">Log in</a>
     </div>
 
   </div>
