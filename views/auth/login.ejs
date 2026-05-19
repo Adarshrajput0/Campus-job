@@ -1,85 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-    
+
 <%- include('../partials/head', { pageTitle: 'Login' }) %>
- <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<head>
+  <link rel="stylesheet" href="/css/singinPage.css">
+</head>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+
 
 <body>
 
-  <%- include('../partials/header') %>
-  <link rel="stylesheet" href="/css/login.css" />
+<%- include('../partials/header') %>
 
-  <div class="center-wrapper">
+<div class="page-shell">
 
-   <div class="login-form">
-    <form action="/login" method="POST">
+  <!-- LEFT: BRAND PANEL -->
+  <div class="left-panel">
+    <div>
+      <span class="panel-eyebrow"><span class="pulse"></span> Campus Platform</span>
+      <h2 class="panel-headline">Your <em>campus gigs</em><br>are waiting.</h2>
+      <p class="panel-sub">Sign in to browse flexible micro-jobs, apply instantly, and start earning on your schedule.</p>
 
-      <h2 class="text-center">Sign In</h2>
-         
-
-      <div class="form-group">
-  <div class="input-box">
-    <i class="fa fa-user"></i>
-    <% if ( errors.length > 0) { %>
-      <div class="error-alert">
-        <div class="error-header">
-          <i class="fas fa-exclamation-circle"></i>
+      <div class="panel-stats">
+        <div>
+          <p class="panel-stat-num">100+</p>
+          <p class="panel-stat-label">Jobs Live</p>
         </div>
-        <ul class="error-list">
-          <% errors.slice(0,5).forEach(error => { %>
-            <li><%= error %></li>
-          <% }) %>
-        </ul>
+        <div>
+          <p class="panel-stat-num">4.8★</p>
+          <p class="panel-stat-label">Avg Rating</p>
+        </div>
+        <div>
+          <p class="panel-stat-num">50+</p>
+          <p class="panel-stat-label">Earners</p>
+        </div>
       </div>
-      <% } %>
-      <div>
-    <input
-      type="email"
-      name="email"
-      class="form-control"
-      placeholder="Enter Your email"
-       value="<%= oldInput.email ? oldInput.email: '' %>"
-      required
-    />
+    </div>
+
+    <p class="panel-footer">© Campus Jobs Platform</p>
   </div>
+
+  <!-- RIGHT: LOGIN FORM -->
+  <div class="right-panel">
+    <div class="login-box">
+
+      <div class="login-box__header">
+        <h2 class="login-box__title">Sign In</h2>
+        <p class="login-box__subtitle">Welcome back — let's find your next gig.</p>
+      </div>
+
+      <form action="/login" method="POST">
+
+        <!-- ERRORS -->
+        <% if (errors.length > 0) { %>
+        <div class="error-alert">
+          <i class="fas fa-exclamation-circle"></i>
+          <ul class="error-list">
+            <% errors.slice(0,5).forEach(error => { %>
+              <li><%= error %></li>
+            <% }) %>
+          </ul>
+        </div>
+        <% } %>
+
+        <!-- EMAIL -->
+        <div class="field">
+          <label class="field-label" for="email">Email</label>
+          <div class="input-wrap">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@university.edu"
+              value="<%= oldInput.email ? oldInput.email : '' %>"
+              required
+            />
+            <i class="fa fa-envelope"></i>
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="field">
+          <label class="field-label" for="password">Password</label>
+          <div class="input-wrap">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+            <i class="fa fa-lock"></i>
+          </div>
+        </div>
+
+        <!-- REMEMBER -->
+        <div class="remember-row">
+          <input type="checkbox" id="remember" name="remember">
+          <label for="remember">Remember me</label>
+        </div>
+
+        <!-- SUBMIT -->
+        <button type="submit" class="submit-btn">Log In →</button>
+
+      </form>
+    </div>
+  </div>
+
 </div>
-
-
-      <div class="form-group">
-  <div class="input-box">
-    <i class="fa fa-lock"></i>
-    <input
-      type="password"
-      name="password"
-      class="form-control"
-      placeholder="Password"
-      required
-    />
-  </div>
-</div>
-
-
-      <div class="button-btn">
-        <button type="submit" class="login-btn">
-  Log in
-</button>
-
-      </div>
-      
-      <div class="clearfix">
-        <label class="pull-left checkbox-inline">
-          <input type="checkbox"> Remember me
-        </label>
-        
-      </div>
-
-    </form>
-
-  </div>
-  </div>
 
 </body>
 </html>
-
-
