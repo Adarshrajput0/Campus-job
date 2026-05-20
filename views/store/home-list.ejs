@@ -1,141 +1,234 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="/css/output.css" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/output.css" />
+<%- include('../partials/head', { pageTitle: 'Campus Tasks Directory' }) %>
 
-  <%- include('../partials/head') %>
-  </head>
+<style>
+  :root {
+    --brand-primary: #6366f1; /* Indigo */
+    --brand-emerald: #10b981; /* Emerald */
+    --brand-slate: #0f172a; /* Slate 900 */
+    --bg-light: #f8fafc; /* Slate 50 */
+    --border-soft: #f1f5f9; /* Slate 100 */
+    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.01);
+  }
 
-  <body
-    class="min-h-screen bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7] font-sans"
-  >
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-light);
+    color: #334155;
+  }
 
-  
-   <%- include('../partials/header', { 
-      isLoggedIn: isLoggedIn, 
-      user: user 
-}) %>
+  .font-heading { font-family: 'Outfit', sans-serif; }
 
-<main
-  class="min-h-screen flex flex-col items-center pt-28 text-center 
-         bg-gradient-to-b from-green-50 via-white to-gray-50"
->
+  /* Neo-Glassmorphism Card Design */
+  .premium-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 24px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .premium-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.3);
+  }
 
- 
-  <div class="max-w-4xl px-4">
-    <h1
-      class="text-5xl md:text-6xl font-extrabold text-green-700 tracking-tight"
-    >
-      Find campus tasks near you 🚀
-    </h1>
+  /* Chatbot styles */
+  #chat-toggle {
+    position: fixed; bottom: 32px; right: 32px;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--brand-slate); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4);
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000;
+  }
+  #chat-toggle:hover { transform: scale(1.08) rotate(5deg); }
+  #chat-toggle i { font-size: 22px; color: var(--brand-emerald); }
+  #chat-toggle .notif-dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #ef4444; border: 2.5px solid var(--brand-slate);
+  }
 
-    <p class="mt-4 text-lg text-gray-600">
-      Explore micro-jobs posted by students. Earn, help, and grow together.
-    </p>
-  </div>
+  #chat-container {
+    position: fixed; bottom: 104px; right: 32px;
+    width: 360px; height: 500px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 28px; display: flex; flex-direction: column;
+    overflow: hidden; box-shadow: 0 24px 64px rgba(13,13,13,0.12);
+    transform-origin: bottom right;
+    transition: opacity 0.25s, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 999;
+  }
+  #chat-container.closed {
+    opacity: 0; transform: scale(0.85) translateY(24px); pointer-events: none;
+  }
+  #chat-container.open {
+    opacity: 1; transform: scale(1) translateY(0);
+  }
 
-  <!-- LISTINGS -->
-  <ul class="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-6 max-w-7xl">
+  #chatbox {
+    flex: 1; overflow-y: auto; padding: 16px;
+    display: flex; flex-direction: column; gap: 12px;
+    background: #f8fafc; min-height: 0;
+  }
+  .bubble { max-width: 85%; padding: 11px 15px; font-size: 0.84rem; line-height: 1.5; border-radius: 18px; }
+  .bubble.bot { background: white; border: 1px solid #e2e8f0; color: #1e293b; border-bottom-left-radius: 4px; }
+  .bubble.user { background: var(--brand-primary); color: white; border-bottom-right-radius: 4px; }
 
-    <% registeredHomes.forEach(home => { %>
+  .chip {
+    flex-shrink: 0; padding: 6px 14px; font-size: 0.72rem;
+    border: 1px solid #e2e8f0; border-radius: 100px;
+    background: white; color: #64748b; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 
-    <li class="group relative rounded-3xl overflow-hidden
-               bg-white/80 backdrop-blur-xl
-               border border-white/50 shadow-xl
-               hover:shadow-2xl transition-all duration-500 hover:-translate-y-3">
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .premium-card:nth-child(1) { animation-delay: 0.1s; }
+  .premium-card:nth-child(2) { animation-delay: 0.18s; }
+  .premium-card:nth-child(3) { animation-delay: 0.26s; }
+</style>
 
-      <!-- Glow -->
-      <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition
-                  bg-gradient-to-br from-green-200/20 via-emerald-200/20 to-teal-200/20"></div>
+</head>
 
-      <!-- Image -->
-      <div class="relative overflow-hidden">
-        <img
-          src="<%= home.photo %>"
-          alt="<%= home.houseName %>"
-          class="w-full h-60 object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+<body class="min-h-screen">
 
-        <!-- Payment Badge -->
-        <span
-          class="absolute top-4 right-4 bg-black/70 text-white px-4 py-1 rounded-full text-sm font-semibold backdrop-blur-md"
-        >
-          ₹ <%= home.price %> reward
-        </span>
+  <!-- NAVBAR HEADER -->
+  <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
 
-        <!-- Verified -->
-        <span
-          class="absolute top-4 left-4 bg-white/80 text-xs font-bold px-3 py-1 rounded-full shadow"
-        >
-          ✔ Verified Task
-        </span>
-      </div>
+  <!-- MAIN WRAP -->
+  <main class="max-w-7xl mx-auto px-6 sm:px-8 pt-32 pb-24">
 
-      <!-- Content -->
-      <div class="relative p-6 space-y-3 text-left">
-
-        <!-- Task Title -->
-        <h3
-          class="text-2xl font-bold text-gray-900 group-hover:text-green-600 transition"
-        >
-          <%= home.houseName %>
-        </h3>
-
-        <!-- Location -->
-        <p class="text-gray-600">📍 <%= home.location %></p>
-
-        <!-- Task Type + People Needed -->
-        <div class="flex items-center justify-between text-sm text-gray-600 pt-1">
-          <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
-            🛠 <%= home.propertytype %>
-          </span>
-
-          <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-semibold">
-            👥 Needed: <%= home.maxguest %>
-          </span>
+    <!-- PAGE HEADER -->
+    <section class="mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6 fade-in-up">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm">
+          <i class="fa-solid fa-list-check"></i> Tasks Marketplace
         </div>
-
-        <!-- Description -->
-        <p class="text-gray-600 text-sm leading-relaxed line-clamp-2">
-          <%= home.description %>
+        <h1 class="font-heading text-4xl sm:text-5xl font-extrabold mt-4 tracking-tight text-slate-900">
+          Campus Micro Jobs
+        </h1>
+        <p class="mt-2 text-slate-500 max-w-xl text-sm sm:text-base leading-relaxed">
+          Explore flexible, small tasks hosted by campus staff and students. Get selected, complete tasks, and earn reward payments securely.
         </p>
-
-        <!-- Bottom -->
-        <div class="flex items-center justify-between pt-3">
-
-          <!-- Rating → Trust -->
-          <span class="flex items-center gap-1 text-yellow-500 font-semibold">
-            ⭐ <%= home.rating %> trust
-          </span>
-
-          <!-- View -->
-          <a
-            href="/homes/<%= home._id %>"
-            class="px-5 py-2 rounded-full bg-green-600 text-white text-sm font-semibold
-                   shadow hover:bg-green-700 hover:shadow-lg active:scale-95 transition"
-          >
-            View Task
-          </a>
-        </div>
-
-        <!-- Save Button -->
-        <div class="pt-3">
-          <%- include('../partials/favourite',{home:home}) %>
-        </div>
-
       </div>
 
-    </li>
+      <!-- Action items -->
+      <div class="flex items-center gap-3">
+        <a href="/smart-matches" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold font-heading uppercase tracking-wider text-slate-600 hover:border-slate-300 transition">
+          🎯 AI Recommendations
+        </a>
+      </div>
+    </section>
 
-    <% }) %>
-  </ul>
+    <!-- DIVIDER -->
+    <div class="mb-8 flex items-center gap-4 fade-in-up" style="animation-delay: 0.1s;">
+      <div class="flex-1 h-px bg-slate-200"></div>
+      <span class="font-heading text-[10px] font-bold tracking-widest text-slate-400 uppercase">Live Opportunity Marketplace</span>
+      <div class="flex-1 h-px bg-slate-200"></div>
+    </div>
 
-  <!-- FOOTER -->
-  <p class="mt-20 text-lg md:text-xl text-gray-600 max-w-xl leading-relaxed">
-    💼 Small tasks. Real earnings. Stronger campus community.
-  </p>
+    <!-- EMPTY STATE -->
+    <% if (registeredHomes.length === 0) { %>
+      <div class="max-w-md mx-auto text-center border-2 border-dashed border-slate-200 rounded-[28px] p-12 fade-in-up">
+        <div class="text-5xl mb-4">🔍</div>
+        <h2 class="font-heading text-2xl font-bold text-slate-800">No active tasks live right now</h2>
+        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Check back later or post your own opportunity to collaborate with other campus students.</p>
+      </div>
 
-</main>
+    <% } else { %>
 
-   
-  </body>
+      <!-- GRID LISTINGS -->
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% registeredHomes.forEach(home => { %>
+
+          <li class="premium-card fade-in-up flex flex-col group">
+
+            <!-- Card Banner -->
+            <div class="relative h-52 overflow-hidden bg-slate-100 rounded-t-[24px]">
+              <img src="<%= home.photo %>" alt="<%= home.houseName %>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103">
+
+              <!-- Price indicator -->
+              <span class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-md border border-white/10 text-white font-heading text-xs font-bold px-3 py-1.5 rounded-full">
+                ₹ <%= home.price %>
+              </span>
+
+              <!-- Status Counter Overlay -->
+              <div class="absolute bottom-4 left-4 flex gap-2">
+                <span class="bg-indigo-600 text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">Active</span>
+                <span class="bg-white/90 text-slate-800 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-slate-200">Verified</span>
+              </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-6 flex flex-col flex-grow">
+              <div class="mb-4">
+                <span class="text-[9px] font-bold text-indigo-500 uppercase tracking-widest block"><%= home.propertytype %></span>
+                <h3 class="font-heading text-lg font-bold text-slate-900 mt-1 leading-snug truncate">
+                  <%= home.houseName %>
+                </h3>
+                <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                  <i class="fa-solid fa-map-pin text-slate-300"></i> <%= home.location %>
+                </p>
+              </div>
+
+              <p class="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-6">
+                <%= home.description %>
+              </p>
+
+              <!-- helper details row -->
+              <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex justify-between items-center text-xs mb-6 mt-auto">
+                <div>
+                  <span class="text-[9px] font-semibold text-slate-400 block uppercase tracking-wide">Helpers Wanted</span>
+                  <span class="font-bold text-slate-700"><%= home.maxguest %> student<%= home.maxguest > 1 ? 's' : '' %></span>
+                </div>
+                <div>
+                  <span class="text-[9px] font-semibold text-slate-400 block uppercase tracking-wide">Trust score</span>
+                  <span class="font-bold text-slate-700 flex items-center gap-1"><i class="fa-solid fa-star text-amber-400"></i> <%= home.rating %></span>
+                </div>
+              </div>
+
+              <!-- Action button row -->
+              <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                <div class="flex-shrink-0">
+                  <%- include('../partials/favourite', { home: home }) %>
+                </div>
+                <a href="/homes/<%= home._id %>" class="flex-grow bg-slate-900 hover:bg-slate-800 text-white font-heading text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl text-center transition">
+                  Apply <i class="fa-solid fa-chevron-right ml-1 text-[9px]"></i>
+                </a>
+              </div>
+
+            </div>
+          </li>
+
+        <% }) %>
+      </ul>
+
+    <% } %>
+
+  </main>
+
+  <%- include('../partials/chatbot-widget') %>
+
+</body>
 </html>

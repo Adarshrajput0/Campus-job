@@ -61,6 +61,13 @@
           </p>
         </div>
 
+        <% if (locals.errorMessage) { %>
+          <div class="mb-6 p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-xl flex items-center gap-3 shadow-sm text-sm text-rose-800 font-medium">
+            <svg class="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <p><%= errorMessage %></p>
+          </div>
+        <% } %>
+
         <!-- FORM -->
         <form 
           action="/<%= editing ? "edithome" : "add-home" %>" 
@@ -69,7 +76,7 @@
           class="space-y-6"
         >
 
-          <input type="hidden" name="id" value="<%= editing ? home._id : '' %>" />
+          <input type="hidden" name="id" value="<%= home._id || '' %>" />
 
           <!-- TASK TITLE -->
           <div>
@@ -79,7 +86,7 @@
             <input
               type="text"
               name="houseName"
-              value="<%= editing ? home.houseName : '' %>"
+              value="<%= home.houseName || '' %>"
               placeholder="e.g. Need help with notes printing"
               required
               class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -95,7 +102,7 @@
               <input
                 type="number"
                 name="price"
-                value="<%= editing ? home.price : '' %>"
+                value="<%= home.price || '' %>"
                 placeholder="e.g. 100"
                 required
                 class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -111,7 +118,7 @@
                 step="0.1"
                 max="5"
                 name="rating"
-                value="<%= editing ? home.rating : '' %>"
+                value="<%= home.rating || '' %>"
                 placeholder="e.g. 4.5"
                 required
                 class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -127,7 +134,7 @@
                 type="number"
                 name="maxguest"
                 min="1"
-                value="<%= editing ? home.maxGuests : '' %>"
+                value="<%= home.maxguest || home.maxGuests || '' %>"
                 placeholder="e.g. 2"
                 required
                 class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -145,12 +152,12 @@
                 class="w-full px-4 py-3 border rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:outline-none"
               >
                 <option value="">Select task type</option>
-                <option value="Delivery">Delivery</option>
-                <option value="Academic Help">Academic Help</option>
-                <option value="Cleaning">Cleaning</option>
-                <option value="Tech Help">Tech Help</option>
-                <option value="Design">Design</option>
-                <option value="Other">Other</option>
+                <option value="Delivery" <%= home.propertytype === 'Delivery' ? 'selected' : '' %>>Delivery</option>
+                <option value="Academic Help" <%= home.propertytype === 'Academic Help' ? 'selected' : '' %>>Academic Help</option>
+                <option value="Cleaning" <%= home.propertytype === 'Cleaning' ? 'selected' : '' %>>Cleaning</option>
+                <option value="Tech Help" <%= home.propertytype === 'Tech Help' ? 'selected' : '' %>>Tech Help</option>
+                <option value="Design" <%= home.propertytype === 'Design' ? 'selected' : '' %>>Design</option>
+                <option value="Other" <%= home.propertytype === 'Other' ? 'selected' : '' %>>Other</option>
               </select>
             </div>
           </div>
@@ -163,7 +170,7 @@
             <input
               type="text"
               name="location"
-              value="<%= editing ? home.location : '' %>"
+              value="<%= home.location || '' %>"
               placeholder="e.g. Hostel Block A"
               required
               class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -181,7 +188,7 @@
               required
               placeholder="Explain what needs to be done clearly..."
               class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none resize-none"
-            ><%= editing ? home.description : '' %></textarea>
+            ><%= home.description || '' %></textarea>
           </div>
 
           <!-- IMAGE -->

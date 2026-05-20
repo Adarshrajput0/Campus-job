@@ -23,8 +23,10 @@ router.get("/bookings", async (req, res) => {
   );
 
   res.render("store/bookings", {
+    pageTitle: "My Applications",
+    currentPage: "bookings",
     bookings: bookings,
-    isLoggedIn: req.session.isLoggedIn,
+    isLoggedIn: req.session.isLoggedIn || true,
     user: req.session.user,
   });
 });

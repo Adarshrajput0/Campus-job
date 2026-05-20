@@ -94,20 +94,35 @@ exports.postSignup = [
       });
     }
 
-    bcrypt
-      .hash(password, 12)
-      .then((hashedPassword) => {
-        const user = new User({
-          firstName,
-          lastName,
-          email,
-          password: hashedPassword,
-          userType,
-        });
-        return user.save();
-      })
-      .then(() => {
-        res.redirect("/login");
+    const normalizedEmail = email ? email.toLowerCase().trim() : "";
+
+    User.findOne({ email: normalizedEmail })
+      .then((userDoc) => {
+        if (userDoc) {
+          return res.status(422).render("auth/signup", {
+            pageTitle: "Signup",
+            currentPage: "signup",
+            isLoggedIn: false,
+            errors: ["E-Mail address already exists! Please use a different one."],
+            oldInput: { firstName, lastName, email, password, userType },
+            user: {},
+          });
+        }
+        return bcrypt
+          .hash(password, 12)
+          .then((hashedPassword) => {
+            const user = new User({
+              firstName,
+              lastName,
+              email: normalizedEmail,
+              password: hashedPassword,
+              userType,
+            });
+            return user.save();
+          })
+          .then(() => {
+            res.redirect("/login");
+          });
       })
       .catch((err) => {
         return res.status(422).render("auth/signup", {
@@ -124,7 +139,8 @@ exports.postSignup = [
 
 exports.postLogin = async (req, res, next) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email: email });
+  const normalizedEmail = email ? email.toLowerCase().trim() : "";
+  const user = await User.findOne({ email: normalizedEmail });
   if (!user) {
     return res.status(422).render("auth/login", {
       pageTitle: "Login",
@@ -151,11 +167,6 @@ exports.postLogin = async (req, res, next) => {
   // ✅ JSON-safe session
   req.session.isLoggedIn = true;
   req.session.user = user;
-  // req.session.user = {
-  //   _id: user._id.toString(), // ← ObjectId ko string me convert
-  //   firstName: user.firstName,
-  //   email: user.email,
-  // };
 
   // Save session before redirect
   await req.session.save((err) => {

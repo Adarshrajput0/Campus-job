@@ -1,0 +1,431 @@
+<!-- ══════════════════════════════════════════════
+     CAMPUS AI FLOATING WIDGET
+     Works on every page – calls POST /ai/chat
+══════════════════════════════════════════════ -->
+
+<style>
+  /* ── Toggle Button ── */
+  #cam-btn {
+    position: fixed;
+    bottom: 30px; right: 28px;
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background: #0f172a;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(15,23,42,.45);
+    transition: transform .28s cubic-bezier(.175,.885,.32,1.275), box-shadow .2s;
+    z-index: 2000;
+    outline: none;
+  }
+  #cam-btn:hover  { transform: scale(1.1);  box-shadow: 0 12px 32px rgba(15,23,42,.5); }
+  #cam-btn:active { transform: scale(0.97); }
+  #cam-btn .cam-icon { font-size: 20px; color: #34d399; transition: opacity .2s; }
+  #cam-btn .cam-close { display:none; font-size: 18px; color: #94a3b8; }
+  #cam-btn.open .cam-icon  { display: none; }
+  #cam-btn.open .cam-close { display: block; }
+
+  /* Pulse ring */
+  #cam-btn::before {
+    content: '';
+    position: absolute; inset: -6px;
+    border-radius: 50%;
+    border: 2px solid rgba(52,211,153,.35);
+    animation: camRing 2.5s ease-in-out infinite;
+  }
+  @keyframes camRing {
+    0%,100% { transform: scale(1);   opacity: .6; }
+    50%      { transform: scale(1.18); opacity: 0;  }
+  }
+
+  /* Unread badge */
+  #cam-badge {
+    position: absolute; top: 5px; right: 5px;
+    width: 13px; height: 13px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2.5px solid #0f172a;
+    transition: opacity .2s;
+  }
+
+  /* ── Chat Panel ── */
+  #cam-panel {
+    position: fixed;
+    bottom: 102px; right: 28px;
+    width: 360px;
+    max-height: 540px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 26px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 28px 72px rgba(0,0,0,.13);
+    transform-origin: bottom right;
+    transition: opacity .22s, transform .26s cubic-bezier(.16,1,.3,1);
+    z-index: 1999;
+  }
+  #cam-panel.closed { opacity: 0; transform: scale(.84) translateY(20px); pointer-events: none; }
+  #cam-panel.open   { opacity: 1; transform: scale(1)   translateY(0);     }
+
+  /* Header */
+  #cam-header {
+    background: #0f172a;
+    padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .cam-avatar {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg,#6366f1,#10b981);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .cam-title { font-family:'Outfit',sans-serif; font-size:.88rem; font-weight:700; color:#fff; line-height:1; }
+  .cam-subtitle { font-size: .68rem; color: #34d399; font-weight:600; margin-top:3px; display:flex; align-items:center; gap:5px; }
+  .cam-dot-pulse { width:7px;height:7px;border-radius:50%;background:#34d399;animation:dotPulse 1.6s ease-in-out infinite; }
+  @keyframes dotPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.75)} }
+
+  /* Quick clear button */
+  #cam-clear {
+    background: none; border: none; cursor: pointer;
+    color: #475569; font-size: 13px; padding: 4px 6px; border-radius: 8px;
+    transition: color .15s;
+  }
+  #cam-clear:hover { color: #f87171; }
+
+  /* Messages area */
+  #cam-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 14px 4px;
+    display: flex; flex-direction: column;
+    gap: 10px;
+    background: #f8fafc;
+    min-height: 0;
+    scroll-behavior: smooth;
+  }
+  #cam-messages::-webkit-scrollbar { width: 4px; }
+  #cam-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+  /* Bubbles */
+  .cam-row { display:flex; width:100%; }
+  .cam-row.bot  { justify-content: flex-start; }
+  .cam-row.user { justify-content: flex-end;   }
+
+  .cam-bubble {
+    max-width: 82%;
+    padding: 10px 14px;
+    font-size: .82rem;
+    line-height: 1.55;
+    border-radius: 20px;
+    animation: bubblePop .2s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes bubblePop { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
+
+  .cam-bubble.bot  {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    border-bottom-left-radius: 5px;
+  }
+  .cam-bubble.user {
+    background: #6366f1;
+    color: #fff;
+    border-bottom-right-radius: 5px;
+  }
+
+  /* Time stamp */
+  .cam-time {
+    font-size: .65rem; color: #94a3b8; margin-top: 3px;
+    text-align: right;
+  }
+  .cam-row.bot .cam-time { text-align: left; }
+
+  /* Typing indicator */
+  #cam-typing {
+    display: none;
+    align-items: center; gap: 4px;
+    padding: 2px 0 10px 14px;
+    background: #f8fafc;
+    flex-shrink: 0;
+  }
+  .cam-typing-dot {
+    width: 7px; height: 7px;
+    background: #94a3b8;
+    border-radius: 50%;
+    animation: typingBounce 1.1s ease-in-out infinite;
+  }
+  .cam-typing-dot:nth-child(2) { animation-delay:.18s; }
+  .cam-typing-dot:nth-child(3) { animation-delay:.36s; }
+  @keyframes typingBounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+  .cam-typing-text { font-size: .68rem; color: #94a3b8; font-style: italic; margin-left: 4px; }
+
+  /* Suggestion chips */
+  #cam-chips {
+    display: flex; gap: 7px; overflow-x: auto; padding: 8px 14px;
+    background: #fff; border-top: 1px solid #f1f5f9;
+    flex-shrink: 0;
+    scrollbar-width: none;
+  }
+  #cam-chips::-webkit-scrollbar { display: none; }
+  .cam-chip {
+    flex-shrink: 0;
+    padding: 5px 13px;
+    font-size: .7rem; font-weight:600;
+    border: 1px solid #e2e8f0;
+    border-radius: 100px;
+    background: #fff; color: #64748b;
+    cursor: pointer; transition: all .15s;
+    white-space: nowrap;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .cam-chip:hover { border-color: #6366f1; color: #6366f1; background: #eef2ff; }
+
+  /* Input bar */
+  #cam-inputbar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px;
+    background: #fff; border-top: 1px solid #f1f5f9;
+    flex-shrink: 0;
+  }
+  #cam-input {
+    flex: 1;
+    font-size: .82rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 9px 13px;
+    outline: none;
+    transition: border-color .18s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1e293b;
+    background: #f8fafc;
+  }
+  #cam-input:focus { border-color: #6366f1; background: #fff; }
+  #cam-send {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #0f172a;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #34d399; font-size: 13px;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+  #cam-send:hover { background: #1e293b; transform: scale(1.08); }
+  #cam-send:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+  @media (max-width: 420px) {
+    #cam-panel { width: calc(100vw - 24px); right: 12px; }
+    #cam-btn   { right: 16px; bottom: 20px; }
+  }
+</style>
+
+<!-- ── Floating Button ── -->
+<button id="cam-btn" aria-label="Open Campus AI" onclick="camToggle()">
+  <i class="fa-solid fa-comments cam-icon"></i>
+  <i class="fa-solid fa-xmark cam-close"></i>
+  <span id="cam-badge"></span>
+</button>
+
+<!-- ── Chat Panel ── -->
+<div id="cam-panel" class="closed" role="dialog" aria-label="Campus AI Assistant">
+
+  <!-- Header -->
+  <div id="cam-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="cam-avatar">🎓</div>
+      <div>
+        <div class="cam-title">Campus AI</div>
+        <div class="cam-subtitle">
+          <span class="cam-dot-pulse"></span> Intelligent · Live database
+        </div>
+      </div>
+    </div>
+    <button id="cam-clear" title="Clear chat" onclick="camClear()">
+      <i class="fa-solid fa-rotate-right"></i>
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div id="cam-messages"></div>
+
+  <!-- Typing indicator -->
+  <div id="cam-typing">
+    <div class="cam-typing-dot"></div>
+    <div class="cam-typing-dot"></div>
+    <div class="cam-typing-dot"></div>
+    <span class="cam-typing-text">Campus AI is thinking...</span>
+  </div>
+
+  <!-- Chips -->
+  <div id="cam-chips">
+    <button class="cam-chip" onclick="camChip(this)">🔍 Find live tasks</button>
+    <button class="cam-chip" onclick="camChip(this)">💰 How do I get paid?</button>
+    <button class="cam-chip" onclick="camChip(this)">📚 Library hours</button>
+    <button class="cam-chip" onclick="camChip(this)">🤖 AI job match</button>
+    <button class="cam-chip" onclick="camChip(this)">🍕 Cafeteria today</button>
+  </div>
+
+  <!-- Input bar -->
+  <div id="cam-inputbar">
+    <input id="cam-input" type="text" placeholder="Ask anything about campus…" autocomplete="off" />
+    <button id="cam-send" onclick="camSend()" aria-label="Send">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  /* ── State ── */
+  let isOpen   = false;
+  let history  = [];   // multi-turn [{role,content}]
+  let isBusy   = false;
+
+  const panel    = document.getElementById('cam-panel');
+  const btn      = document.getElementById('cam-btn');
+  const badge    = document.getElementById('cam-badge');
+  const msgs     = document.getElementById('cam-messages');
+  const typingEl = document.getElementById('cam-typing');
+  const input    = document.getElementById('cam-input');
+  const sendBtn  = document.getElementById('cam-send');
+
+  /* ── Helpers ── */
+  function now() {
+    return new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function addMsg(content, role) {
+    const row = document.createElement('div');
+    row.className = `cam-row ${role === 'user' ? 'user' : 'bot'}`;
+
+    const wrap = document.createElement('div');
+    wrap.style.maxWidth = '82%';
+
+    const bubble = document.createElement('div');
+    bubble.className = `cam-bubble ${role === 'user' ? 'user' : 'bot'}`;
+    bubble.innerHTML = content;
+
+    const time = document.createElement('div');
+    time.className = 'cam-time';
+    time.textContent = now();
+
+    wrap.appendChild(bubble);
+    wrap.appendChild(time);
+    row.appendChild(wrap);
+    msgs.appendChild(row);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    history.push({ role: role === 'user' ? 'user' : 'assistant', content });
+  }
+
+  /* ── Typing indicator ── */
+  function showTyping() {
+    typingEl.style.display = 'flex';
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  function hideTyping() {
+    typingEl.style.display = 'none';
+  }
+
+  /* ── Toggle ── */
+  window.camToggle = function() {
+    isOpen = !isOpen;
+    panel.className = isOpen ? 'open' : 'closed';
+    btn.classList.toggle('open', isOpen);
+    badge.style.display = isOpen ? 'none' : '';
+    if (isOpen) input.focus();
+  };
+
+  /* ── Clear ── */
+  window.camClear = function() {
+    msgs.innerHTML = '';
+    history = [];
+    greet();
+  };
+
+  /* ── Send ── */
+  window.camSend = async function() {
+    const text = input.value.trim();
+    if (!text || isBusy) return;
+
+    input.value = '';
+    addMsg(text, 'user');
+    isBusy = true;
+    sendBtn.disabled = true;
+    showTyping();
+
+    // min 700ms "thinking" feel
+    const wait = new Promise(r => setTimeout(r, 700));
+
+    try {
+      const [res] = await Promise.all([
+        fetch('/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, history: history.slice(-8) })
+        }),
+        wait
+      ]);
+
+      const data = await res.json();
+      hideTyping();
+      addMsg(data.reply || "Sorry, I didn't get a response. Try again!", 'bot');
+    } catch(e) {
+      await wait;
+      hideTyping();
+      addMsg(
+        `⚠️ I'm having trouble connecting right now.<br><small style="color:#94a3b8">Please check your connection or refresh the page.</small>`,
+        'bot'
+      );
+    }
+
+    isBusy = false;
+    sendBtn.disabled = false;
+    input.focus();
+  };
+
+  /* ── Chip shortcut ── */
+  window.camChip = function(el) {
+    input.value = el.textContent.replace(/^[^\s]+\s/, '').trim(); // strip emoji
+    camSend();
+  };
+
+  /* ── Enter key ── */
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); camSend(); }
+  });
+
+  /* ── Opening greeting sequence ── */
+  const greetings = [
+    `👋 Hey! I'm <strong>Campus AI</strong> — your intelligent guide for this micro-job portal.<br>
+     I can search <strong>live tasks</strong> from the database, explain how payments work, share campus schedules, and help you land the perfect gig! 🎯`,
+
+    `Here's what I can help with right now:<br>
+     🔍 <strong>Search tasks</strong> by skill or category<br>
+     💰 <strong>Explain reward & payment</strong> process<br>
+     📚 <strong>Library timings</strong> & campus info<br>
+     🤖 <strong>Smart job matching</strong> based on your profile<br>
+     🍕 <strong>Campus cafeteria</strong> specials today<br><br>
+     <em>Just type or tap a quick-chip below! ⚡</em>`
+  ];
+
+  async function greet() {
+    for (const [i, msg] of greetings.entries()) {
+      await new Promise(r => setTimeout(r, i === 0 ? 300 : 1400));
+      if (i > 0) showTyping();
+      await new Promise(r => setTimeout(r, i === 0 ? 0 : 800));
+      hideTyping();
+      addMsg(msg, 'bot');
+    }
+    badge.style.display = isOpen ? 'none' : '';
+  }
+
+  // Kick off greeting after slight delay
+  setTimeout(greet, 800);
+
+})();
+</script>

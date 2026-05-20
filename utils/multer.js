@@ -10,6 +10,18 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image/")) {
+    cb(null, true);
+  } else {
+    req.fileValidationError = "Only image files (jpg, jpeg, png) are allowed!";
+    cb(null, false);
+  }
+};
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: fileFilter
+});
 
 module.exports = upload;
