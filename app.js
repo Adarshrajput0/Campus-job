@@ -14,8 +14,13 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo").default;
 require("dotenv").config();
 const bookingRouter = require("./routes/bookingRouter");
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
+app.use(express.json());
+app.get("/chatbot", (req, res) => {
+  res.render("chatbot");
+});
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -49,11 +54,10 @@ app.use((req, res, next) => {
   res.locals.isLoggedIn = req.session.isLoggedIn || false;
   res.locals.user = req.session.user || null;
 
-  req.isLoggedIn = res.locals.isLoggedIn;
-  req.user = res.locals.user;
-
   next();
 });
+
+app.use("/ai", aiRoutes);
 
 app.use(storeRouter);
 app.use(authRouter);
@@ -66,6 +70,9 @@ app.use("/host", (req, res, next) => {
   }
 });
 app.use(hostRouter);
+// app.get("/chatbot", (req, res) => {
+//   res.render("chatbot");
+// });
 
 app.use(errorsController.pageNotFound);
 

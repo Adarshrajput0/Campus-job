@@ -1,142 +1,325 @@
-<link rel="stylesheet" href="/css/bookings.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/output.css" />
 
-<%- include('../partials/header', { 
-  isLoggedIn: isLoggedIn, 
-  user: user 
-}) %>
+<%- include('../partials/head') %>
 
-<div class="booking-page">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --cream: #f5f0e8;
+    --lime: #c8f04a;
+    --lime-dark: #a8cc30;
+    --muted: #6b6b6b;
+    --border: #e4e0d8;
+  }
 
-  <div class="booking-container">
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+  .font-heading { font-family: 'Clash Display', sans-serif; }
+  .font-display { font-family: 'Syne', sans-serif; }
 
-    <!-- Page Title -->
-    <h1 class="booking-title text-green-700">📋 My Tasks</h1>
+  /* Task Card */
+  .booking-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: transform 0.28s cubic-bezier(.22,.68,0,1.2), box-shadow 0.28s ease;
+    opacity: 0;
+    animation: fadeUp 0.45s ease forwards;
+  }
+  .booking-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 48px rgba(0,0,0,0.07);
+  }
+  .booking-card:nth-child(1) { animation-delay: 0.05s; }
+  .booking-card:nth-child(2) { animation-delay: 0.12s; }
+  .booking-card:nth-child(3) { animation-delay: 0.18s; }
+  .booking-card:nth-child(4) { animation-delay: 0.24s; }
+  .booking-card:nth-child(5) { animation-delay: 0.30s; }
+  .booking-card:nth-child(6) { animation-delay: 0.36s; }
 
-    <!-- Empty State -->
-    <% if (bookings.length === 0) { %>
+  /* Selected card highlight */
+  .card-selected {
+    border-color: #eab308;
+    background: linear-gradient(135deg, #fffef0 0%, #fff 100%);
+    box-shadow: 0 0 0 2px rgba(234,179,8,0.18), 0 12px 32px rgba(234,179,8,0.08);
+  }
+  .card-applied {
+    border-color: #93c5fd;
+  }
 
-      <div class="text-center mt-20">
-        <h2 class="text-2xl font-semibold text-gray-700">
-          No tasks yet 😕
-        </h2>
-        <p class="text-gray-500 mt-2">
-          Start exploring tasks and apply to earn rewards.
-        </p>
+  /* Status pill */
+  .status-pill {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .pill-applied   { background: #dbeafe; color: #1e40af; }
+  .pill-selected  { background: #fef08a; color: #854d0e; }
+  .pill-completed { background: #dcfce7; color: #166534; }
+  .pill-pending   { background: #f3f4f6; color: #6b7280; }
 
-        <a href="/"
-          class="inline-block mt-6 px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition">
-          Explore Tasks
-        </a>
+  /* Section label */
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Remove button */
+  .remove-btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: 1px solid #fecaca;
+    background: #fff0f0;
+    color: #dc2626;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .remove-btn:hover { background: #fee2e2; border-color: #fca5a5; }
+
+  /* Selected banner inside card */
+  .selected-banner {
+    background: linear-gradient(90deg, #fef08a 0%, #fde68a 100%);
+    border-bottom: 1px solid #fcd34d;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Confetti-like shimmer for selected */
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+  }
+  .shimmer-badge {
+    background: linear-gradient(90deg, #fef08a, #fcd34d, #fbbf24, #fcd34d, #fef08a);
+    background-size: 200% auto;
+    animation: shimmer 2.5s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+  }
+</style>
+
+</head>
+
+<body class="min-h-screen">
+
+<%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
+
+<main class="max-w-5xl mx-auto px-5 sm:px-8 pt-28 pb-28">
+
+  <!-- PAGE HEADER -->
+  <section class="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div>
+      <div class="inline-flex items-center gap-2 bg-white border border-[var(--border)] px-4 py-1.5 rounded-full text-xs font-semibold text-gray-500 shadow-sm">
+        <i class="fa-solid fa-clipboard-check text-[var(--lime-dark)]"></i> Student Dashboard
       </div>
+      <h1 class="font-heading text-4xl sm:text-5xl font-bold mt-4 tracking-tight text-gray-900">
+        My Applications
+      </h1>
+      <p class="mt-1 text-gray-500 text-sm">Track all the campus micro-tasks you've applied to.</p>
+    </div>
 
-    <% } else { %>
+    <!-- STATS STRIP -->
+    <% 
+      const selectedCount = bookings.filter(b => b.status === 'Selected').length;
+      const appliedCount  = bookings.filter(b => b.status === 'Applied').length;
+    %>
+    <div class="flex gap-3">
+      <div class="bg-white border border-[var(--border)] rounded-2xl px-5 py-3 text-center shadow-sm">
+        <p class="font-heading text-2xl font-bold text-gray-900"><%= bookings.length %></p>
+        <p class="section-label mt-0.5">Total</p>
+      </div>
+      <% if (selectedCount > 0) { %>
+      <div class="bg-amber-50 border border-amber-300 rounded-2xl px-5 py-3 text-center shadow-sm">
+        <p class="font-heading text-2xl font-bold text-amber-700"><%= selectedCount %></p>
+        <p class="section-label mt-0.5 text-amber-600">🎉 Selected</p>
+      </div>
+      <% } %>
+      <div class="bg-white border border-[var(--border)] rounded-2xl px-5 py-3 text-center shadow-sm">
+        <p class="font-heading text-2xl font-bold text-blue-700"><%= appliedCount %></p>
+        <p class="section-label mt-0.5">Pending</p>
+      </div>
+    </div>
+  </section>
 
-    <!-- Tasks Grid -->
-    <div class="booking-grid">
+  <!-- SELECTED ALERT (if any selected) -->
+  <% if (selectedCount > 0) { %>
+  <div class="mb-8 p-5 bg-amber-50 border-2 border-amber-300 rounded-2xl flex items-start gap-4 shadow-sm">
+    <div class="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center flex-shrink-0 text-white">
+      <i class="fa-solid fa-trophy text-sm"></i>
+    </div>
+    <div>
+      <p class="font-display font-bold text-amber-800 text-sm uppercase tracking-wider">🎉 You've Been Hired!</p>
+      <p class="text-amber-700 text-sm mt-0.5">
+        A host has selected you for <%= selectedCount > 1 ? selectedCount + ' tasks' : 'a task' %>. 
+        Check the card(s) below — coordinate with the host and complete the task to earn your reward!
+      </p>
+    </div>
+  </div>
+  <% } %>
 
-      <% bookings.forEach(booking => { %>
+  <% if (bookings.length === 0) { %>
+    <!-- EMPTY STATE -->
+    <div class="max-w-md mx-auto text-center border-2 border-dashed border-[var(--border)] rounded-[28px] p-12 mt-10">
+      <div class="text-5xl mb-4">📋</div>
+      <h2 class="font-heading text-2xl font-bold text-gray-800">No applications yet</h2>
+      <p class="text-sm text-gray-500 mt-2">Browse campus tasks and apply to start earning!</p>
+      <a href="/homes" class="inline-block mt-8 bg-[var(--ink)] text-[var(--lime)] font-display font-bold text-sm uppercase tracking-wider px-8 py-3 rounded-xl hover:bg-[#222] transition">
+        Browse Tasks →
+      </a>
+    </div>
 
-        <div class="booking-card hover:shadow-xl transition duration-300">
+  <% } else { %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
-          <!-- Task Title -->
-          <h3 class="booking-home">
-            <%= booking.home ? booking.home.houseName : "Task removed ❌" %>
-          </h3>
+      <% bookings.forEach(booking => { 
+        const isSelected  = booking.status === 'Selected';
+        const isApplied   = booking.status === 'Applied';
+        const isCompleted = booking.status === 'Completed';
+      %>
 
-          <div class="booking-divider"></div>
+      <div class="booking-card <%= isSelected ? 'card-selected' : isApplied ? 'card-applied' : '' %>">
 
-          <div class="booking-details">
+        <!-- Selected Banner -->
+        <% if (isSelected) { %>
+        <div class="selected-banner">
+          <i class="fa-solid fa-star text-amber-600 text-sm"></i>
+          <span class="font-display font-bold text-amber-800 text-xs uppercase tracking-widest">You Were Hired! Coordinate with the host</span>
+        </div>
+        <% } %>
 
-            <!-- Start Date -->
-            <div class="booking-row">
-              <span class="booking-label">Start Date</span>
-              <span>
-                <%= booking.checkInDate ? booking.checkInDate.toDateString() : "-" %>
-              </span>
+        <!-- Card Body -->
+        <div class="p-6 space-y-4">
+
+          <!-- Task Name & Status -->
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <h3 class="font-heading text-lg font-bold text-gray-900 truncate">
+                <%= booking.home ? booking.home.houseName : 'Task Removed' %>
+              </h3>
+              <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                <i class="fa-solid fa-location-dot"></i>
+                <%= booking.home ? booking.home.location : '—' %>
+              </p>
+            </div>
+            <!-- Status Pill -->
+            <span class="status-pill 
+              <%= booking.status === 'Applied'   ? 'pill-applied'   :
+                  booking.status === 'Selected'  ? 'pill-selected'  :
+                  booking.status === 'Completed' ? 'pill-completed' :
+                  'pill-pending' %>
+              flex-shrink-0">
+              <% if (booking.status === 'Selected')  { %><i class="fa-solid fa-trophy text-[9px]"></i><% } %>
+              <% if (booking.status === 'Applied')   { %><i class="fa-solid fa-hourglass-half text-[9px]"></i><% } %>
+              <% if (booking.status === 'Completed') { %><i class="fa-solid fa-circle-check text-[9px]"></i><% } %>
+              <%= booking.status || 'Pending' %>
+            </span>
+          </div>
+
+          <!-- Details Grid -->
+          <div class="grid grid-cols-2 gap-3">
+
+            <div class="bg-gray-50 rounded-xl p-3">
+              <p class="section-label">Reward</p>
+              <p class="font-heading text-lg font-bold text-emerald-600 mt-1">
+                ₹ <%= booking.totalPrice || (booking.home ? booking.home.price : '—') %>
+              </p>
             </div>
 
-            <!-- End Date -->
-            <div class="booking-row">
-              <span class="booking-label">End Date</span>
-              <span>
-                <%= booking.checkOutDate ? booking.checkOutDate.toDateString() : "-" %>
-              </span>
+            <div class="bg-gray-50 rounded-xl p-3">
+              <p class="section-label">Type</p>
+              <p class="font-semibold text-gray-800 text-sm mt-1 truncate">
+                <%= booking.home ? booking.home.propertytype : '—' %>
+              </p>
             </div>
 
-            <!-- Reward -->
-            <div class="booking-row">
-              <span class="booking-label">Reward</span>
-              <span class="booking-price text-green-600 font-semibold">
-                ₹ <%= booking.totalPrice %>
-              </span>
+            <% if (booking.checkInDate) { %>
+            <div class="bg-gray-50 rounded-xl p-3">
+              <p class="section-label">Start</p>
+              <p class="font-semibold text-gray-700 text-xs mt-1">
+                <%= booking.checkInDate.toDateString() %>
+              </p>
             </div>
+            <% } %>
 
-            <!-- Status -->
-            <div class="booking-row">
-              <span class="booking-label">Status</span>
-              <span class="text-sm font-medium text-blue-600">
-                <%= booking.status %>
-              </span>
+            <% if (booking.checkOutDate) { %>
+            <div class="bg-gray-50 rounded-xl p-3">
+              <p class="section-label">End</p>
+              <p class="font-semibold text-gray-700 text-xs mt-1">
+                <%= booking.checkOutDate.toDateString() %>
+              </p>
             </div>
+            <% } %>
 
           </div>
 
-          <!-- ✅ DELETE BUTTON -->
-          <% if (booking.home) { %>
-          <form action="/bookings/delete/<%= booking._id %>" method="POST"
-      onsubmit="return confirm('Are you sure you want to remove this task?')">
-
-  <button class="delete-btn">
-    Remove Task
-  </button>
-
-</form>
+          <!-- Selected: action hint -->
+          <% if (isSelected) { %>
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-amber-600 text-sm"></i>
+            <p class="text-xs text-amber-700 font-medium">
+              🎯 Contact the host to coordinate task completion. Once done, the host will mark it complete.
+            </p>
+          </div>
           <% } %>
 
+          <!-- Footer: remove button -->
+          <div class="pt-2 border-t border-[var(--border)]">
+            <% if (booking.home) { %>
+            <form action="/bookings/delete/<%= booking._id %>" method="POST"
+                  onsubmit="return confirm('Remove this application?')">
+              <button class="remove-btn w-full justify-center">
+                <i class="fa-solid fa-xmark text-[10px]"></i>
+                Remove Application
+              </button>
+            </form>
+            <% } else { %>
+            <p class="text-center text-xs text-gray-400 italic">This task was removed by the host.</p>
+            <% } %>
+          </div>
+
         </div>
+      </div>
 
       <% }) %>
-
     </div>
+  <% } %>
 
-    <% } %>
+</main>
 
-  </div>
+  <%- include('../partials/chatbot-widget') %>
 
-</div>
-
-<style>
-  .delete-btn {
-  margin-top: 12px;
-  width: 100%;
-  padding: 10px;
-
-  border: none;
-  border-radius: 8px;
-
-  background-color: #ef4444; /* clean red */
-  color: white;
-
-  font-size: 14px;
-  font-weight: 500;
-
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-/* Hover */
-.delete-btn:hover {
-  background-color: #dc2626;
-}
-
-/* Click */
-.delete-btn:active {
-  transform: scale(0.97);
-}
-
-/* Focus */
-.delete-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
-}
-</style>
+</body>
+</html>

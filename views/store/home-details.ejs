@@ -1,243 +1,241 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="/css/output.css" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/output.css" />
+<%- include('../partials/head', { pageTitle: home.houseName }) %>
 
-  <!-- <%- include('../partials/head') %> -->
-  </head>
+<style>
+  :root {
+    --brand-primary: #6366f1; /* Indigo */
+    --brand-emerald: #10b981; /* Emerald */
+    --brand-slate: #0f172a; /* Slate 900 */
+    --bg-light: #f8fafc; /* Slate 50 */
+    --border-soft: #f1f5f9; /* Slate 100 */
+    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.01);
+  }
 
-  <body
-    class="min-h-screen bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7] font-sans"
-  >
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-light);
+    color: #334155;
+  }
 
-  <%- include('../partials/header') %> 
-  <%- include('../partials/header', { 
-      isLoggedIn: isLoggedIn, 
-      user: user 
-}) %>
+  .font-heading { font-family: 'Outfit', sans-serif; }
 
-    <main class="pt-28 pb-16 bg-gray-50 min-h-screen">
-  <div class="max-w-6xl mx-auto px-4">
+  /* Premium Content Card */
+  .premium-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 28px;
+    box-shadow: var(--card-shadow);
+  }
 
-   
-    <div class="relative rounded-3xl overflow-hidden shadow-xl">
-      <img
-        src="<%= home.photo %>"
-        alt="<%= home.houseName %>"
-        class="w-full h-[420px] object-cover"
-      />
+  .input-form-field {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: white;
+    outline: none;
+    font-size: 0.88rem;
+    color: #1e293b;
+    transition: all 0.2s;
+  }
+  .input-form-field:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
 
-      <div class="grid grid-cols-3 text-center mt-6 bg-white rounded-xl shadow p-4">
+  .elite-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    background: var(--brand-slate);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .elite-submit:hover {
+    background: #1e293b;
+    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
+    transform: translateY(-1px);
+  }
 
-  <div>
-    <p class="text-gray-500 text-xs">Reward</p>
-    <p class="font-semibold text-green-600">₹ <%= home.price %></p>
-  </div>
+  .section-tag {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brand-primary);
+  }
+</style>
 
-  <div>
-    <p class="text-gray-500 text-xs">People Needed</p>
-    <p class="font-semibold"><%= home.maxguest %></p>
-  </div>
+</head>
 
-  <div>
-    <p class="text-gray-500 text-xs">Location</p>
-    <p class="font-semibold"><%= home.location %></p>
-  </div>
+<body class="min-h-screen">
 
-</div>
+  <!-- NAVBAR HEADER -->
+  <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
 
-     
-      <div class="absolute top-6 right-6 flex gap-2">
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto px-6 sm:px-8 pt-32 pb-24">
 
-  <span class="bg-green-600 text-white px-4 py-1 rounded-full text-xs font-semibold shadow">
-    💼 Micro Job
-  </span>
+    <!-- BACK ACTION -->
+    <a href="/homes" class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-900 mb-8 transition">
+      <i class="fa-solid fa-arrow-left"></i> Back to Gigs Marketplace
+    </a>
 
-  <span class="bg-black/70 text-white px-4 py-1 rounded-full text-xs font-semibold backdrop-blur">
-    ₹ <%= home.price %> reward
-  </span>
+    <!-- DETAIL GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-</div>
-
-    <!-- Content -->
-    <div class="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
-
-      <!-- LEFT -->
+      <!-- LEFT SIDE: DETAIL PANELS -->
       <div class="lg:col-span-2 space-y-6">
 
-        <!-- Task Title -->
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-900">
-          <%= home.houseName %>
-        </h1>
-
-        <!-- Rating + Location -->
-        <div class="flex items-center gap-4 text-gray-600">
-          
-          
-          <span>📍 <%= home.location %></span>
+        <!-- Cover Photo Panel -->
+        <div class="relative rounded-[28px] overflow-hidden border border-slate-200 h-[320px] sm:h-[400px]">
+          <img src="<%= home.photo %>" alt="<%= home.houseName %>" class="w-full h-full object-cover">
+          <span class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-md border border-white/10 text-white px-4 py-1.5 rounded-full text-xs font-heading font-bold shadow-md">
+            Reward: ₹ <%= home.price %>
+          </span>
+          <span class="absolute top-4 left-4 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[9px] font-bold font-heading uppercase tracking-wider shadow">
+            Verified Opportunity
+          </span>
         </div>
 
-        <div class="flex gap-3 mt-2">
+        <!-- Task Spec details -->
+        <div class="premium-card p-8 space-y-6">
+          <div>
+            <span class="section-tag">Direct Campus Gig</span>
+            <h1 class="font-heading text-3xl sm:text-4xl font-extrabold mt-2 text-slate-950 leading-tight">
+              <%= home.houseName %>
+            </h1>
+            <p class="text-xs text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
+              <i class="fa-solid fa-map-pin text-slate-300"></i> <%= home.location %>
+            </p>
+          </div>
 
-  <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">
-    ⏳ Urgent Requirement
-  </span>
+          <!-- Specs row metrics -->
+          <div class="grid grid-cols-3 gap-4">
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center">
+              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Type</span>
+              <span class="font-bold text-slate-800 mt-1 block truncate"><%= home.propertytype %></span>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center">
+              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Slots</span>
+              <span class="font-bold text-slate-800 mt-1 block"><%= home.maxguest %> Helpers</span>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center">
+              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Trust Rating</span>
+              <span class="font-bold text-slate-800 mt-1 block"><i class="fa-solid fa-star text-amber-400"></i> <%= home.rating %></span>
+            </div>
+          </div>
 
-  
+          <div class="h-px bg-slate-100"></div>
 
-</div>
+          <!-- Task writeup -->
+          <div class="space-y-4">
+            <h2 class="font-heading text-xl font-bold text-slate-900">Task Overview</h2>
+            <p class="text-sm text-slate-500 leading-relaxed">
+              <%= home.description %>
+            </p>
+          </div>
 
-        <div class="h-px bg-gray-200"></div>
-
-        <!-- Description -->
-        <div class="space-y-3">
-          <h2 class="text-xl font-semibold text-gray-900">
-            About this task
-          </h2>
-          <p class="text-gray-600 leading-relaxed">
-            <strong><%= home.houseName %></strong> is a campus task posted in 
-            <%= home.location %>. This task requires responsible students who 
-            can complete it efficiently. Check details below and apply if it 
-            matches your skills.
-          </p>
-        </div>
-
-        <div class="space-y-3">
-  <h2 class="text-xl font-semibold text-gray-900">
-    What You'll Do
-  </h2>
-
-  <ul class="list-disc pl-5 text-gray-600 text-sm space-y-1">
-    <li>Complete assigned task responsibly</li>
-    <li>Coordinate with task owner</li>
-    <li>Deliver work within timeline</li>
-    <li>Maintain quality and communication</li>
-  </ul>
-</div>
-
-        <!-- Task Details -->
-        <div class="space-y-3">
-          <h2 class="text-xl font-semibold text-gray-900">
-            Task Details
-          </h2>
-
-          <ul class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-gray-600 text-sm">
-            <li>🛠 Type: <%= home.propertytype %></li>
-            <li>👥 People Needed: <%= home.maxguest %></li>
-            <li>💰 Reward: ₹ <%= home.price %></li>
-            <li>⭐ Trust Score: <%= home.rating %></li>
-            <li>📍 Location: <%= home.location %></li>
-          </ul>
+          <!-- Guidelines Checklist -->
+          <div class="space-y-4 pt-4">
+            <h2 class="font-heading text-xl font-bold text-slate-900">Helper Responsibilities</h2>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-500">
+              <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-emerald-500 font-bold"></i> Timely completion within deadlines</li>
+              <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-emerald-500 font-bold"></i> Active updates to the task owner</li>
+              <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-emerald-500 font-bold"></i> Professional execution standards</li>
+              <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-emerald-500 font-bold"></i> Payment released securely online</li>
+            </ul>
+          </div>
         </div>
 
       </div>
 
-      <!-- RIGHT CARD -->
-      <div class="lg:col-span-1">
-        <div class="sticky top-32 bg-white rounded-2xl shadow-xl p-6 space-y-5">
+      <!-- RIGHT SIDE: APPLY CARD -->
+      <div class="lg:col-span-1 space-y-6">
 
-          <div class="bg-gray-50 p-3 rounded-lg text-sm text-gray-600">
-  ✔ Verified Campus Task <br>
-  ✔ Secure Reward System <br>
-  ✔ Trusted by Students
-</div>
+        <div class="premium-card p-6 space-y-6 sticky top-28">
 
-          <!-- Reward -->
-          <div class="flex items-center justify-between">
-            <span class="text-2xl font-bold text-gray-900">
-              ₹ <%= home.price %>
-            </span>
-            <span class="text-gray-700 text-sm">reward</span>
+          <div>
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Task Reward Value</span>
+            <div class="flex items-baseline gap-1 mt-2">
+              <span class="font-heading text-3xl font-extrabold text-indigo-600">₹<%= home.price %></span>
+              <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Per Helper</span>
+            </div>
           </div>
 
-          <div class="flex items-center gap-1 text-yellow-500 font-semibold">
-            ⭐ <%= home.rating %>
-          </div>
-
-          <!-- APPLY FORM (same logic, just UI change) -->
+          <!-- Application execution -->
           <form action="/bookings" method="POST" class="space-y-4">
-
-            <!-- Hidden ID -->
             <input type="hidden" name="homeId" value="<%= home._id %>" />
 
-            <!-- Start Date -->
             <div>
-              <label class="block text-sm font-medium text-gray-700">
-                Start Date
-              </label>
-              <input type="date" name="checkIn" required
-                class="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Preferred Start Date</label>
+              <input type="date" name="checkIn" required class="input-form-field" />
             </div>
 
-            <!-- End Date -->
             <div>
-              <label class="block text-sm font-medium text-gray-700">
-                End Date
-              </label>
-              <input type="date" name="checkOut" required
-                class="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Preferred End Date</label>
+              <input type="date" name="checkOut" required class="input-form-field" />
             </div>
 
-            <!-- People Applying -->
             <div>
-              <label class="block text-sm font-medium text-gray-700">
-                Number of People
-              </label>
-              <input type="number" name="guests" min="1" value="1" required
-                class="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Apply Count (Number of students)</label>
+              <input type="number" name="guests" min="1" max="<%= home.maxguest %>" value="1" required class="input-form-field" />
             </div>
 
-            <!-- APPLY BUTTON -->
-            <button type="submit"
-              class="w-full py-4 rounded-full
-                     bg-green-600 text-white font-semibold
-                     hover:bg-green-700 transition shadow-md">
-              Apply for Task
+            <button type="submit" class="elite-submit">
+              Apply For Gig <i class="fa-solid fa-paper-plane ml-2 text-[9px]"></i>
             </button>
-
-            <div class="mt-5 p-4 bg-gray-100 rounded-lg">
-
-  <p class="text-sm text-gray-700">
-    Contact Task Owner
-  </p>
-
-  <% if (home.owner) { %>
-
-    <p class="text-sm">
-      <strong>Email:</strong> <%= home.owner.email %>
-    </p>
-
-    <a href="mailto:<%= home.owner.email %>"
-       class="block mt-2 text-center bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-       Contact via Email
-    </a>
-
-  <% } else { %>
-
-    <p class="text-sm text-gray-500">
-      Contact not available
-    </p>
-
-  <% } %>
-
-</div>
-
           </form>
 
-          <!-- SAVE -->
-          <div>
+          <div class="h-px bg-slate-100"></div>
+
+          <!-- Contact details card -->
+          <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Owner Contact</span>
+            <% if (home.owner) { %>
+              <p class="text-xs font-bold text-slate-700 truncate mb-3"><%= home.owner.email %></p>
+              <a href="mailto:<%= home.owner.email %>?subject=Regarding%20Campus%20Task:%20<%= encodeURIComponent(home.houseName) %>"
+                 class="inline-flex items-center gap-1.5 justify-center px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition w-full">
+                <i class="fa-regular fa-envelope"></i> Contact via Email
+              </a>
+            <% } else { %>
+              <p class="text-xs text-slate-400 italic">No contact available</p>
+            <% } %>
+          </div>
+
+          <!-- Quick Save -->
+          <div class="pt-2">
             <%- include('../partials/favourite', { home: home }) %>
           </div>
 
-          <!-- Note -->
-          <p class="text-center text-sm text-gray-500">
-            You can apply now and coordinate later with the task poster
-          </p>
-
         </div>
+
       </div>
 
     </div>
-  </div>
-</main>
-  </body>
+
+  </main>
+
+  <%- include('../partials/chatbot-widget') %>
+
+</body>
 </html>

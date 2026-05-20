@@ -26,15 +26,6 @@ exports.getHomes = (req, res, next) => {
   });
 };
 
-exports.getBookings = (req, res, next) => {
-  // Home.find((registeredHomes) =>
-  res.render("store/bookings", {
-    pageTitle: "My Bookings",
-    currentPage: "bookings",
-    isLoggedIn: req.isLoggedIn,
-    user: req.session.user,
-  });
-};
 
 exports.getFavouriteList = async (req, res, next) => {
   const userId = req.session.user._id;
@@ -90,13 +81,16 @@ exports.getHomeDetails = (req, res, next) => {
 };
 
 exports.getBookings = async (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
   const bookings = await Booking.find({
     user: req.session.user._id,
   }).populate("home");
 
   res.render("store/bookings", {
+    pageTitle: "My Applications",
+    currentPage: "bookings",
     bookings: bookings,
-    isLoggedIn: req.session.isLoggedIn,
+    isLoggedIn: req.session.isLoggedIn || true,
     user: req.session.user,
   });
 };

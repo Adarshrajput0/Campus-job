@@ -23,4 +23,7 @@ hostRouter.post(
 
 hostRouter.post("/delete-home/:homeId", hostController.postDeleteHome);
 
+hostRouter.post("/complete-home/:homeId", hostController.postCompleteHome);
+hostRouter.post("/bookings/select/:bookingId", hostController.postSelectBooking);
+
 module.exports = hostRouter;

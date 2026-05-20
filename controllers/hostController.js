@@ -1,4 +1,5 @@
 const Home = require("../models/home");
+const Booking = require("../models/booking");
 
 exports.getAddHome = (req, res, next) => {
   res.render("host/edithome", {
@@ -7,6 +8,8 @@ exports.getAddHome = (req, res, next) => {
     editing: false,
     isLoggedIn: req.isLoggedIn,
     user: req.session.user,
+    home: {},
+    errorMessage: null
   });
 };
 
@@ -31,20 +34,46 @@ exports.getEditHome = (req, res, next) => {
       editing: editing,
       isLoggedIn: req.isLoggedIn,
       user: req.session.user,
+      errorMessage: null
     });
   });
 };
 
-exports.getHostHomes = (req, res, next) => {
-  Home.find().then((registeredHomes) => {
+exports.getHostHomes = async (req, res, next) => {
+  try {
+    const hostId = req.session.user._id;
+
+    // Show tasks owned by this host OR legacy tasks with no owner set yet
+    const registeredHomes = await Home.find({
+      $or: [
+        { owner: hostId },
+        { owner: { $exists: false } },
+        { owner: null },
+      ],
+    });
+
+    // For each task, fetch all bookings and populate student info
+    const homesWithBookings = await Promise.all(
+      registeredHomes.map(async (home) => {
+        const bookings = await Booking.find({ home: home._id }).populate(
+          "user",
+          "firstName lastName email expectedPrice distance completedTasks location"
+        );
+        return { ...home.toObject(), bookings };
+      })
+    );
+
     res.render("host/host-home-list", {
-      registeredHomes: registeredHomes,
-      pageTitle: "Host Homes List",
+      registeredHomes: homesWithBookings,
+      pageTitle: "Host Task Dashboard",
       currentPage: "host-homes",
       isLoggedIn: req.isLoggedIn,
       user: req.session.user,
     });
-  });
+  } catch (err) {
+    console.error("[getHostHomes Error]", err);
+    res.redirect("/");
+  }
 };
 
 exports.postAddHome = (req, res, next) => {
@@ -57,23 +86,21 @@ exports.postAddHome = (req, res, next) => {
     maxguest,
     propertytype,
   } = req.body;
-  console.log(
-    houseName,
-    price,
-    location,
-    rating,
-    description,
-    maxguest,
-    propertytype,
-  );
-  console.log("Received file:", req.file);
 
-  if (!req.file) {
-    return res.status(422).send("No file uploaded or invalid file type.");
+  if (req.fileValidationError) {
+    return res.status(422).render("host/edithome", {
+      pageTitle: "Add jobs to platform",
+      currentPage: "addHome",
+      editing: false,
+      isLoggedIn: req.isLoggedIn,
+      user: req.session.user,
+      home: req.body,
+      errorMessage: req.fileValidationError
+    });
   }
 
-  // const photo = req.file.path;
-  const photo = req.file.path; // Cloudinary URL
+  const photo = req.file ? req.file.path : "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200";
+
   const home = new Home({
     houseName,
     price,
@@ -83,6 +110,7 @@ exports.postAddHome = (req, res, next) => {
     description,
     maxguest,
     propertytype,
+    owner: req.session.user._id, // ✅ Save host as owner
   });
   home.save().then(() => {
     console.log("Home Saved Sucessfully");
@@ -102,7 +130,26 @@ exports.postEditHome = (req, res, next) => {
     maxguest,
     propertytype,
   } = req.body;
-  //  const photo = req.file.path;
+  if (req.fileValidationError) {
+    return res.status(422).render("host/edithome", {
+      pageTitle: "Edit your home",
+      currentPage: "host-homes",
+      editing: true,
+      isLoggedIn: req.isLoggedIn,
+      user: req.session.user,
+      home: {
+        _id: id,
+        houseName,
+        price,
+        location,
+        rating,
+        description,
+        maxguest,
+        propertytype
+      },
+      errorMessage: req.fileValidationError
+    });
+  }
 
   Home.findById(id)
     .then((home) => {
@@ -143,4 +190,68 @@ exports.postDeleteHome = (req, res, next) => {
     .catch((error) => {
       console.log("Error while deleting ", error);
     });
+};
+
+exports.postCompleteHome = async (req, res, next) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+    const homeId = req.params.homeId;
+    console.log("Marking home completed: ", homeId);
+
+    const User = require("../models/user");
+    
+    // 1. Find if there is a selected booking (hired student) for this task
+    const selectedBooking = await Booking.findOne({ home: homeId, status: "Selected" });
+    if (selectedBooking) {
+      // 2. Increment completedTasks count for that student
+      const studentId = selectedBooking.user;
+      await User.findByIdAndUpdate(studentId, { $inc: { completedTasks: 1 } });
+      console.log(`Incremented completedTasks for student ${studentId}`);
+    }
+
+    // 3. Delete all associated bookings/applicants
+    await Booking.deleteMany({ home: homeId });
+
+    // 4. Delete the task (Home)
+    await Home.findByIdAndDelete(homeId);
+
+    res.redirect("/host-home-list");
+  } catch (err) {
+    console.error("[postCompleteHome Error]", err);
+    res.redirect("/host-home-list");
+  }
+};
+
+exports.postSelectBooking = async (req, res, next) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+    const bookingId = req.params.bookingId;
+    console.log("Came to select booking: ", bookingId);
+
+    // Find the booking we want to select
+    const bookingToSelect = await Booking.findById(bookingId);
+    if (!bookingToSelect) {
+      console.log("Booking not found");
+      return res.redirect("/host-home-list");
+    }
+
+    // Change status of the selected booking to "Selected"
+    bookingToSelect.status = "Selected";
+    await bookingToSelect.save();
+
+    // Reset status of all other bookings for the same home to "Applied"
+    await Booking.updateMany(
+      { home: bookingToSelect.home, _id: { $ne: bookingId } },
+      { $set: { status: "Applied" } }
+    );
+
+    res.redirect("/host-home-list");
+  } catch (err) {
+    console.error("[postSelectBooking Error]", err);
+    res.redirect("/host-home-list");
+  }
 };

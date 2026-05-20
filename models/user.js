@@ -25,13 +25,15 @@ const userSchema = mongoose.Schema({
     },
   ],
 
-  // Add these inside your userSchema:
   bio: { type: String, maxlength: 200, default: "" },
   skills: { type: [String], default: [] },
+  location: { type: String, default: "" },
   avatar: { type: String, default: "" },
   rating: { type: Number, default: 0 },
   totalRatings: { type: Number, default: 0 },
   completedTasks: { type: Number, default: 0 },
+  expectedPrice: { type: Number, default: 0 },
+  distance: { type: Number, default: 0 },
 });
 
 module.exports = mongoose.model("User", userSchema);

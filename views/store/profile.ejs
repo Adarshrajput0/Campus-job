@@ -1,0 +1,476 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/output.css" />
+
+<%- include('../partials/head') %>
+
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --cream: #f5f0e8;
+    --lime: #c8f04a;
+    --lime-dark: #a8cc30;
+    --muted: #6b6b6b;
+    --card-bg: #ffffff;
+    --border: #e4e0d8;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  .font-display { font-family: 'Syne', sans-serif; }
+  .font-heading { font-family: 'Clash Display', sans-serif; }
+
+  /* Premium Card Design */
+  .profile-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .profile-card:hover {
+    box-shadow: 0 20px 50px rgba(0,0,0,0.06);
+  }
+
+  /* Interactive Skill Tag */
+  .skill-tag {
+    cursor: pointer;
+    font-size: 0.84rem;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--muted);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .skill-tag:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+    background: #fbfaf8;
+    transform: translateY(-1px);
+  }
+  .skill-tag.selected {
+    background: var(--ink);
+    color: var(--lime);
+    border-color: var(--ink);
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(200, 240, 74, 0.2);
+  }
+
+  .custom-skill-input {
+    border: 1.5px dashed var(--border);
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-size: 0.84rem;
+    outline: none;
+    transition: all 0.2s;
+    background: transparent;
+  }
+  .custom-skill-input:focus {
+    border-style: solid;
+    border-color: var(--ink);
+    background: white;
+  }
+
+  .bio-textarea {
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    min-height: 120px;
+  }
+  .bio-textarea:focus {
+    border-color: var(--ink);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  }
+
+  /* Success Banner slide-in */
+  .alert-banner {
+    animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .save-btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--lime);
+    padding: 14px 28px;
+    border-radius: 16px;
+    transition: background 0.2s, transform 0.15s;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .save-btn:hover {
+    background: #222;
+    transform: translateY(-2px);
+  }
+  .save-btn:active {
+    transform: translateY(0);
+  }
+
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+</style>
+
+</head>
+
+<body class="min-h-screen">
+
+<%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
+
+<main class="max-w-4xl mx-auto px-5 sm:px-8 pt-28 pb-28">
+
+  <!-- PAGE HEADER -->
+  <section class="mb-8 text-center sm:text-left">
+    <div class="inline-flex items-center gap-2 bg-white border border-[var(--border)] px-4 py-1.5 rounded-full text-xs font-semibold text-gray-500 shadow-sm">
+      <i class="fa-solid fa-user-gear text-[var(--lime-dark)]"></i> Student Center
+    </div>
+    <h1 class="font-heading text-4xl sm:text-5xl font-bold mt-4 tracking-tight text-gray-900">
+      My Student Profile
+    </h1>
+    <p class="mt-2 text-gray-500 max-w-xl text-sm sm:text-base">
+      Set up your bio and campus skills. Our AI engine uses these details to match you with top-paying campus gigs!
+    </p>
+  </section>
+
+  <!-- STATS ROW -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+    <div class="bg-white border border-[var(--border)] rounded-2xl px-4 py-3 text-center shadow-sm">
+      <p class="font-heading text-2xl font-bold text-emerald-600"><%= user.completedTasks || 0 %></p>
+      <p class="section-label mt-0.5 text-[10px]">Tasks Done</p>
+    </div>
+    <div class="bg-white border border-[var(--border)] rounded-2xl px-4 py-3 text-center shadow-sm">
+      <p class="font-heading text-2xl font-bold text-gray-900"><%= (user.skills || []).length %></p>
+      <p class="section-label mt-0.5 text-[10px]">Skills</p>
+    </div>
+    <div class="bg-white border border-[var(--border)] rounded-2xl px-4 py-3 text-center shadow-sm">
+      <p class="font-heading text-2xl font-bold text-gray-900">₹<%= user.expectedPrice || 0 %></p>
+      <p class="section-label mt-0.5 text-[10px]">My Rate</p>
+    </div>
+    <div class="bg-white border border-[var(--border)] rounded-2xl px-4 py-3 text-center shadow-sm">
+      <p class="font-heading text-2xl font-bold text-blue-600"><%= user.distance || 0 %> km</p>
+      <p class="section-label mt-0.5 text-[10px]">Distance</p>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <% if (successMessage) { %>
+    <div class="alert-banner mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
+        <p class="text-sm text-emerald-800 font-medium"><%= successMessage %></p>
+      </div>
+      <a href="/smart-matches" class="text-xs bg-emerald-600 text-white font-semibold py-1.5 px-3 rounded-full hover:bg-emerald-700 transition">View Matches 🎯</a>
+    </div>
+  <% } %>
+
+  <% if (errorMessage) { %>
+    <div class="alert-banner mb-6 p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-xl flex items-center gap-3 shadow-sm">
+      <i class="fa-solid fa-circle-exclamation text-rose-600 text-lg"></i>
+      <p class="text-sm text-rose-800 font-medium"><%= errorMessage %></p>
+    </div>
+  <% } %>
+
+  <!-- MAIN CARD FORM -->
+  <div class="profile-card p-6 sm:p-10">
+    <form action="/profile" method="POST" id="profileForm">
+      
+      <!-- BIO SECTION -->
+      <div class="mb-8">
+        <div class="flex justify-between items-center mb-3">
+          <label class="section-label">Introduce Yourself (Bio)</label>
+          <span class="text-xs text-gray-400 font-medium" id="charCount">0/200</span>
+        </div>
+        <textarea 
+          name="bio" 
+          id="bioInput" 
+          maxlength="200" 
+          class="bio-textarea" 
+          placeholder="E.g., 'I have a bicycle and a laser printer, willing to run errands on campus and print notes.' or 'CS sophomore offering tutoring in programming. Available on weekends.'"
+        ><%= user.bio || '' %></textarea>
+        <p class="text-xs text-gray-400 mt-2">
+          💡 Mentioning specific assets (like a printer, bike, or camera) helps the AI match you to related tasks like stationery printing or parcel delivery.
+        </p>
+      </div>
+
+      <!-- SKILLS SECTION -->
+      <div class="mb-10">
+        <label class="section-label block mb-4">Select or Add Campus Skills</label>
+        
+        <!-- Popular preset skills -->
+        <div class="flex flex-wrap gap-2.5 mb-5" id="presetsContainer">
+          <% 
+            const popularSkills = ["Printing", "Errands", "Tutoring", "Delivery", "Coding", "Designing", "Photography", "Note-Taking", "Proofreading", "Event Help"];
+            const currentSkills = user.skills || [];
+            
+            popularSkills.forEach(skill => {
+              const isSelected = currentSkills.some(s => s.toLowerCase() === skill.toLowerCase());
+          %>
+            <div 
+              class="skill-tag <%= isSelected ? 'selected' : '' %>" 
+              onclick="togglePreset(this, '<%= skill %>')"
+            >
+              <%= skill %>
+              <% if (isSelected) { %>
+                <i class="fa-solid fa-check text-[10px]"></i>
+              <% } else { %>
+                <i class="fa-solid fa-plus text-[10px]"></i>
+              <% } %>
+            </div>
+          <% }) %>
+
+          <!-- Dynamically added custom skills will show here too -->
+          <% 
+            // Any user skills not in presets will render as active custom skills
+            const lowerPresets = popularSkills.map(s => s.toLowerCase());
+            currentSkills.forEach(skill => {
+              if (!lowerPresets.includes(skill.toLowerCase())) {
+          %>
+            <div 
+              class="skill-tag selected custom-rendered" 
+              onclick="removeCustomTag(this, '<%= skill %>')"
+            >
+              <%= skill %>
+              <i class="fa-solid fa-xmark text-[10px]"></i>
+            </div>
+          <% 
+              }
+            }); 
+          %>
+        </div>
+
+        <!-- Custom skills input -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <div class="relative w-full sm:w-72">
+            <i class="fa-solid fa-tag absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input 
+              type="text" 
+              id="customSkillInput" 
+              class="custom-skill-input pl-9 pr-4 py-2 w-full" 
+              placeholder="Add other skill (e.g. Photoshop)..."
+            />
+          </div>
+          <button 
+            type="button" 
+            onclick="addCustomSkill()" 
+            class="text-xs bg-white border border-gray-300 font-semibold py-2.5 px-4 rounded-full hover:border-gray-900 transition"
+          >
+            Add Tag +
+          </button>
+        </div>
+      </div>
+
+      <!-- PRICING, DISTANCE & LOCATION SECTION -->
+      <div class="mb-10 pt-6 border-t border-[var(--border)]">
+        <label class="section-label block mb-4">Availability & Location Info</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+          <!-- Expected Price -->
+          <div>
+            <label class="section-label block mb-2">Expected Hourly Rate (₹)</label>
+            <div class="relative">
+              <i class="fa-solid fa-indian-rupee-sign absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
+              <input 
+                type="number" 
+                name="expectedPrice" 
+                id="expectedPriceInput" 
+                class="custom-skill-input pl-9 pr-4 py-2.5 w-full rounded-2xl border-[1.5px] border-[var(--border)] focus:border-[var(--ink)]" 
+                placeholder="e.g. 150"
+                value="<%= user.expectedPrice || '' %>"
+                min="0"
+              />
+            </div>
+            <p class="text-xs text-gray-400 mt-1.5">Set your expected rate per hour or per small task.</p>
+          </div>
+
+          <!-- Distance -->
+          <div>
+            <label class="section-label block mb-2">Distance from Campus Center (km)</label>
+            <div class="relative">
+              <i class="fa-solid fa-location-dot absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
+              <input 
+                type="number" 
+                step="0.1"
+                name="distance" 
+                id="distanceInput" 
+                class="custom-skill-input pl-9 pr-4 py-2.5 w-full rounded-2xl border-[1.5px] border-[var(--border)] focus:border-[var(--ink)]" 
+                placeholder="e.g. 0.5"
+                value="<%= user.distance || '' %>"
+                min="0"
+              />
+            </div>
+            <p class="text-xs text-gray-400 mt-1.5">Your approximate distance from campus center.</p>
+          </div>
+
+          <!-- Location (area/hostel/neighborhood) -->
+          <div class="sm:col-span-2">
+            <label class="section-label block mb-2">Your Location / Area on Campus</label>
+            <div class="relative">
+              <i class="fa-solid fa-map-pin absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
+              <input 
+                type="text" 
+                name="location" 
+                id="locationInput" 
+                class="custom-skill-input pl-9 pr-4 py-2.5 w-full rounded-2xl border-[1.5px] border-[var(--border)] focus:border-[var(--ink)]" 
+                placeholder="e.g. Boys Hostel Block C, or Main Gate Area"
+                value="<%= user.location || '' %>"
+              />
+            </div>
+            <p class="text-xs text-gray-400 mt-1.5">Helps hosts understand your availability zone within campus.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- HIDDEN INPUT TO TRANSMIT SKILLS ARRAY AS COMMA SEPARATED LIST -->
+      <input type="hidden" name="skills" id="skillsOutput" value="<%= currentSkills.join(',') %>" />
+
+      <!-- SUBMIT -->
+      <div class="flex flex-col sm:flex-row items-center justify-between border-t border-[var(--border)] pt-8 gap-4">
+        <div class="flex items-center gap-3 text-left">
+          <div class="w-10 h-10 bg-[var(--lime)] rounded-full flex items-center justify-center text-sm font-semibold">
+            🎯
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Matching status</p>
+            <p class="text-xs font-semibold text-gray-700 mt-0.5">
+              <%= currentSkills.length %> Skills Active • AI Engine Ready
+              <% if ((user.completedTasks || 0) > 0) { %>
+              • 🏆 <%= user.completedTasks %> Task<%= user.completedTasks > 1 ? 's' : '' %> Completed
+              <% } %>
+            </p>
+          </div>
+        </div>
+
+        <button type="submit" class="save-btn w-full sm:w-auto">
+          Save Profile Details <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</main>
+
+<script>
+  // Character count tracker
+  const bioInput = document.getElementById('bioInput');
+  const charCount = document.getElementById('charCount');
+  
+  function updateCount() {
+    charCount.textContent = `${bioInput.value.length}/200`;
+  }
+  bioInput.addEventListener('input', updateCount);
+  updateCount(); // Init
+
+  // Skills array state management
+  let activeSkills = "<%= currentSkills.join(',') %>".split(',').filter(s => s.length > 0);
+  const skillsOutput = document.getElementById('skillsOutput');
+
+  function updateHiddenOutput() {
+    skillsOutput.value = activeSkills.join(',');
+  }
+
+  // Toggle presets
+  function togglePreset(el, skill) {
+    const isSelected = el.classList.contains('selected');
+    const cleanSkill = skill.trim();
+
+    if (isSelected) {
+      // Remove
+      el.classList.remove('selected');
+      activeSkills = activeSkills.filter(s => s.toLowerCase() !== cleanSkill.toLowerCase());
+      el.innerHTML = `${skill} <i class="fa-solid fa-plus text-[10px]"></i>`;
+    } else {
+      // Add
+      el.classList.add('selected');
+      if (!activeSkills.some(s => s.toLowerCase() === cleanSkill.toLowerCase())) {
+        activeSkills.push(cleanSkill);
+      }
+      el.innerHTML = `${skill} <i class="fa-solid fa-check text-[10px]"></i>`;
+    }
+    updateHiddenOutput();
+  }
+
+  // Add custom skill dynamically
+  const customInput = document.getElementById('customSkillInput');
+  const presetsContainer = document.getElementById('presetsContainer');
+
+  function addCustomSkill() {
+    const value = customInput.value.trim();
+    if (!value) return;
+
+    // Check if already exists in active list
+    if (activeSkills.some(s => s.toLowerCase() === value.toLowerCase())) {
+      customInput.value = '';
+      return;
+    }
+
+    activeSkills.push(value);
+    updateHiddenOutput();
+
+    // Create a new visual tag
+    const newTag = document.createElement('div');
+    newTag.className = 'skill-tag selected custom-rendered animate-pulse';
+    newTag.innerHTML = `${value} <i class="fa-solid fa-xmark text-[10px]"></i>`;
+    
+    // Wire up removing
+    newTag.onclick = function() {
+      removeCustomTag(newTag, value);
+    };
+
+    presetsContainer.appendChild(newTag);
+    setTimeout(() => newTag.classList.remove('animate-pulse'), 500);
+    
+    customInput.value = '';
+  }
+
+  function removeCustomTag(el, skill) {
+    el.remove();
+    activeSkills = activeSkills.filter(s => s.toLowerCase() !== skill.toLowerCase());
+    updateHiddenOutput();
+  }
+
+  // Trigger addCustomSkill on typing Enter key
+  customInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addCustomSkill();
+    }
+  });
+</script>
+
+  <%- include('../partials/chatbot-widget') %>
+
+</body>
+</html>

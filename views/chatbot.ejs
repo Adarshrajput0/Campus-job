@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus AI Assistant</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "DM Sans", Arial, sans-serif;
+        background: #f4f4f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .chat-shell {
+        background: #fff;
+        border: 1px solid #e0e0da;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 620px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Header */
+      .chat-header {
+        padding: 14px 18px;
+        border-bottom: 1px solid #e8e8e2;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+      }
+      .chat-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #dceffe;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .chat-avatar i {
+        font-size: 18px;
+        color: #2878c8;
+      }
+      .chat-meta {
+        flex: 1;
+      }
+      .chat-meta .name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a1a18;
+        line-height: 1.2;
+      }
+      .chat-meta .status {
+        font-size: 11px;
+        color: #2e9e5b;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 2px;
+      }
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #2e9e5b;
+        display: inline-block;
+      }
+      .chat-actions {
+        display: flex;
+        gap: 6px;
+      }
+      .chat-actions button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #888;
+        padding: 6px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        transition: background 0.15s;
+      }
+      .chat-actions button:hover {
+        background: #f0f0ea;
+        color: #333;
+      }
+      .chat-actions button i {
+        font-size: 18px;
+      }
+
+      /* Messages area */
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 14px 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: #f8f8f4;
+        scroll-behavior: smooth;
+      }
+      .chat-messages::-webkit-scrollbar {
+        width: 4px;
+      }
+      .chat-messages::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 2px;
+      }
+
+      .msg-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+      }
+      .msg-row.user {
+        flex-direction: row-reverse;
+      }
+
+      .msg-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .msg-icon.bot-icon {
+        background: #dceffe;
+        color: #2878c8;
+      }
+      .msg-icon.user-icon {
+        background: #e8e8e2;
+        color: #666;
+      }
+
+      .bubble {
+        max-width: 72%;
+        padding: 10px 14px;
+        font-size: 14px;
+        line-height: 1.55;
+        color: #1a1a18;
+      }
+      .bubble.bot-bubble {
+        background: #fff;
+        border: 1px solid #e0e0da;
+        border-radius: 16px 16px 16px 4px;
+      }
+      .bubble.user-bubble {
+        background: #dceffe;
+        border-radius: 16px 16px 4px 16px;
+      }
+
+      .timestamp {
+        font-size: 10px;
+        color: #aaa;
+        margin-top: 3px;
+        padding: 0 4px;
+      }
+      .msg-row.user .timestamp {
+        text-align: right;
+      }
+
+      /* Typing indicator */
+      .typing-indicator {
+        display: none;
+        align-items: flex-end;
+        gap: 8px;
+        padding: 0 14px 8px;
+      }
+      .typing-indicator.visible {
+        display: flex;
+      }
+      .dots {
+        display: flex;
+        gap: 4px;
+        padding: 12px 14px;
+        background: #fff;
+        border: 1px solid #e0e0da;
+        border-radius: 16px 16px 16px 4px;
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #bbb;
+        animation: bounce 1.2s infinite;
+      }
+      .dot:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .dot:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      @keyframes bounce {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-5px);
+        }
+      }
+
+      /* Suggestion chips */
+      .chat-suggestions {
+        padding: 8px 14px;
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        background: #f8f8f4;
+        border-top: 1px solid #e8e8e2;
+        scrollbar-width: none;
+      }
+      .chat-suggestions::-webkit-scrollbar {
+        display: none;
+      }
+      .suggestion-chip {
+        flex-shrink: 0;
+        padding: 5px 11px;
+        font-size: 12px;
+        border: 1px solid #d8d8d0;
+        border-radius: 20px;
+        background: #fff;
+        color: #555;
+        cursor: pointer;
+        white-space: nowrap;
+        font-family: inherit;
+        transition: background 0.15s;
+      }
+      .suggestion-chip:hover {
+        background: #eee;
+        color: #111;
+      }
+
+      /* Input area */
+      .chat-input-area {
+        padding: 10px 12px;
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        border-top: 1px solid #e8e8e2;
+        background: #fff;
+      }
+      .input-wrap {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #d8d8d0;
+        border-radius: 22px;
+        padding: 8px 12px;
+        background: #f8f8f4;
+        transition: border-color 0.15s;
+      }
+      .input-wrap:focus-within {
+        border-color: #2878c8;
+      }
+      .input-wrap textarea {
+        flex: 1;
+        border: none;
+        background: none;
+        resize: none;
+        outline: none;
+        font-family: inherit;
+        font-size: 14px;
+        color: #1a1a18;
+        line-height: 1.4;
+        max-height: 100px;
+        overflow-y: auto;
+        scrollbar-width: none;
+      }
+      .input-wrap textarea::placeholder {
+        color: #aaa;
+      }
+      .input-wrap textarea::-webkit-scrollbar {
+        display: none;
+      }
+
+      .attach-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 2px;
+        color: #aaa;
+        display: flex;
+        align-items: center;
+      }
+      .attach-btn:hover {
+        color: #666;
+      }
+      .attach-btn i {
+        font-size: 18px;
+      }
+
+      .send-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: none;
+        background: #1a1a18;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+      .send-btn:hover {
+        opacity: 0.82;
+      }
+      .send-btn:active {
+        transform: scale(0.93);
+      }
+      .send-btn:disabled {
+        opacity: 0.28;
+        cursor: default;
+      }
+      .send-btn i {
+        font-size: 17px;
+      }
+
+      .fade-in {
+        animation: fadeUp 0.2s ease forwards;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-shell">
+      <!-- Header -->
+      <div class="chat-header">
+        <div class="chat-avatar"><i class="ti ti-school"></i></div>
+        <div class="chat-meta">
+          <div class="name">Campus AI Assistant</div>
+          <div class="status"><span class="status-dot"></span>Online</div>
+        </div>
+        <div class="chat-actions">
+          <button title="Search"><i class="ti ti-search"></i></button>
+          <button title="More"><i class="ti ti-dots"></i></button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg-row">
+          <div class="msg-icon bot-icon">AI</div>
+          <div>
+            <div class="bubble bot-bubble fade-in">
+              Hi! I'm your Campus AI Assistant. Ask me about classes, schedules,
+              campus resources, or anything university-related. 🎓
+            </div>
+            <div class="timestamp">Today, 9:00 AM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div class="typing-indicator" id="typingIndicator">
+        <div class="msg-icon bot-icon">AI</div>
+        <div class="dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Suggestion chips -->
+      <div class="chat-suggestions" id="suggestions">
+        <button class="suggestion-chip" onclick="useSuggestion(this)">
+          📅 My class schedule
+        </button>
+        <button class="suggestion-chip" onclick="useSuggestion(this)">
+          📚 Library hours
+        </button>
+        <button class="suggestion-chip" onclick="useSuggestion(this)">
+          🍽️ Cafeteria menu
+        </button>
+        <button class="suggestion-chip" onclick="useSuggestion(this)">
+          🏥 Health center
+        </button>
+        <button class="suggestion-chip" onclick="useSuggestion(this)">
+          🅿️ Parking info
+        </button>
+      </div>
+
+      <!-- Input area -->
+      <div class="chat-input-area">
+        <div class="input-wrap">
+          <button class="attach-btn" title="Attach file">
+            <i class="ti ti-paperclip"></i>
+          </button>
+          <textarea
+            id="msgInput"
+            rows="1"
+            placeholder="Ask about campus…"
+          ></textarea>
+        </div>
+        <button
+          class="send-btn"
+          id="sendBtn"
+          onclick="handleSend()"
+          title="Send"
+        >
+          <i class="ti ti-send"></i>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const messagesEl = document.getElementById("chatMessages");
+      const inputEl = document.getElementById("msgInput");
+      const typingEl = document.getElementById("typingIndicator");
+      const sendBtn = document.getElementById("sendBtn");
+
+      /* ── Local demo replies (replace with your real API call) ── */
+      const campusReplies = {
+        schedule:
+          "Your next class is <strong>CSCI 301 – Data Structures</strong> at 2:00 PM in Room 204, Engineering Block. You also have <strong>MATH 202</strong> at 4:00 PM.",
+        library:
+          "The main library is open <strong>Mon–Fri 8 AM – 10 PM</strong> and <strong>Sat–Sun 10 AM – 6 PM</strong>. The 24/7 study room on Floor 2 is always accessible with your student card.",
+        cafeteria:
+          "Today's special: <strong>Grilled Paneer Wrap</strong> + soup for ₹120. Cafeteria hours: 7:30 AM – 8:30 PM. The food court near the sports complex serves until 10 PM.",
+        health:
+          "The campus health center is open <strong>Mon–Sat, 9 AM – 5 PM</strong> in Block C, Ground Floor. For emergencies dial <strong>ext. 1111</strong> or campus security at <strong>+91-9800-CAMPUS</strong>.",
+        parking:
+          "Student parking is available in <strong>Lots B and D</strong> near the east gate. Semester permits cost ₹2,500. Visitor parking is at Lot A near the main entrance.",
+        default:
+          "That's a great question! For detailed info, check the <strong>Student Portal</strong> at portal.campus.edu or visit the Admin Office (Block A, Room 101) during office hours.",
+      };
+
+      function getLocalReply(msg) {
+        const m = msg.toLowerCase();
+        if (
+          m.includes("schedule") ||
+          m.includes("class") ||
+          m.includes("lecture")
+        )
+          return campusReplies.schedule;
+        if (m.includes("library") || m.includes("book") || m.includes("study"))
+          return campusReplies.library;
+        if (
+          m.includes("food") ||
+          m.includes("cafeteria") ||
+          m.includes("eat") ||
+          m.includes("menu")
+        )
+          return campusReplies.cafeteria;
+        if (
+          m.includes("health") ||
+          m.includes("doctor") ||
+          m.includes("medical")
+        )
+          return campusReplies.health;
+        if (m.includes("park") || m.includes("car") || m.includes("vehicle"))
+          return campusReplies.parking;
+        return campusReplies.default;
+      }
+
+      function formatTime() {
+        return new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function addMessage(html, role) {
+        const isUser = role === "user";
+        const row = document.createElement("div");
+        row.className = "msg-row fade-in" + (isUser ? " user" : "");
+
+        const icon = document.createElement("div");
+        icon.className = "msg-icon " + (isUser ? "user-icon" : "bot-icon");
+        icon.textContent = isUser ? "ME" : "AI";
+
+        const inner = document.createElement("div");
+        const bubble = document.createElement("div");
+        bubble.className = "bubble " + (isUser ? "user-bubble" : "bot-bubble");
+        bubble.innerHTML = html;
+
+        const ts = document.createElement("div");
+        ts.className = "timestamp";
+        ts.textContent = "Today, " + formatTime();
+
+        inner.appendChild(bubble);
+        inner.appendChild(ts);
+        row.appendChild(icon);
+        row.appendChild(inner);
+        messagesEl.appendChild(row);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      function showTyping() {
+        messagesEl.appendChild(typingEl); // move into scroll area
+        typingEl.classList.add("visible");
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+      function hideTyping() {
+        typingEl.classList.remove("visible");
+      }
+
+      async function handleSend() {
+        const text = inputEl.value.trim();
+        if (!text) return;
+
+        addMessage(text, "user");
+        inputEl.value = "";
+        inputEl.style.height = "auto";
+        sendBtn.disabled = true;
+        document.getElementById("suggestions").style.display = "none";
+
+        showTyping();
+
+        /* ── REAL API CALL ────────────────────────────────────────────
+       Uncomment the block below and remove the fake-delay block
+       to connect to your backend.
+
+    try {
+      const res  = await fetch('/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+      const data = await res.json();
+      hideTyping();
+      addMessage(data.reply, 'bot');
+    } catch (err) {
+      hideTyping();
+      addMessage('Sorry, I couldn\'t reach the server. Please try again.', 'bot');
+    }
+    ── END REAL API CALL ─────────────────────────────────────── */
+
+        // Demo fallback – remove once connected to real API
+        await new Promise((r) => setTimeout(r, 900 + Math.random() * 600));
+        hideTyping();
+        addMessage(getLocalReply(text), "bot");
+
+        sendBtn.disabled = false;
+      }
+
+      function useSuggestion(el) {
+        inputEl.value = el.textContent.replace(/^\S+\s/, "");
+        handleSend();
+      }
+
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          handleSend();
+        }
+      });
+      inputEl.addEventListener("input", () => {
+        inputEl.style.height = "auto";
+        inputEl.style.height = Math.min(inputEl.scrollHeight, 100) + "px";
+      });
+    </script>
+  </body>
+</html>

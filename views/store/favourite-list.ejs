@@ -1,126 +1,211 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="/css/output.css" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/output.css" />
+<%- include('../partials/head', { pageTitle: 'Saved Tasks' }) %>
 
-  <%- include('../partials/head') %>
-  </head>
+<style>
+  :root {
+    --brand-primary: #6366f1; /* Indigo */
+    --brand-emerald: #10b981; /* Emerald */
+    --brand-slate: #0f172a; /* Slate 900 */
+    --bg-light: #f8fafc; /* Slate 50 */
+    --border-soft: #f1f5f9; /* Slate 100 */
+    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.01);
+  }
 
-  <body
-    class="min-h-screen bg-gradient-to-b from-[#fff1f2] via-white to-[#f7f7f7] font-sans"
-  >
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-light);
+    color: #334155;
+  }
 
-  <%- include('../partials/header') %> 
-  <%- include('../partials/header', { 
-      isLoggedIn: isLoggedIn, 
-      user: user 
-}) %>
+  .font-heading { font-family: 'Outfit', sans-serif; }
 
+  /* Glassmorphic Saved Card */
+  .premium-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 24px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .premium-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.3);
+  }
 
+  .remove-elite-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    background: #fff5f5;
+    color: #ef4444;
+    border: 1px solid #fee2e2;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .remove-elite-btn:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+  }
 
-<section class="max-w-7xl mx-auto px-6 mb-16">
-  <h1 class="text-6xl md:text-5xl font-semibold text-green-700 mb-3">
-    Saved Tasks
-  </h1>
-  <p class="text-gray-500 max-w-2xl">
-    All the tasks you saved in one place. Easily access, compare, and apply when you're ready.
-  </p>
-</section>
+  .view-elite-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    background: white;
+    color: var(--brand-slate);
+    border: 1px solid #e2e8f0;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color 0.18s;
+  }
+  .view-elite-btn:hover {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+  }
 
-<!-- Info strip -->
-<section class="max-w-7xl mx-auto px-6 mb-12">
-  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white rounded-2xl shadow-sm border p-6">
-    <p class="text-gray-600 text-sm">
-      🔖 Tip: Save tasks to quickly revisit them and choose the best opportunity.
-    </p>
-    <a
-      href="/"
-      class="text-sm font-medium text-green-600 hover:underline"
-    >
-      Browse more tasks →
-    </a>
-  </div>
-</section>
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 
-<!-- Tasks Grid -->
-<section class="max-w-7xl mx-auto px-6">
-  <ul class="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+</head>
 
-    <% favouriteHomes.forEach(home => { %>
+<body class="min-h-screen">
 
-    <li class="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300">
+  <!-- NAVBAR HEADER -->
+  <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
 
-      <!-- Image -->
-      <div class="relative h-60 overflow-hidden">
-        <img
-          src="<%= home.photo %>"
-          alt="<%= home.houseName %>"
-          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+  <!-- MAIN WRAP -->
+  <main class="max-w-7xl mx-auto px-6 sm:px-8 pt-32 pb-24">
 
-        <!-- Reward -->
-        <span class="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-sm font-semibold text-gray-800 shadow">
-          ₹ <%= home.price %> reward
-        </span>
+    <!-- PAGE HEADER -->
+    <section class="mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6 fade-in-up">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm">
+          <i class="fa-solid fa-bookmark"></i> Saved List
+        </div>
+        <h1 class="font-heading text-4xl sm:text-5xl font-extrabold mt-4 tracking-tight text-slate-900">
+          Saved Gigs
+        </h1>
+        <p class="mt-2 text-slate-500 max-w-xl text-sm sm:text-base leading-relaxed">
+          Keep track of opportunities you plan to apply for or want to monitor.
+        </p>
+      </div>
+    </section>
 
-        <!-- Saved Icon -->
-        <span class="absolute top-4 right-4 bg-white/90 backdrop-blur p-2 rounded-full shadow text-green-600">
-          🔖
-        </span>
+    <!-- DIVIDER -->
+    <div class="mb-8 flex items-center gap-4 fade-in-up" style="animation-delay: 0.1s;">
+      <div class="flex-1 h-px bg-slate-200"></div>
+      <span class="font-heading text-[10px] font-bold tracking-widest text-slate-400 uppercase">Saved Listings Directory (<%= favouriteHomes.length %>)</span>
+      <div class="flex-1 h-px bg-slate-200"></div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <% if (favouriteHomes.length === 0) { %>
+      <div class="max-w-md mx-auto text-center border-2 border-dashed border-slate-200 rounded-[28px] p-12 fade-in-up">
+        <div class="text-5xl mb-4">🔖</div>
+        <h2 class="font-heading text-2xl font-bold text-slate-800">Your saved list is empty</h2>
+        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Bookmark micro-gigs in the marketplace to see them here later!</p>
+        <a href="/homes" class="inline-block mt-8 bg-slate-900 text-white font-heading font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-xl hover:bg-slate-800 transition shadow">
+          Explore Marketplace
+        </a>
       </div>
 
-      <!-- Content -->
-      <div class="p-6">
+    <% } else { %>
 
-        <div class="flex items-start justify-between mb-2">
-          <h3 class="text-xl font-semibold text-gray-900 leading-tight">
-            <%= home.houseName %>
-          </h3>
+      <!-- GRID LISTINGS -->
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% favouriteHomes.forEach(home => { %>
 
-          <span class="flex items-center gap-1 text-yellow-500 text-sm font-semibold">
-            ⭐ <%= home.rating %> trust
-          </span>
-        </div>
+          <li class="premium-card fade-in-up flex flex-col group">
 
-        <p class="text-gray-500 text-sm mb-5">📍 <%= home.location %></p>
+            <!-- Card Banner Image -->
+            <div class="relative h-48 overflow-hidden rounded-t-[24px]">
+              <img src="<%= home.photo %>" alt="<%= home.houseName %>" class="w-full h-full object-cover">
+              <span class="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md border border-white/10 text-white font-heading text-xs font-bold px-3 py-1.5 rounded-full">
+                ₹ <%= home.price %>
+              </span>
+              <span class="absolute top-4 right-4 bg-white/90 text-xs p-2 rounded-full shadow text-indigo-600">
+                <i class="fa-solid fa-bookmark"></i>
+              </span>
+            </div>
 
-        <div class="h-px bg-gray-200 mb-5"></div>
+            <!-- Content Area -->
+            <div class="p-6 flex flex-col flex-grow">
+              <div class="mb-4">
+                <span class="text-[9px] font-bold text-indigo-500 uppercase tracking-widest block"><%= home.propertytype %></span>
+                <h3 class="font-heading text-lg font-bold text-slate-900 mt-1 leading-snug truncate">
+                  <%= home.houseName %>
+                </h3>
+                <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                  <i class="fa-solid fa-map-pin text-slate-300"></i> <%= home.location %>
+                </p>
+              </div>
 
-        <!-- Actions -->
-        <div class="flex items-center justify-between gap-3">
+              <!-- helper details metrics row -->
+              <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex justify-between items-center text-xs mb-6 mt-auto">
+                <div>
+                  <span class="text-[8px] font-bold text-slate-400 block uppercase tracking-wider">Required Slots</span>
+                  <span class="font-bold text-slate-700"><%= home.maxguest %> helpers</span>
+                </div>
+                <div>
+                  <span class="text-[8px] font-bold text-slate-400 block uppercase tracking-wider">Trust Score</span>
+                  <span class="font-bold text-slate-700 flex items-center gap-0.5"><i class="fa-solid fa-star text-amber-400"></i> <%= home.rating %></span>
+                </div>
+              </div>
 
-          <a
-            href="/homes/<%= home._id %>"
-            class="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium
-                   border border-gray-300 text-gray-700
-                   hover:border-green-600 hover:text-green-600
-                   transition"
-          >
-            View Task
-          </a>
+              <!-- Action button row -->
+              <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100 mt-auto">
+                <a href="/homes/<%= home._id %>" class="view-elite-btn">
+                  View Detail
+                </a>
+                <form action="/favourites/delete/<%= home._id %>" method="POST" onsubmit="return confirm('Remove this from saved list?')">
+                  <button type="submit" class="remove-elite-btn">
+                    Remove
+                  </button>
+                </form>
+              </div>
 
-          <form action="/favourites/delete/<%= home._id %>" method="POST" class="flex-1">
-            <button
-              type="submit"
-              class="w-full px-4 py-2 rounded-lg text-sm font-medium
-                     bg-red-500 text-white
-                     hover:bg-red-600 transition"
-            >
-              Remove
-            </button>
-          </form>
+            </div>
+          </li>
 
-        </div>
-      </div>
-    </li>
+        <% }) %>
+      </ul>
 
-    <% }) %>
+    <% } %>
 
-  </ul>
-</section>
+  </main>
 
-</main>
+  <%- include('../partials/chatbot-widget') %>
 
-
-
-  </body>
+</body>
 </html>
