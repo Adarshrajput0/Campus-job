@@ -55,13 +55,21 @@ exports.clerkCallback = async (req, res) => {
     const lastName  = clerkUser.lastName  || "";
     const avatar    = clerkUser.imageUrl  || "";
 
-    // Find existing user by clerkId OR email (handles legacy accounts)
-    let user = await User.findOne({ $or: [{ clerkId: userId }, { email }] });
-    let isNewUser = false;
+    // Find existing user — first try clerkId, then fall back to email
+    let user = await User.findOne({ clerkId: userId });
+
+    if (!user && email) {
+      // Legacy account matched by email — link the clerkId now
+      user = await User.findOne({ email });
+      if (user) {
+        user.clerkId = userId;
+        if (!user.avatar && avatar) user.avatar = avatar;
+        await user.save();
+      }
+    }
 
     if (!user) {
-      // Brand-new signup via Clerk
-      isNewUser = true;
+      // Truly brand-new user — create with incomplete profile
       user = new User({
         clerkId: userId,
         firstName,
@@ -73,26 +81,34 @@ exports.clerkCallback = async (req, res) => {
       });
       await user.save();
     } else {
-      // Returning user — patch any missing fields
-      let changed = false;
-      if (!user.clerkId)          { user.clerkId = userId;  changed = true; }
-      if (!user.avatar && avatar) { user.avatar  = avatar;  changed = true; }
-      if (changed) await user.save();
+      // Patch avatar if missing
+      if (!user.avatar && avatar) {
+        user.avatar = avatar;
+        await user.save();
+      }
     }
 
-    // New user: needs to pick a role first
-    if (!user.profileComplete) {
-      req.session.pendingUserId = user._id.toString();
-      await req.session.save();
-      return res.redirect("/complete-profile");
+    // ── RETURNING USER: profile already complete → go straight to dashboard ──
+    if (user.profileComplete) {
+      // Clear any stale pending session flags
+      delete req.session.pendingUserId;
+      req.session.isLoggedIn = true;
+      req.session.user = user.toObject();
+      return req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        res.redirect(user.userType === "host" ? "/host-home-list" : "/");
+      });
     }
 
-    // Returning user: set session and go to dashboard
-    req.session.isLoggedIn = true;
-    req.session.user = user.toObject();
-    await req.session.save();
+    // ── NEW USER: needs to choose host or guest role ──────────────────────────
+    req.session.pendingUserId = user._id.toString();
+    delete req.session.isLoggedIn;
+    delete req.session.user;
+    return req.session.save((err) => {
+      if (err) console.error("Session save error:", err);
+      res.redirect("/complete-profile");
+    });
 
-    res.redirect(user.userType === "host" ? "/host-home-list" : "/");
   } catch (err) {
     console.error("[clerkCallback Error]", err);
     res.redirect("/login");
@@ -100,8 +116,31 @@ exports.clerkCallback = async (req, res) => {
 };
 
 // ─── GET /complete-profile ──────────────────────────────────────────────────
-exports.getCompleteProfile = (req, res) => {
-  if (!req.session.pendingUserId) return res.redirect("/login");
+exports.getCompleteProfile = async (req, res) => {
+  // If already fully logged in, redirect to their dashboard
+  if (req.session.isLoggedIn && req.session.user) {
+    return res.redirect(req.session.user.userType === "host" ? "/host-home-list" : "/");
+  }
+
+  const pendingUserId = req.session.pendingUserId;
+  if (!pendingUserId) return res.redirect("/login");
+
+  // Double-check: if the pending user already has a complete profile, skip this step
+  try {
+    const user = await User.findById(pendingUserId);
+    if (user && user.profileComplete) {
+      delete req.session.pendingUserId;
+      req.session.isLoggedIn = true;
+      req.session.user = user.toObject();
+      return req.session.save((err) => {
+        if (err) console.error("Session save error:", err);
+        res.redirect(user.userType === "host" ? "/host-home-list" : "/");
+      });
+    }
+  } catch (e) {
+    console.error("[getCompleteProfile lookup error]", e);
+  }
+
   res.render("auth/complete-profile", {
     pageTitle: "Choose Your Role — Campus Jobs",
     currentPage: "signup",
@@ -116,6 +155,11 @@ exports.postCompleteProfile = async (req, res) => {
   try {
     const { userType } = req.body;
     const pendingUserId = req.session.pendingUserId;
+
+    // Guard: if already logged in, just redirect
+    if (!pendingUserId && req.session.isLoggedIn && req.session.user) {
+      return res.redirect(req.session.user.userType === "host" ? "/host-home-list" : "/");
+    }
 
     if (!pendingUserId) return res.redirect("/login");
 
@@ -139,9 +183,10 @@ exports.postCompleteProfile = async (req, res) => {
     delete req.session.pendingUserId;
     req.session.isLoggedIn = true;
     req.session.user = user.toObject();
-    await req.session.save();
-
-    res.redirect(userType === "host" ? "/host-home-list" : "/");
+    return req.session.save((err) => {
+      if (err) console.error("Session save error:", err);
+      res.redirect(userType === "host" ? "/host-home-list" : "/");
+    });
   } catch (err) {
     console.error("[postCompleteProfile Error]", err);
     res.redirect("/login");
