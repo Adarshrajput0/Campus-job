@@ -17,6 +17,10 @@ const bookingSchema = new mongoose.Schema(
     guests: Number,
     totalPrice: Number,
     status: String,
+    releaseRequested: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true },
 );

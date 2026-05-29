@@ -1,51 +1,56 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <link rel="stylesheet" href="/css/output.css" />
 
 <%- include('../partials/head') %>
 
 <style>
   :root {
-    --ink: #0d0d0d;
-    --cream: #f5f0e8;
-    --lime: #c8f04a;
-    --lime-dark: #a8cc30;
-    --muted: #6b6b6b;
-    --card-bg: #ffffff;
-    --border: #e4e0d8;
+    --brand-primary: #6366f1; /* Indigo */
+    --brand-emerald: #10b981; /* Emerald */
+    --brand-slate: #0f172a; /* Slate 900 */
+    --bg-light: #f8fafc; /* Slate 50 */
+    --border-soft: #f1f5f9; /* Slate 100 */
+    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.01);
   }
 
   body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--ink);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-light);
+    color: #334155;
   }
 
-  .font-display { font-family: 'Syne', sans-serif; }
-  .font-heading { font-family: 'Clash Display', sans-serif; }
+  .font-heading { font-family: 'Outfit', sans-serif; }
 
-  /* Job Card Neo-Brutalist Style */
+  /* Job Card style */
   .match-card {
-    background: white;
-    border: 1.5px solid var(--border);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: 26px;
     overflow: hidden;
-    transition: transform 0.28s cubic-bezier(.22,.68,0,1.2), box-shadow 0.28s ease;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
   }
   .match-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 20px 48px rgba(0,0,0,0.08);
-    border-color: #c5c0b8;
+    box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.3);
   }
 
   .match-card__img-wrap {
     position: relative;
     overflow: hidden;
     height: 180px;
+    background-color: #f1f5f9;
   }
   .match-card__img-wrap img {
     width: 100%; height: 100%;
@@ -53,14 +58,14 @@
     transition: transform 0.5s ease;
   }
   .match-card:hover .match-card__img-wrap img {
-    transform: scale(1.06);
+    transform: scale(1.04);
   }
 
   .badge {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -68,8 +73,6 @@
     padding: 5px 10px;
     border-radius: 100px;
   }
-
-  .badge-price  { background: rgba(0,0,0,0.68); color: white; backdrop-filter: blur(6px); }
 
   .match-card__body {
     padding: 24px;
@@ -80,17 +83,17 @@
   }
 
   .job-title {
-    font-family: 'Clash Display', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--ink);
+    font-weight: 700;
+    color: var(--brand-slate);
     letter-spacing: -0.01em;
     line-height: 1.25;
   }
 
   .job-desc {
-    font-size: 0.86rem;
-    color: #555;
+    font-size: 0.82rem;
+    color: #64748b;
     line-height: 1.55;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -102,18 +105,18 @@
   .insight-banner {
     border-radius: 16px;
     padding: 14px 16px;
-    font-size: 0.84rem;
+    font-size: 0.8rem;
     line-height: 1.5;
     border: 1px solid transparent;
   }
   .insight-banner-ai {
     background: #f0fdf4;
-    border-color: #bbf7d0;
+    border-color: #dcfce7;
     color: #166534;
   }
   .insight-banner-local {
-    background: #fef3c7;
-    border-color: #fde68a;
+    background: #fffbeb;
+    border-color: #fef08a;
     color: #92400e;
   }
 
@@ -123,20 +126,21 @@
     text-align: center;
     padding: 12px;
     border-radius: 14px;
-    background: var(--ink);
-    color: var(--lime);
-    font-family: 'Syne', sans-serif;
+    background: var(--brand-slate);
+    color: white;
+    font-family: 'Outfit', sans-serif;
     font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     text-decoration: none;
-    transition: background 0.18s, transform 0.15s;
+    transition: all 0.2s;
     margin-top: auto;
   }
   .apply-btn:hover {
-    background: #222;
-    transform: scale(1.01);
+    background: #1e293b;
+    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
+    transform: translateY(-1px);
   }
 
   /* Fade ups */
@@ -149,14 +153,13 @@
   }
 
   /* Stagger cards */
-  .match-card { opacity: 0; animation: fadeUp 0.5s ease forwards; }
   .match-card:nth-child(1) { animation-delay: 0.1s; }
   .match-card:nth-child(2) { animation-delay: 0.2s; }
   .match-card:nth-child(3) { animation-delay: 0.3s; }
   .match-card:nth-child(4) { animation-delay: 0.4s; }
 
   .engine-chip {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -166,8 +169,6 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: white;
-    border: 1.5px solid var(--border);
   }
   .engine-chip .dot {
     width: 6px; height: 6px;
@@ -175,12 +176,12 @@
   }
 
   .section-label {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: #94a3b8;
   }
 </style>
 
@@ -190,18 +191,18 @@
 
 <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
 
-<main class="max-w-7xl mx-auto px-5 sm:px-8 pt-28 pb-28">
+<main class="max-w-7xl mx-auto px-5 sm:px-8 pt-32 pb-28">
 
   <!-- PAGE HEADER -->
   <section class="mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
     <div class="fade-up">
-      <div class="inline-flex items-center gap-2 bg-white border border-[var(--border)] px-4 py-1.5 rounded-full text-xs font-semibold text-gray-500 shadow-sm">
-        🎯 Match Score Recommendations
+      <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm animate-pulse">
+        🎯 Smart Matches Recommendation Engine
       </div>
-      <h1 class="font-heading text-4xl sm:text-5xl font-bold mt-4 tracking-tight text-gray-900">
+      <h1 class="font-heading text-4xl sm:text-5xl font-extrabold mt-4 tracking-tight text-slate-900">
         AI Smart Matches
       </h1>
-      <p class="mt-2 text-gray-500 max-w-xl text-sm sm:text-base">
+      <p class="mt-2 text-slate-500 max-w-xl text-sm sm:text-base leading-relaxed">
         Personalized micro-job recommendations matched directly to your student bio & skill set. Keep your skills updated to discover new opportunities.
       </p>
     </div>
@@ -210,12 +211,12 @@
     <% if (!profileIncomplete && matches.length > 0) { %>
       <div class="fade-up md:mb-2">
         <% if (aiUsed) { %>
-          <div class="engine-chip text-emerald-800 border-emerald-200 bg-emerald-50">
+          <div class="engine-chip text-emerald-800 border border-emerald-200 bg-emerald-50">
             <span class="dot bg-emerald-500 animate-ping"></span>
             🤖 OpenAI GPT Engine Active
           </div>
         <% } else { %>
-          <div class="engine-chip text-amber-800 border-amber-200 bg-amber-50">
+          <div class="engine-chip text-amber-800 border border-amber-200 bg-amber-50">
             <span class="dot bg-amber-500 animate-pulse"></span>
             ⚡ Local NLP Engine Active
           </div>
@@ -226,10 +227,10 @@
 
   <!-- EMPTY STATE: PROFILE INCOMPLETE -->
   <% if (profileIncomplete) { %>
-    <div class="max-w-md mx-auto text-center border-2 border-dashed border-[var(--border)] rounded-[28px] p-8 sm:p-12 fade-up">
+    <div class="max-w-md mx-auto text-center border-2 border-dashed border-slate-200 rounded-[28px] p-8 sm:p-12 fade-up">
       <div class="text-5xl mb-4">👤</div>
-      <h2 class="font-heading text-2xl font-bold text-gray-800">Set up your profile</h2>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">
+      <h2 class="font-heading text-2xl font-bold text-slate-800">Set up your profile</h2>
+      <p class="text-sm text-slate-500 mt-3 leading-relaxed">
         We need to know your bio and skills (like Stationery, Printing, Errands, or Tutoring) before calculating matches!
       </p>
       <a href="/profile" class="apply-btn mt-8 inline-block w-auto px-8">Complete Profile →</a>
@@ -237,15 +238,15 @@
 
   <!-- EMPTY STATE: NO MATCHES FOUND -->
   <% } else if (matches.length === 0) { %>
-    <div class="max-w-md mx-auto text-center border-2 border-dashed border-[var(--border)] rounded-[28px] p-8 sm:p-12 fade-up">
+    <div class="max-w-md mx-auto text-center border-2 border-dashed border-slate-200 rounded-[28px] p-8 sm:p-12 fade-up">
       <div class="text-5xl mb-4">🔍</div>
-      <h2 class="font-heading text-2xl font-bold text-gray-800">No active matches found</h2>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">
+      <h2 class="font-heading text-2xl font-bold text-slate-800">No active matches found</h2>
+      <p class="text-sm text-slate-500 mt-3 leading-relaxed">
         There are currently no active tasks on campus, or they don't match your current profile parameters. Check back soon or edit your profile!
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-3 mt-8">
         <a href="/profile" class="apply-btn inline-block w-auto px-6">Edit Skills</a>
-        <a href="/homes" class="apply-btn inline-block w-auto px-6 bg-white border border-gray-300 text-gray-800 hover:bg-gray-50">Browse All Jobs</a>
+        <a href="/homes" class="apply-btn inline-block w-auto px-6 bg-white border border-slate-200 text-slate-700 hover:border-slate-300">Browse All Jobs</a>
       </div>
     </div>
 
@@ -262,19 +263,18 @@
             <img src="<%= match.photo %>" alt="<%= match.houseName %>">
             
             <!-- Price badge -->
-            <span class="badge badge-price absolute top-4 right-4">₹ <%= match.price %></span>
+            <span class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-md border border-white/10 text-white font-heading text-xs font-bold px-3 py-1.5 rounded-full">
+              ₹ <%= match.price %>
+            </span>
             
             <!-- Match score tag overlay -->
             <% 
-              let scoreColor = "border-emerald-400 text-emerald-800 bg-emerald-50";
               let scoreBorder = "border-emerald-400";
               let scoreText = "text-emerald-700";
               if (match.matchScore < 80 && match.matchScore >= 50) {
-                scoreColor = "border-amber-400 text-amber-800 bg-amber-50";
                 scoreBorder = "border-amber-400";
                 scoreText = "text-amber-700";
               } else if (match.matchScore < 50) {
-                scoreColor = "border-slate-300 text-slate-700 bg-slate-50";
                 scoreBorder = "border-slate-300";
                 scoreText = "text-slate-600";
               }
@@ -282,12 +282,12 @@
             <div class="absolute top-4 left-4 flex items-center justify-center w-14 h-14 rounded-full border-4 bg-white shadow-md <%= scoreBorder %>">
               <div class="flex flex-col items-center justify-center leading-none">
                 <span class="text-base font-bold font-heading <%= scoreText %>"><%= match.matchScore %></span>
-                <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">%</span>
+                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">%</span>
               </div>
             </div>
 
             <!-- Job category tag -->
-            <span class="badge absolute bottom-4 left-4 bg-white/95 text-gray-800 border border-[var(--border)] shadow-sm">
+            <span class="badge absolute bottom-4 left-4 bg-white/95 text-slate-800 border border-slate-100 shadow-sm">
               <%= match.propertytype %>
             </span>
           </div>
@@ -296,9 +296,9 @@
           <div class="match-card__body">
             
             <div>
-              <h3 class="job-title"><%= match.houseName %></h3>
-              <p class="text-xs text-gray-400 flex items-center gap-1 mt-1.5 font-medium">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              <h3 class="job-title truncate"><%= match.houseName %></h3>
+              <p class="text-xs text-slate-400 flex items-center gap-1 mt-1.5 font-medium">
+                <i class="fa-solid fa-map-pin text-slate-300"></i>
                 <%= match.location %>
               </p>
             </div>
@@ -308,30 +308,30 @@
 
             <!-- MATCH REASON INSIGHT BOX -->
             <div class="insight-banner <%= aiUsed ? 'insight-banner-ai' : 'insight-banner-local' %> mt-2">
-              <div class="flex items-center gap-1.5 mb-1 text-[10px] font-bold tracking-wider uppercase font-display">
+              <div class="flex items-center gap-1.5 mb-1 text-[10px] font-bold tracking-wider uppercase font-heading">
                 <% if (aiUsed) { %>
                   <i class="fa-solid fa-microchip"></i> AI Recommendation
                 <% } else { %>
                   <i class="fa-solid fa-bolt"></i> Local Smart Fit
                 <% } %>
               </div>
-              <p class="text-xs font-medium leading-relaxed">
+              <p class="text-xs font-semibold leading-relaxed">
                 <%= match.matchReason %>
               </p>
             </div>
 
             <!-- ACTIONS -->
-            <div class="mt-4 pt-4 border-t border-[var(--border)] flex items-center justify-between gap-3">
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
               <div class="text-left">
-                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider block">Rating</span>
-                <span class="text-xs font-bold text-gray-800 flex items-center gap-1 mt-0.5">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="#f59e0b" stroke="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider block">Rating</span>
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1 mt-0.5">
+                  <i class="fa-solid fa-star text-amber-400"></i>
                   <%= match.rating %>
                 </span>
               </div>
               
               <a href="/homes/<%= match._id %>" class="apply-btn flex-1">
-                View & Apply →
+                View & Apply &rarr;
               </a>
             </div>
 
@@ -347,8 +347,8 @@
   <!-- RE-EVALUATE BUTTON -->
   <% if (!profileIncomplete && matches.length > 0) { %>
     <div class="mt-16 text-center fade-up">
-      <p class="text-xs text-gray-400 font-medium">Not seeing the jobs you want?</p>
-      <a href="/profile" class="inline-flex items-center gap-2 text-xs font-bold text-gray-800 hover:text-black mt-2 underline transition">
+      <p class="text-xs text-slate-400 font-medium">Not seeing the jobs you want?</p>
+      <a href="/profile" class="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 mt-2 underline transition">
         <i class="fa-solid fa-pen-to-square"></i> Refine bio & skills tags in your profile
       </a>
     </div>

@@ -1,23 +1,89 @@
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <%- include('../partials/head') %>   
-  </head>
-   
-  <body>
-    <!-- <%- include('../partials/header') %> -->
-     <%- include('../partials/header', { 
-      isLoggedIn: isLoggedIn, 
-      user: user 
-}) %>
-    <main class="container mx-auto mt-20 text-center">
-      <h2 class="text-6xl font-bold text-red-500 mb-4">404</h2>
-      <p class="text-2xl text-gray-700 mb-8">Oops! Page Not Found</p>
-      <a
-        href="/"
-        class="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-600 transition duration-300"
-        >Go Back Home</a
-      >
-    </main>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   
+  <%- include('../partials/head', { pageTitle: 'Page Not Found - Campus Gigs' }) %>
+  
+  <style>
+    :root {
+      --brand-primary: #6366f1;
+      --brand-slate: #0f172a;
+      --bg-light: #f8fafc;
+      --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.01);
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-light);
+      color: #334155;
+    }
+    .font-heading { font-family: 'Outfit', sans-serif; }
+    .premium-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: var(--card-shadow);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <!-- NAVBAR HEADER -->
+  <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-grow flex items-center justify-center p-6 sm:p-10 pt-28 pb-20">
+    
+    <div class="premium-card max-w-lg w-full text-center p-10 sm:p-14 rounded-[32px] shadow-xl relative overflow-hidden">
+      <!-- Ambient glow -->
+      <div class="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-emerald-500/5 blur-3xl pointer-events-none"></div>
+
+      <!-- Icon/Graphic -->
+      <div class="w-20 h-20 bg-indigo-50 border border-indigo-100 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
+        <i class="fa-solid fa-compass-drafting text-indigo-600 text-3xl animate-spin" style="animation-duration: 6s;"></i>
+      </div>
+
+      <!-- Error Code -->
+      <h1 class="font-heading text-8xl font-black tracking-tighter leading-none bg-gradient-to-r from-indigo-500 to-emerald-500 bg-clip-text text-transparent">
+        404
+      </h1>
+      
+      <!-- Headline -->
+      <h2 class="font-heading text-3xl font-extrabold text-slate-900 mt-6">
+        Lost on campus?
+      </h2>
+      
+      <!-- Description -->
+      <p class="text-sm text-slate-500 mt-4 max-w-sm mx-auto leading-relaxed">
+        The page you are looking for doesn't exist or has been moved. Let's get you back to the micro-jobs dashboard.
+      </p>
+
+      <!-- Action Button Grid -->
+      <div class="flex flex-col sm:flex-row gap-3 justify-center items-stretch mt-8 max-w-xs mx-auto">
+        <a href="/" class="bg-slate-900 hover:bg-slate-800 text-white font-heading text-xs font-bold uppercase tracking-wider py-4 px-6 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+          Go Back Home <i class="fa-solid fa-house text-[10px]"></i>
+        </a>
+        <a href="/homes" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-heading text-xs font-bold uppercase tracking-wider py-4 px-6 rounded-xl transition flex items-center justify-center gap-2">
+          Browse Tasks
+        </a>
+      </div>
+
+      <!-- Brand stamp -->
+      <p class="text-[9px] font-bold text-slate-300 uppercase tracking-widest font-heading mt-10">
+        Campus Jobs Platform
+      </p>
+    </div>
+
+  </main>
+
+  <%- include('../partials/chatbot-widget') %>
+
+</body>
 </html>

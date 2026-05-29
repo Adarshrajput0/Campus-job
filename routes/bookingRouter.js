@@ -9,7 +9,9 @@ const isAuth = (req, res, next) => {
   next();
 };
 
-router.post("/bookings", isAuth, bookingController.postBooking);
+router.post('/bookings', isAuth, bookingController.postBooking);
+router.post('/bookings/cancel/:id', isAuth, bookingController.postCancelBooking);
+router.post('/bookings/release/:id', isAuth, bookingController.postReleaseBooking);
 
 router.get("/bookings", async (req, res) => {
   if (!req.session.user) {
@@ -30,7 +32,5 @@ router.get("/bookings", async (req, res) => {
     user: req.session.user,
   });
 });
-
-router.post("/bookings/delete/:id", bookingController.deleteBooking);
 
 module.exports = router;

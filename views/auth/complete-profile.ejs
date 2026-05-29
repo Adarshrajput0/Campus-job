@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
+    .font-heading { font-family: 'Outfit', sans-serif; }
+
+    .role-card input[type="radio"] { display: none; }
+    .role-card .card-inner {
+      border: 2px solid #e2e8f0;
+      border-radius: 24px;
+      padding: 32px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .role-card .card-inner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(99,102,241,0.04) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .role-card input[type="radio"]:checked + .card-inner {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.12), 0 20px 40px -15px rgba(99,102,241,0.2);
+      transform: translateY(-4px);
+    }
+    .role-card input[type="radio"]:checked + .card-inner::before { opacity: 1; }
+    .role-card input[type="radio"]:checked + .card-inner .check-ring {
+      background: #6366f1;
+      border-color: #6366f1;
+    }
+    .role-card input[type="radio"]:checked + .card-inner .check-ring::after {
+      opacity: 1;
+    }
+    .check-ring {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .check-ring::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .icon-wrap {
+      width: 64px; height: 64px;
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 28px;
+    }
+    .guest-icon { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #7c3aed; }
+    .host-icon  { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #059669; }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+    .d1 { animation-delay: 0.1s; }
+    .d2 { animation-delay: 0.2s; }
+    .d3 { animation-delay: 0.3s; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+  <!-- Background orbs -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+    <div class="absolute -top-48 -left-48 w-96 h-96 rounded-full bg-indigo-100 blur-3xl opacity-60"></div>
+    <div class="absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-emerald-100 blur-3xl opacity-50"></div>
+  </div>
+
+  <div class="relative max-w-xl w-full">
+
+    <!-- Logo -->
+    <div class="text-center mb-10 fade-up">
+      <div class="inline-flex items-center gap-2 bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-full text-sm font-semibold text-slate-600 font-heading mb-4">
+        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+        Campus Jobs Platform
+      </div>
+      <h1 class="font-heading text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        One last step! 🎓
+      </h1>
+      <p class="text-slate-500 mt-2 text-sm leading-relaxed">
+        Your account is ready. Tell us how you want to use the platform.
+      </p>
+    </div>
+
+    <!-- Errors -->
+    <% if (errors && errors.length > 0) { %>
+    <div class="mb-6 p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-xl fade-up">
+      <p class="text-xs font-bold text-rose-700"><%= errors[0] %></p>
+    </div>
+    <% } %>
+
+    <!-- Role Card Form -->
+    <form action="/complete-profile" method="POST">
+      <div class="grid grid-cols-2 gap-5 mb-8 fade-up d1">
+
+        <!-- Guest / Helper Card -->
+        <label class="role-card">
+          <input type="radio" name="userType" value="guest" required>
+          <div class="card-inner">
+            <div class="check-ring"></div>
+            <div class="icon-wrap guest-icon">
+              <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <h3 class="font-heading text-lg font-bold text-slate-900">Helper</h3>
+            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+              Browse and apply to campus micro-gigs. Earn rewards for completing tasks.
+            </p>
+            <ul class="mt-4 space-y-1.5 text-left">
+              <li class="flex items-center gap-2 text-xs text-slate-600">
+                <i class="fa-solid fa-check text-indigo-500 text-[10px]"></i> Apply to any task
+              </li>
+              <li class="flex items-center gap-2 text-xs text-slate-600">
+                <i class="fa-solid fa-check text-indigo-500 text-[10px]"></i> Earn ₹ per gig
+              </li>
+              <li class="flex items-center gap-2 text-xs text-slate-600">
+                <i class="fa-solid fa-check text-indigo-500 text-[10px]"></i> Build your reputation
+              </li>
+            </ul>
+          </div>
+        </label>
+
+        <!-- Host Card -->
+        <label class="role-card">
+          <input type="radio" name="userType" value="host">
+          <div class="card-inner">
+            <div class="check-ring"></div>
+            <div class="icon-wrap host-icon">
+              <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <h3 class="font-heading text-lg font-bold text-slate-900">Host</h3>
+            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+              Post tasks you need done and hire the best campus helpers for your gigs.
+            </p>
+            <ul class="mt-4 space-y-1.5 text-left">
+              <li class="flex items-center gap-2 text-xs text-slate-600">
+                <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Post unlimited tasks
+              </li>
+              <li class="flex items-center gap-2 text-xs text-slate-600">
+                <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Review applicants
+              </li>
+              <li class="flex items-center gap-2 text-xs text-slate-600">
+                <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Chat with helpers
+              </li>
+            </ul>
+          </div>
+        </label>
+
+      </div>
+
+      <div class="fade-up d2">
+        <button type="submit"
+          class="w-full bg-slate-900 hover:bg-indigo-600 text-white font-heading font-bold text-sm uppercase tracking-wider py-4 rounded-2xl transition-all duration-200 shadow-md hover:shadow-indigo-500/30 flex items-center justify-center gap-2">
+          Continue to Dashboard <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+      </div>
+
+      <p class="text-center text-[11px] text-slate-400 mt-5 fade-up d3">
+        You can change your role later from your profile settings.
+      </p>
+    </form>
+
+  </div>
+
+</body>
+</html>

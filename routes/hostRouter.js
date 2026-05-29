@@ -3,27 +3,44 @@ const hostRouter = express.Router();
 const hostController = require("../controllers/hostController");
 const upload = require("../utils/multer");
 
-hostRouter.get("/add-home", hostController.getAddHome);
+// 🔒 Host-only guard — applied to every route in this router
+const isHost = (req, res, next) => {
+  if (!req.session.isLoggedIn) {
+    return res.redirect("/login");
+  }
+  if (!req.session.user || req.session.user.userType !== "host") {
+    // Logged in but not a host → send back to index
+    return res.redirect("/");
+  }
+  next();
+};
+
+hostRouter.get("/add-home", isHost, hostController.getAddHome);
 
 hostRouter.post(
   "/add-home",
-  upload.single("photo"),
+  isHost,
+  upload.array("files", 10),
   hostController.postAddHome,
 );
 
-hostRouter.get("/host-home-list", hostController.getHostHomes);
+hostRouter.get("/home-added", isHost, hostController.getHomeAdded);
 
-hostRouter.get("/edithome/:homeId", hostController.getEditHome);
+hostRouter.get("/host-home-list", isHost, hostController.getHostHomes);
+
+hostRouter.get("/edithome/:homeId", isHost, hostController.getEditHome);
 
 hostRouter.post(
   "/edithome",
-  upload.single("photo"),
+  isHost,
+  upload.array("files", 10),
   hostController.postEditHome,
 );
 
-hostRouter.post("/delete-home/:homeId", hostController.postDeleteHome);
+hostRouter.post("/delete-home/:homeId", isHost, hostController.postDeleteHome);
 
-hostRouter.post("/complete-home/:homeId", hostController.postCompleteHome);
-hostRouter.post("/bookings/select/:bookingId", hostController.postSelectBooking);
+hostRouter.post("/complete-home/:homeId", isHost, hostController.postCompleteHome);
+
+hostRouter.post("/bookings/select/:bookingId", isHost, hostController.postSelectBooking);
 
 module.exports = hostRouter;

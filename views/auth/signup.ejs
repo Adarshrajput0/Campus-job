@@ -1,334 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signup</title>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <%- include('../partials/head', { pageTitle: 'Signup - Campus Gigs' }) %>
+  
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --ink: #0d0d0d;
-      --cream: #f5f0e8;
-      --lime: #c8f04a;
-      --muted: #6b6b6b;
-      --border: #e2ddd4;
-      --red: #e53e3e;
+      --brand-primary: #6366f1;
+      --brand-emerald: #10b981;
+      --brand-slate: #0f172a;
+      --bg-light: #f8fafc;
+      --border-soft: #f1f5f9;
+      --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.01);
     }
-
     body {
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      background: var(--cream);
-      padding-top: 64px; /* offset for fixed header */
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-light);
+      color: #334155;
     }
-
-    .page-shell {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      min-height: calc(100vh - 64px);
+    .font-heading { font-family: 'Outfit', sans-serif; }
+    .premium-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: var(--card-shadow);
     }
-
-    /* ── LEFT PANEL ── */
-    .left-panel {
-      background: var(--ink);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 56px 52px;
-      position: relative;
-      overflow: hidden;
-    }
-    .left-panel::before {
-      content: '';
-      position: absolute;
-      top: -100px; right: -100px;
-      width: 380px; height: 380px;
-      background: var(--lime);
-      border-radius: 50%;
-      opacity: 0.07;
-    }
-    .left-panel::after {
-      content: '';
-      position: absolute;
-      bottom: -60px; left: -60px;
-      width: 240px; height: 240px;
-      background: var(--lime);
-      border-radius: 50%;
-      opacity: 0.05;
-    }
-
-    .panel-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(200,240,74,0.1);
-      border: 1px solid rgba(200,240,74,0.22);
-      color: var(--lime);
-      font-family: 'Syne', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 7px 14px;
-      border-radius: 100px;
-      width: fit-content;
-    }
-    .pulse {
-      width: 6px; height: 6px;
-      background: var(--lime);
-      border-radius: 50%;
-      animation: pulse 1.8s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { opacity:1; transform:scale(1); }
-      50%      { opacity:0.4; transform:scale(1.6); }
-    }
-
-    .panel-headline {
-      font-family: 'Clash Display', sans-serif;
-      font-size: clamp(2rem, 3vw, 3.2rem);
-      font-weight: 700;
-      color: white;
-      line-height: 1.06;
-      letter-spacing: -0.02em;
-      margin-top: 28px;
-    }
-    .panel-headline em { font-style: normal; color: var(--lime); }
-
-    .panel-sub {
-      color: rgba(255,255,255,0.42);
-      font-size: 0.88rem;
-      line-height: 1.65;
-      margin-top: 14px;
-      max-width: 320px;
-    }
-
-    .panel-steps { margin-top: 44px; display: flex; flex-direction: column; gap: 18px; }
-    .step { display: flex; align-items: flex-start; gap: 14px; }
-    .step-num {
-      width: 28px; height: 28px; flex-shrink: 0;
-      border-radius: 50%;
-      background: rgba(200,240,74,0.12);
-      border: 1px solid rgba(200,240,74,0.28);
-      color: var(--lime);
-      font-family: 'Syne', sans-serif;
-      font-size: 0.72rem; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .step-text { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.5; padding-top: 5px; }
-    .step-text strong { color: rgba(255,255,255,0.85); display: block; font-weight: 500; }
-
-    .panel-footer {
-      font-size: 0.72rem;
-      color: rgba(255,255,255,0.18);
-      font-family: 'Syne', sans-serif;
-      letter-spacing: 0.06em;
-    }
-
-    /* ── RIGHT PANEL ── */
-    .right-panel {
-      overflow-y: auto;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 52px 40px;
-      background: var(--cream);
-    }
-
-    .signup-box {
+    .input-form-field {
       width: 100%;
-      max-width: 420px;
-      animation: fadeUp 0.55s ease both;
+      padding: 12px 14px 12px 40px;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      background: white;
+      outline: none;
+      font-size: 0.88rem;
+      color: #1e293b;
+      transition: all 0.2s;
     }
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(18px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-
-    .signup-box__header { margin-bottom: 32px; }
-    .signup-box__title {
-      font-family: 'Clash Display', sans-serif;
-      font-size: 2rem; font-weight: 700;
-      color: var(--ink); letter-spacing: -0.02em;
-    }
-    .signup-box__sub { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
-    .signup-box__sub a {
-      color: var(--ink); font-weight: 600;
-      text-decoration: none; border-bottom: 1px solid var(--ink);
-    }
-
-    /* ERROR */
-    .error-alert {
-      background: #fff5f5;
-      border: 1px solid #fed7d7;
-      border-left: 3px solid var(--red);
-      border-radius: 12px;
-      padding: 14px 16px; margin-bottom: 22px;
-      display: flex; gap: 10px; align-items: flex-start;
-    }
-    .error-alert > i { color: var(--red); font-size: 0.85rem; margin-top: 2px; flex-shrink: 0; }
-    .error-alert-body { flex: 1; }
-    .error-header {
-      font-size: 0.8rem; font-weight: 600; color: var(--red);
-      margin-bottom: 6px; font-family: 'Syne', sans-serif; letter-spacing: 0.04em;
-    }
-    .error-list { list-style: none; font-size: 0.8rem; color: #c53030; line-height: 1.7; }
-
-    /* FIELDS */
-    .row { display: flex; gap: 14px; }
-    .field { margin-bottom: 16px; width: 100%; }
-    .field-label {
-      display: block; font-size: 0.74rem; font-weight: 700;
-      color: var(--ink); letter-spacing: 0.08em; text-transform: uppercase;
-      margin-bottom: 7px; font-family: 'Syne', sans-serif;
-    }
-    .input-wrap { position: relative; }
-    .input-wrap i {
-      position: absolute; left: 14px; top: 50%;
-      transform: translateY(-50%); color: #bbb;
-      font-size: 0.82rem; pointer-events: none; transition: color 0.2s;
-    }
-    .input-wrap input {
-      width: 100%; padding: 13px 14px 13px 40px;
-      border: 1.5px solid var(--border); border-radius: 12px;
-      background: white; font-family: 'DM Sans', sans-serif;
-      font-size: 0.88rem; color: var(--ink); outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .input-wrap input::placeholder { color: #c5c0b8; }
-    .input-wrap input:focus {
-      border-color: var(--ink);
-      box-shadow: 0 0 0 4px rgba(13,13,13,0.06);
-    }
-    .input-wrap:focus-within i { color: var(--ink); }
-
-    /* ROLE SELECTOR */
-    .role-label {
-      font-size: 0.74rem; font-weight: 700; color: var(--ink);
-      letter-spacing: 0.08em; text-transform: uppercase;
-      font-family: 'Syne', sans-serif; display: block; margin-bottom: 10px;
-    }
-    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
-    .role-option { position: relative; }
-    .role-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
-    .role-card {
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      padding: 18px 12px; border: 1.5px solid var(--border); border-radius: 14px;
-      background: white; cursor: pointer;
-      transition: border-color 0.18s, background 0.18s, transform 0.15s;
-      user-select: none;
-    }
-    .role-card i { font-size: 1.3rem; color: var(--muted); transition: color 0.18s; }
-    .role-card span {
-      font-size: 0.82rem; font-weight: 600; color: var(--muted);
-      font-family: 'Syne', sans-serif; letter-spacing: 0.04em; transition: color 0.18s;
-    }
-    .role-option input:checked ~ .role-card {
-      border-color: var(--ink); background: var(--ink);
-      transform: translateY(-2px); box-shadow: 0 6px 16px rgba(13,13,13,0.12);
-    }
-    .role-option input:checked ~ .role-card i,
-    .role-option input:checked ~ .role-card span { color: var(--lime); }
-
-    /* TERMS */
-    .terms-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 22px; }
-    .terms-row input[type="checkbox"] {
-      width: 16px; height: 16px; accent-color: var(--ink);
-      cursor: pointer; margin-top: 2px; flex-shrink: 0;
-    }
-    .terms-row span { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
-    .terms-row a { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 1px solid currentColor; }
-
-    /* SUBMIT */
-    .submit-btn {
-      width: 100%; padding: 15px; border: none; border-radius: 13px;
-      background: var(--ink); color: var(--lime);
-      font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      cursor: pointer; transition: background 0.18s, transform 0.12s;
-    }
-    .submit-btn:hover { background: #222; }
-    .submit-btn:active { transform: scale(0.99); }
-
-    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0 0; }
-    .divider-line { flex: 1; height: 1px; background: var(--border); }
-    .divider-text { font-size: 0.75rem; color: #bbb; }
-
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      .page-shell { grid-template-columns: 1fr; }
-      .left-panel { display: none; }
-      .right-panel { padding: 36px 24px; }
-    }
-    @media (max-width: 400px) {
-      .row { flex-direction: column; gap: 0; }
+    .input-form-field:focus {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
   </style>
 </head>
 
-<body>
+<body class="min-h-screen flex flex-col">
 
-  <%- include('../partials/header') %>
+  <!-- NAVBAR HEADER -->
+  <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
 
-  <div class="page-shell">
+  <!-- SPLIT CONTENT SHELL -->
+  <div class="flex-grow grid grid-cols-1 md:grid-cols-12 pt-16">
 
-    <!-- LEFT PANEL -->
-    <div class="left-panel">
-      <div>
-        <span class="panel-eyebrow"><span class="pulse"></span> Join the Platform</span>
+    <!-- LEFT: BRAND PANEL (Visible on MD and up) -->
+    <div class="hidden md:flex md:col-span-5 lg:col-span-4 bg-slate-950 text-white flex-col justify-between p-10 lg:p-12 relative overflow-hidden">
+      <!-- Ambient decorative elements -->
+      <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none"></div>
 
-        <h2 class="panel-headline">
-          Start earning<br>on <em>your campus</em><br>today.
+      <div class="relative z-10 my-auto space-y-8">
+        <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+          Join the Platform
+        </div>
+        
+        <h2 class="font-heading text-4xl lg:text-5xl font-extrabold leading-[1.1] tracking-tight">
+          Start earning<br>on <span class="bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">your campus</span><br>today.
         </h2>
-        <p class="panel-sub">
+        <p class="text-sm lg:text-base text-slate-400 max-w-sm leading-relaxed">
           Create an account to post tasks, find micro-gigs, and connect with your campus community.
         </p>
 
-        <div class="panel-steps">
-          <div class="step">
-            <span class="step-num">1</span>
-            <p class="step-text"><strong>Create your account</strong>Takes less than a minute.</p>
+        <!-- Steps display -->
+        <div class="space-y-4 pt-4">
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+            <div class="text-xs">
+              <strong class="text-slate-200 block font-semibold">Create your account</strong>
+              <span class="text-slate-500">Takes less than a minute.</span>
+            </div>
           </div>
-          <div class="step">
-            <span class="step-num">2</span>
-            <p class="step-text"><strong>Pick your role</strong>Join as a Guest or Host.</p>
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+            <div class="text-xs">
+              <strong class="text-slate-200 block font-semibold">Pick your role</strong>
+              <span class="text-slate-500">Join as a student Helper or a Host.</span>
+            </div>
           </div>
-          <div class="step">
-            <span class="step-num">3</span>
-            <p class="step-text"><strong>Start earning</strong>Browse jobs and apply instantly.</p>
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+            <div class="text-xs">
+              <strong class="text-slate-200 block font-semibold">Start earning</strong>
+              <span class="text-slate-500">Browse live jobs and apply instantly.</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <p class="panel-footer">© Campus Jobs Platform</p>
+      <p class="relative z-10 text-[10px] text-slate-600 font-semibold tracking-wider uppercase font-heading">
+        © Campus Jobs Platform
+      </p>
     </div>
 
-    <!-- RIGHT PANEL -->
-    <div class="right-panel">
-      <div class="signup-box">
-
-        <div class="signup-box__header">
-          <h2 class="signup-box__title">Create Account</h2>
-          <p class="signup-box__sub">
-            Already have an account? <a href="/login">Log in</a>
+    <!-- RIGHT: FORM PANEL -->
+    <div class="col-span-1 md:col-span-7 lg:col-span-8 flex items-center justify-center p-6 sm:p-10 bg-slate-50 overflow-y-auto">
+      
+      <div class="premium-card p-8 sm:p-10 rounded-[28px] max-w-md w-full shadow-lg my-8">
+        
+        <div class="mb-8">
+          <h2 class="font-heading text-3xl font-extrabold text-slate-900">Create Account</h2>
+          <p class="text-xs text-slate-500 mt-2">
+            Already have an account? 
+            <a href="/login" class="text-indigo-600 hover:underline font-bold ml-1">Log in</a>
           </p>
         </div>
 
-        <form action="/signup" method="POST">
+        <form action="/signup" method="POST" class="space-y-4">
 
+          <!-- ERRORS -->
           <% if (errors.length > 0) { %>
-          <div class="error-alert">
-            <i class="fas fa-exclamation-circle"></i>
-            <div class="error-alert-body">
-              <p class="error-header">Please fix the following</p>
-              <ul class="error-list">
+          <div class="p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-xl flex items-start gap-3 shadow-sm mb-4">
+            <i class="fa-solid fa-circle-exclamation text-rose-600 text-lg mt-0.5"></i>
+            <div>
+              <p class="text-xs font-bold text-rose-800 font-heading">Please fix the following:</p>
+              <ul class="list-disc pl-5 mt-1 text-[11px] text-rose-700 space-y-0.5">
                 <% errors.slice(0,5).forEach(error => { %>
                   <li><%= error %></li>
                 <% }) %>
@@ -337,94 +137,154 @@
           </div>
           <% } %>
 
-          <!-- NAME ROW -->
-          <div class="row">
-            <div class="field">
-              <label class="field-label" for="firstName">First Name</label>
-              <div class="input-wrap">
-                <input type="text" id="firstName" name="firstName"
-                  value="<%= oldInput.firstName || '' %>" placeholder="John" required />
-                <i class="fa-solid fa-user"></i>
+          <!-- FIRST / LAST NAME ROW -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="firstName">First Name</label>
+              <div class="relative">
+                <i class="fa-regular fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  class="input-form-field"
+                  placeholder="John"
+                  value="<%= oldInput.firstName || '' %>"
+                  required
+                />
               </div>
             </div>
-            <div class="field">
-              <label class="field-label" for="lastName">Last Name</label>
-              <div class="input-wrap">
-                <input type="text" id="lastName" name="lastName"
-                  value="<%= oldInput.lastName || '' %>" placeholder="Doe" required />
-                <i class="fa-solid fa-user"></i>
+            <div class="space-y-2">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="lastName">Last Name</label>
+              <div class="relative">
+                <i class="fa-regular fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  class="input-form-field"
+                  placeholder="Doe"
+                  value="<%= oldInput.lastName || '' %>"
+                  required
+                />
               </div>
             </div>
           </div>
 
           <!-- EMAIL -->
-          <div class="field">
-            <label class="field-label" for="email">Email Address</label>
-            <div class="input-wrap">
-              <input type="email" id="email" name="email"
-                value="<%= oldInput.email || '' %>" placeholder="you@university.edu" required />
-              <i class="fa-solid fa-envelope"></i>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="email">Email Address</label>
+            <div class="relative">
+              <i class="fa-regular fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="input-form-field"
+                placeholder="you@university.edu"
+                value="<%= oldInput.email || '' %>"
+                required
+              />
             </div>
           </div>
 
           <!-- PASSWORD -->
-          <div class="field">
-            <label class="field-label" for="password">Password</label>
-            <div class="input-wrap">
-              <input type="password" id="password" name="password"
-                placeholder="Create a password" required />
-              <i class="fa-solid fa-lock"></i>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="password">Password</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="input-form-field"
+                placeholder="Create a password"
+                required
+              />
             </div>
           </div>
 
           <!-- CONFIRM PASSWORD -->
-          <div class="field">
-            <label class="field-label" for="confirmPassword">Confirm Password</label>
-            <div class="input-wrap">
-              <input type="password" id="confirmPassword" name="confirmPassword"
-                placeholder="Repeat your password" required />
-              <i class="fa-solid fa-lock"></i>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="confirmPassword">Confirm Password</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                class="input-form-field"
+                placeholder="Repeat your password"
+                required
+              />
             </div>
           </div>
 
-          <!-- ROLE -->
-          <span class="role-label">I want to register as:</span>
-          <div class="role-grid">
-            <label class="role-option">
-              <input type="radio" name="userType" value="guest"
-                <%= oldInput.userType === 'guest' ? 'checked' : '' %> />
-              <div class="role-card">
-                <i class="fa-solid fa-user-graduate"></i>
-                <span>Guest</span>
-              </div>
-            </label>
-            <label class="role-option">
-              <input type="radio" name="userType" value="host"
-                <%= oldInput.userType === 'host' ? 'checked' : '' %> />
-              <div class="role-card">
-                <i class="fa-solid fa-house-user"></i>
-                <span>Host</span>
-              </div>
-            </label>
+          <!-- ROLE SELECTOR -->
+          <div class="space-y-2 pt-1">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading">Register As</span>
+            
+            <div class="grid grid-cols-2 gap-3">
+              <label class="relative block cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="userType" 
+                  value="guest" 
+                  class="peer sr-only" 
+                  <%= oldInput.userType === 'guest' ? 'checked' : '' %> 
+                  required 
+                />
+                <div class="p-4 border border-slate-200 rounded-2xl text-center hover:border-slate-300 transition duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 peer-checked:text-indigo-600 flex flex-col items-center gap-1.5 font-heading text-slate-500">
+                  <i class="fa-solid fa-user-graduate text-lg"></i>
+                  <span class="text-xs font-bold uppercase tracking-wider">Helper</span>
+                </div>
+              </label>
+              
+              <label class="relative block cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="userType" 
+                  value="host" 
+                  class="peer sr-only" 
+                  <%= oldInput.userType === 'host' ? 'checked' : '' %> 
+                />
+                <div class="p-4 border border-slate-200 rounded-2xl text-center hover:border-slate-300 transition duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 peer-checked:text-indigo-600 flex flex-col items-center gap-1.5 font-heading text-slate-500">
+                  <i class="fa-solid fa-house-user text-lg"></i>
+                  <span class="text-xs font-bold uppercase tracking-wider">Host</span>
+                </div>
+              </label>
+            </div>
           </div>
 
-          <!-- TERMS -->
-          <div class="terms-row">
-            <input type="checkbox" name="terms" id="terms" required />
-            <span>I agree to the <a href="#">Terms &amp; Conditions</a></span>
+          <!-- TERMS CHECKBOX -->
+          <div class="flex items-start gap-2.5 text-xs text-slate-500 pt-2 select-none">
+            <input 
+              type="checkbox" 
+              name="terms" 
+              id="terms" 
+              class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 accent-indigo-600 mt-0.5 cursor-pointer" 
+              required 
+            />
+            <label for="terms" class="cursor-pointer">
+              I agree to the <a href="#" class="text-indigo-600 font-semibold hover:underline">Terms &amp; Conditions</a>
+            </label>
           </div>
 
           <!-- SUBMIT -->
-          <button type="submit" class="submit-btn">Register →</button>
+          <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-heading text-xs font-bold uppercase tracking-wider py-4 rounded-xl transition shadow-md hover:shadow-indigo-500/10 flex items-center justify-center gap-2 mt-4">
+            Register <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </button>
 
-          <div class="divider">
-            <div class="divider-line"></div>
-            <span class="divider-text">Campus Jobs Platform</span>
-            <div class="divider-line"></div>
+          <!-- PLATFORM BRAND STAMP -->
+          <div class="flex items-center gap-2 py-2 mt-4">
+            <div class="flex-1 h-px bg-slate-100"></div>
+            <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest font-heading">Campus Jobs Platform</span>
+            <div class="flex-1 h-px bg-slate-100"></div>
           </div>
 
         </form>
       </div>
+
     </div>
 
   </div>

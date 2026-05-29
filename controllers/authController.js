@@ -1,182 +1,203 @@
-const { check, validationResult } = require("express-validator");
+const { clerkClient, getAuth } = require("@clerk/express");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-exports.getLogin = (req, res, next) => {
+
+const SIGN_IN_URL = process.env.CLERK_SIGN_IN_URL;
+const SIGN_UP_URL = process.env.CLERK_SIGN_UP_URL;
+const APP_URL     = process.env.APP_URL || "http://localhost:3010";
+
+// ─── GET /login → render embedded Clerk sign-in ────────────────────────────
+exports.getLogin = (req, res) => {
+  if (req.session.isLoggedIn) return res.redirect("/");
   res.render("auth/login", {
-    pageTitle: "Login",
+    pageTitle: "Sign In — Campus Jobs",
     currentPage: "login",
     isLoggedIn: false,
+    user: {},
     errors: [],
     oldInput: { email: "" },
-    user: {},
+    clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+    appUrl: APP_URL,
   });
 };
 
-exports.getSingup = (req, res, next) => {
+// ─── GET /signup → render embedded Clerk sign-up ───────────────────────────
+exports.getSingup = (req, res) => {
+  if (req.session.isLoggedIn) return res.redirect("/");
   res.render("auth/signup", {
-    pageTitle: "Signup",
+    pageTitle: "Create Account — Campus Jobs",
     currentPage: "signup",
     isLoggedIn: false,
+    user: {},
     errors: [],
     oldInput: { firstName: "", lastName: "", email: "", userType: "" },
-    user: {},
+    clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+    appUrl: APP_URL,
   });
 };
 
-exports.postSignup = [
-  check("firstName")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("First Name should be atleast 2 characters long")
-    .matches(/^[A-Za-z\s]+$/)
-    .withMessage("First Name should contain only alphabets"),
+// ─── GET /sso-callback ──────────────────────────────────────────────────────
+// Clerk redirects here after a successful sign-in or sign-up.
+// We sync the Clerk user into MongoDB, then set our express-session.
+exports.clerkCallback = async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
 
-  check("lastName")
-    .matches(/^[A-Za-z\s]*$/)
-    .withMessage("Last Name should contain only alphabets"),
+    if (!userId) {
+      console.log("[clerkCallback] No Clerk userId — session not established yet.");
+      return res.redirect("/login");
+    }
 
-  check("email")
-    .isEmail()
-    .withMessage("Please enter a valid email")
-    .normalizeEmail(),
+    // Fetch full Clerk profile
+    const clerkUser = await clerkClient.users.getUser(userId);
+    const email     = clerkUser.emailAddresses[0]?.emailAddress || "";
+    const firstName = clerkUser.firstName || "User";
+    const lastName  = clerkUser.lastName  || "";
+    const avatar    = clerkUser.imageUrl  || "";
 
-  check("password")
-    .isLength({ min: 8 })
-    .withMessage("Password should be atleast 8 characters long")
-    .matches(/[A-Z]/)
-    .withMessage("Password should contain atleast one uppercase letter")
-    .matches(/[a-z]/)
-    .withMessage("Password should contain atleast one lowercase letter")
-    .matches(/[0-9]/)
-    .withMessage("Password should contain atleast one number")
-    .matches(/[!@&]/)
-    .withMessage("Password should contain atleast one special character")
-    .trim(),
+    // Find existing user by clerkId OR email (handles legacy accounts)
+    let user = await User.findOne({ $or: [{ clerkId: userId }, { email }] });
+    let isNewUser = false;
 
-  check("confirmPassword")
-    .trim()
-    .custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error("Passwords do not match");
-      }
-      return true;
-    }),
+    if (!user) {
+      // Brand-new signup via Clerk
+      isNewUser = true;
+      user = new User({
+        clerkId: userId,
+        firstName,
+        lastName,
+        email,
+        avatar,
+        userType: "guest",
+        profileComplete: false,
+      });
+      await user.save();
+    } else {
+      // Returning user — patch any missing fields
+      let changed = false;
+      if (!user.clerkId)          { user.clerkId = userId;  changed = true; }
+      if (!user.avatar && avatar) { user.avatar  = avatar;  changed = true; }
+      if (changed) await user.save();
+    }
 
-  check("userType")
-    .notEmpty()
-    .withMessage("Please select a user type")
-    .isIn(["guest", "host"])
-    .withMessage("Invalid user type"),
+    // New user: needs to pick a role first
+    if (!user.profileComplete) {
+      req.session.pendingUserId = user._id.toString();
+      await req.session.save();
+      return res.redirect("/complete-profile");
+    }
 
-  check("terms")
-    .notEmpty()
-    .withMessage("Please accept the terms and conditions")
-    .custom((value, { req }) => {
-      if (value !== "on") {
-        throw new Error("Please accept the terms and conditions");
-      }
-      return true;
-    }),
+    // Returning user: set session and go to dashboard
+    req.session.isLoggedIn = true;
+    req.session.user = user.toObject();
+    await req.session.save();
 
-  (req, res, next) => {
-    const { firstName, lastName, email, password, userType } = req.body;
-    const errors = validationResult(req);
-    console.log("VALIDATION ERRORS:", errors.array());
+    res.redirect(user.userType === "host" ? "/host-home-list" : "/");
+  } catch (err) {
+    console.error("[clerkCallback Error]", err);
+    res.redirect("/login");
+  }
+};
 
-    if (!errors.isEmpty()) {
-      return res.status(422).render("auth/signup", {
-        pageTitle: "Signup",
+// ─── GET /complete-profile ──────────────────────────────────────────────────
+exports.getCompleteProfile = (req, res) => {
+  if (!req.session.pendingUserId) return res.redirect("/login");
+  res.render("auth/complete-profile", {
+    pageTitle: "Choose Your Role — Campus Jobs",
+    currentPage: "signup",
+    isLoggedIn: false,
+    user: {},
+    errors: [],
+  });
+};
+
+// ─── POST /complete-profile ─────────────────────────────────────────────────
+exports.postCompleteProfile = async (req, res) => {
+  try {
+    const { userType } = req.body;
+    const pendingUserId = req.session.pendingUserId;
+
+    if (!pendingUserId) return res.redirect("/login");
+
+    if (!["guest", "host"].includes(userType)) {
+      return res.render("auth/complete-profile", {
+        pageTitle: "Choose Your Role — Campus Jobs",
         currentPage: "signup",
         isLoggedIn: false,
-        errors: errors.array().map((err) => err.msg),
-        oldInput: { firstName, lastName, email, password, userType },
         user: {},
+        errors: ["Please select a valid role."],
       });
     }
 
-    const normalizedEmail = email ? email.toLowerCase().trim() : "";
+    const user = await User.findByIdAndUpdate(
+      pendingUserId,
+      { userType, profileComplete: true },
+      { new: true }
+    );
+    if (!user) return res.redirect("/login");
 
-    User.findOne({ email: normalizedEmail })
-      .then((userDoc) => {
-        if (userDoc) {
-          return res.status(422).render("auth/signup", {
-            pageTitle: "Signup",
-            currentPage: "signup",
-            isLoggedIn: false,
-            errors: ["E-Mail address already exists! Please use a different one."],
-            oldInput: { firstName, lastName, email, password, userType },
-            user: {},
-          });
-        }
-        return bcrypt
-          .hash(password, 12)
-          .then((hashedPassword) => {
-            const user = new User({
-              firstName,
-              lastName,
-              email: normalizedEmail,
-              password: hashedPassword,
-              userType,
-            });
-            return user.save();
-          })
-          .then(() => {
-            res.redirect("/login");
-          });
-      })
-      .catch((err) => {
-        return res.status(422).render("auth/signup", {
-          pageTitle: "Signup",
-          currentPage: "signup",
-          isLoggedIn: false,
-          errors: [err.message],
-          oldInput: { firstName, lastName, email, password, userType },
-          user: {},
-        });
-      });
-  },
-];
+    delete req.session.pendingUserId;
+    req.session.isLoggedIn = true;
+    req.session.user = user.toObject();
+    await req.session.save();
 
-exports.postLogin = async (req, res, next) => {
-  const { email, password } = req.body;
-  const normalizedEmail = email ? email.toLowerCase().trim() : "";
-  const user = await User.findOne({ email: normalizedEmail });
-  if (!user) {
-    return res.status(422).render("auth/login", {
-      pageTitle: "Login",
-      currentPage: "login",
-      isLoggedIn: false,
-      errors: ["User does not exist"],
-      oldInput: { email },
-      user: {},
-    });
+    res.redirect(userType === "host" ? "/host-home-list" : "/");
+  } catch (err) {
+    console.error("[postCompleteProfile Error]", err);
+    res.redirect("/login");
   }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    return res.status(401).render("auth/login", {
-      pageTitle: "Login",
-      currentPage: "login",
-      isLoggedIn: false,
-      errors: ["Invalid password"],
-      oldInput: { email },
-      user: {},
-    });
-  }
-
-  // ✅ JSON-safe session
-  req.session.isLoggedIn = true;
-  req.session.user = user;
-
-  // Save session before redirect
-  await req.session.save((err) => {
-    if (err) console.log("Session save error:", err);
-    res.redirect("/"); // redirect only after session saved
-  });
 };
 
-exports.postLogout = (req, res, next) => {
+// ─── POST /logout ────────────────────────────────────────────────────────────
+exports.postLogout = async (req, res) => {
+  try {
+    const { sessionId } = getAuth(req);
+    if (sessionId) {
+      await clerkClient.sessions.revokeSession(sessionId);
+    }
+  } catch (err) {
+    console.error("[postLogout Clerk Error]", err);
+  }
+
   req.session.destroy(() => {
     res.redirect("/login");
   });
+};
+
+// ─── Guest Login (one-click demo access) ────────────────────────────────────
+exports.guestLogin = async (req, res) => {
+  try {
+    const GUEST_EMAIL = "guest@campusjobs.demo";
+    let guestUser = await User.findOne({ email: GUEST_EMAIL });
+
+    if (!guestUser) {
+      const dummyHash = await bcrypt.hash(
+        "GuestAcc@" + Math.random().toString(36).slice(2),
+        12
+      );
+      guestUser = new User({
+        firstName: "Guest",
+        lastName: "Student",
+        email: GUEST_EMAIL,
+        password: dummyHash,
+        userType: "guest",
+        profileComplete: true,
+        bio: "Exploring campus micro-jobs as a guest visitor.",
+        skills: [],
+        location: "Campus",
+        expectedPrice: 0,
+      });
+      await guestUser.save();
+    }
+
+    req.session.isLoggedIn = true;
+    req.session.user = guestUser;
+    await req.session.save((err) => {
+      if (err) console.log("[GuestLogin] Session save error:", err);
+      res.redirect("/homes");
+    });
+  } catch (err) {
+    console.error("[GuestLogin Error]", err);
+    res.redirect("/login");
+  }
 };

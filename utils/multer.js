@@ -4,24 +4,20 @@ const cloudinary = require("./cloudinary");
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: "airbnb_DEV",
-    allowed_formats: ["jpg", "jpeg", "png"],
+  params: async (req, file) => {
+    return {
+      folder: "campus_tasks",
+      resource_type: "auto",
+      use_filename: true,
+      unique_filename: true,
+    };
   },
 });
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image/")) {
-    cb(null, true);
-  } else {
-    req.fileValidationError = "Only image files (jpg, jpeg, png) are allowed!";
-    cb(null, false);
-  }
-};
-
-const upload = multer({ 
+const upload = multer({
   storage: storage,
-  fileFilter: fileFilter
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB per file
 });
 
 module.exports = upload;
+

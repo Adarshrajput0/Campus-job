@@ -1,61 +1,84 @@
-<header>
-  <nav class="navbar">
-    <div class="nav-container">
+<header class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all duration-300">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
 
-      <!-- LOGO → always goes home -->
-      <a href="/" class="logo">
-        <div class="logo-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="currentColor">
+      <!-- LOGO -->
+      <a href="/" class="flex items-center gap-2 group">
+        <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-sm">
+          <svg viewBox="0 0 24 24" class="w-5 h-5 fill-indigo-400 group-hover:fill-emerald-400 transition-colors duration-300">
             <path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5s2.5 1.1 2.5 2.5S13.4 11.5 12 11.5z"/>
           </svg>
         </div>
-        <span>Campus Job</span>
+        <span class="font-heading font-extrabold text-lg text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600">
+          Campus Job
+        </span>
       </a>
 
-      <!-- RIGHT -->
-      <div class="nav-right">
+      <!-- RIGHT SIDE: NAVIGATION LINKS -->
+      <div class="flex items-center gap-1 sm:gap-2">
 
         <% if (isLoggedIn) { %>
           <% if (typeof user !== 'undefined' && user && user.userType === 'guest') { %>
 
-            <a href="/homes" class="nav-link">
-              <i class="fa-solid fa-list-check"></i> Tasks
+            <a href="/homes" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'Home' ? 'active' : '' %>">
+              <i class="fa-solid fa-list-check text-xs"></i>
+              <span>Tasks</span>
             </a>
-            <a href="/smart-matches" class="nav-link">
-              <i class="fa-solid fa-circle-nodes text-[var(--lime-dark)]"></i> Smart Matches
+            <a href="/smart-matches" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'bookings' && typeof user !== 'undefined' ? '' : (typeof currentPage !== 'undefined' && currentPage === 'favourites' ? '' : (typeof currentPage !== 'undefined' && currentPage === 'profile' ? '' : (typeof currentPage !== 'undefined' && currentPage === 'Home' ? '' : 'active'))) %>">
+              <i class="fa-solid fa-circle-nodes text-xs"></i>
+              <span>Smart Matches</span>
             </a>
-            <a href="/favourites" class="nav-link">
-              <i class="fa-solid fa-bookmark"></i> Saved
+            <a href="/favourites" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'favourites' ? 'active' : '' %>">
+              <i class="fa-solid fa-bookmark text-xs"></i>
+              <span>Saved</span>
             </a>
-            <a href="/bookings" class="nav-link">
-              <i class="fa-solid fa-clipboard-check"></i> My Tasks
+            <a href="/bookings" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'bookings' ? 'active' : '' %>">
+              <i class="fa-solid fa-clipboard-check text-xs"></i>
+              <span>My Tasks</span>
             </a>
-            <a href="/profile" class="nav-link">
-              <i class="fa-solid fa-user-gear"></i> Profile
+            <a href="/profile" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'profile' ? 'active' : '' %>">
+              <i class="fa-solid fa-user-gear text-xs"></i>
+              <span>Profile</span>
             </a>
 
           <% } else { %>
 
-            <a href="/host-home-list" class="nav-link">
-              <i class="fa-solid fa-bars-progress"></i> Dashboard
+            <a href="/host-home-list" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'host-dashboard' ? 'active' : '' %>">
+              <i class="fa-solid fa-bars-progress text-xs"></i>
+              <span>Dashboard</span>
             </a>
-            <a href="/add-home" class="nav-cta">
-              <i class="fa-solid fa-plus"></i> Post Task
+            <a href="/add-home" class="cta-btn-gradient">
+              <i class="fa-solid fa-plus text-xs"></i>
+              <span>Post Task</span>
             </a>
 
           <% } %>
         <% } else { %>
 
-          <a href="/login" class="nav-ghost">Login</a>
-          <a href="/signup" class="nav-cta">Signup</a>
+          <a href="/login" class="login-ghost-btn">Login</a>
+          <a href="/signup" class="cta-btn-gradient">Signup</a>
 
         <% } %>
 
-        <form action="/logout" method="POST">
-          <button type="submit" class="nav-logout">
-            <i class="fa-solid fa-right-from-bracket"></i>
-          </button>
-        </form>
+        <% if (isLoggedIn) { %>
+          <a href="<%= (typeof user !== 'undefined' && user.userType === 'host') ? '/host-home-list' : '/bookings' %>" class="relative inline-flex items-center ml-1 sm:ml-2">
+            <div class="w-9 h-9 rounded-xl border border-slate-200 bg-white text-slate-500 flex items-center justify-center hover:bg-slate-50 hover:text-indigo-600 transition shadow-sm" title="Messages">
+              <i class="fa-regular fa-comment-dots"></i>
+              <% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %>
+                <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 text-[9px] font-bold text-white items-center justify-center shadow-sm"><%= unreadCount %></span>
+                </span>
+              <% } %>
+            </div>
+          </a>
+
+          <form action="/logout" method="POST" class="inline-block ml-2">
+            <button type="submit" class="logout-btn-item" title="Logout">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </form>
+        <% } %>
 
       </div>
     </div>
@@ -63,167 +86,108 @@
 </header>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap');
-
-  :root {
-    --ink: #0d0d0d;
-    --cream: #f5f0e8;
-    --lime: #c8f04a;
-    --border: #e2ddd4;
-    --muted: #6b6b6b;
-  }
-
-  /* ── NAVBAR ── */
-  .navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(245, 240, 232, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    z-index: 999;
-  }
-
-  .nav-container {
-    max-width: 1280px;
-    margin: auto;
-    padding: 0 40px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  /* ── LOGO ── */
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    transition: opacity 0.18s;
-  }
-  .logo:hover { opacity: 0.75; }
-
-  .logo-icon-wrap {
-    width: 34px; height: 34px;
-    background: var(--ink);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .logo-icon-wrap svg {
-    width: 18px; height: 18px;
-    fill: var(--lime);
-  }
-
-  .logo span {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-  }
-
-  /* ── RIGHT SIDE ── */
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  /* plain nav links */
-  .nav-link {
-    display: flex;
+  .nav-link-item {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 14px;
-    border-radius: 100px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748b; /* slate-500 */
+    transition: all 0.2s ease;
     text-decoration: none;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: background 0.18s, color 0.18s;
-    white-space: nowrap;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .nav-link:hover {
-    background: white;
-    color: var(--ink);
+  .nav-link-item:hover {
+    color: #0f172a; /* slate-900 */
+    background-color: #f1f5f9; /* slate-100 */
   }
-  .nav-link i { font-size: 0.82rem; }
-
-  /* ghost / outline button */
-  .nav-ghost {
-    display: flex;
-    align-items: center;
-    padding: 8px 16px;
-    border-radius: 100px;
-    text-decoration: none;
-    color: var(--ink);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border: 1.5px solid var(--border);
-    background: transparent;
-    transition: border-color 0.18s, background 0.18s;
-  }
-  .nav-ghost:hover {
-    border-color: var(--ink);
-    background: white;
+  .nav-link-item.active {
+    color: #6366f1; /* indigo-500 */
+    background-color: #eeebff; /* indigo-50 */
   }
 
-  /* primary CTA */
-  .nav-cta {
-    display: flex;
+  .cta-btn-gradient {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 9px 18px;
-    border-radius: 100px;
-    text-decoration: none;
-    background: var(--ink);
-    color: var(--lime);
-    font-family: 'Syne', sans-serif;
-    font-size: 0.8rem;
+    border-radius: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.04em;
-    transition: background 0.18s, transform 0.12s;
-    white-space: nowrap;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #4f46e5 0%, #10b981 100%);
+    color: white;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.2);
+    transition: all 0.2s ease;
+    text-decoration: none;
   }
-  .nav-cta:hover { background: #222; transform: translateY(-1px); }
-  .nav-cta i { font-size: 0.78rem; }
+  .cta-btn-gradient:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+    opacity: 0.95;
+  }
 
-  /* logout — icon only */
-  .nav-logout {
-    width: 36px; height: 36px;
-    border-radius: 100px;
-    border: 1.5px solid var(--border);
+  .login-ghost-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #0f172a;
+    border: 1.5px solid #e2e8f0;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .login-ghost-btn:hover {
+    border-color: #0f172a;
+    background-color: #f8fafc;
+  }
+
+  .logout-btn-item {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    border: 1.5px solid #fee2e2;
     background: transparent;
-    color: var(--muted);
-    font-size: 0.85rem;
+    color: #ef4444;
+    font-size: 0.82rem;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: border-color 0.18s, color 0.18s, background 0.18s;
-    margin-left: 4px;
+    transition: all 0.2s ease;
   }
-  .nav-logout:hover {
-    border-color: #e53e3e;
-    color: #e53e3e;
-    background: #fff5f5;
+  .logout-btn-item:hover {
+    border-color: #ef4444;
+    background-color: #fee2e2;
   }
 
-  /* ── MOBILE ── */
-  @media (max-width: 640px) {
-    .nav-container { padding: 0 20px; }
-    .nav-link span, .nav-link { font-size: 0; padding: 8px 10px; }
-    .nav-link i { font-size: 1rem; margin: 0; }
-    .nav-cta { padding: 9px 14px; font-size: 0; }
-    .nav-cta i { font-size: 0.9rem; }
-    .nav-ghost { padding: 8px 12px; }
-    .logo span { font-size: 0.95rem; }
+  /* Responsive styling */
+  @media (max-width: 768px) {
+    .nav-link-item span {
+      display: none;
+    }
+    .nav-link-item {
+      padding: 10px;
+    }
+    .nav-link-item i {
+      font-size: 1.05rem;
+    }
+    .cta-btn-gradient span {
+      display: none;
+    }
+    .cta-btn-gradient {
+      padding: 10px;
+    }
+    .cta-btn-gradient i {
+      font-size: 1.05rem;
+      margin: 0;
+    }
   }
 </style>
