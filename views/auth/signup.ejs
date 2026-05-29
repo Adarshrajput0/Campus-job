@@ -31,22 +31,54 @@
       border: 1px solid rgba(226, 232, 240, 0.8);
       box-shadow: var(--card-shadow);
     }
-    .input-form-field {
+    /* Clerk component container overrides */
+    #clerk-sign-up {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       width: 100%;
-      padding: 12px 14px 12px 40px;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      background: white;
-      outline: none;
-      font-size: 0.88rem;
-      color: #1e293b;
-      transition: all 0.2s;
     }
-    .input-form-field:focus {
-      border-color: var(--brand-primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    #clerk-sign-up .cl-card {
+      box-shadow: none !important;
+      border: none !important;
+      background: transparent !important;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+    .d1 { animation-delay: 0.1s; }
+    .d2 { animation-delay: 0.2s; }
+
+    /* Loading skeleton while Clerk loads */
+    .clerk-loading {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 8px 0;
+    }
+    .skel {
+      border-radius: 12px;
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
   </style>
+
+  <!-- Clerk JS — embed sign-up on this page -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="<%= clerkPublishableKey %>"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"
+  ></script>
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -107,187 +139,61 @@
       </p>
     </div>
 
-    <!-- RIGHT: FORM PANEL -->
-    <div class="col-span-1 md:col-span-7 lg:col-span-8 flex items-center justify-center p-6 sm:p-10 bg-slate-50 overflow-y-auto">
+    <!-- RIGHT: CLERK SIGN-UP PANEL -->
+    <div class="col-span-1 md:col-span-7 lg:col-span-8 flex flex-col items-center justify-center p-6 sm:p-12 bg-slate-50 overflow-y-auto">
       
-      <div class="premium-card p-8 sm:p-10 rounded-[28px] max-w-md w-full shadow-lg my-8">
+      <div class="w-full max-w-md fade-up d1">
         
-        <div class="mb-8">
-          <h2 class="font-heading text-3xl font-extrabold text-slate-900">Create Account</h2>
-          <p class="text-xs text-slate-500 mt-2">
-            Already have an account? 
-            <a href="/login" class="text-indigo-600 hover:underline font-bold ml-1">Log in</a>
-          </p>
+        <div class="mb-6 text-center md:text-left">
+          <h1 class="font-heading text-3xl font-extrabold text-slate-900 tracking-tight">Create Account</h1>
+          <p class="text-sm text-slate-500 mt-1">Join the Campus Jobs community.</p>
         </div>
 
-        <form action="/signup" method="POST" class="space-y-4">
+        <!-- Clerk Sign-Up Component -->
+        <div id="clerk-loading" class="clerk-loading mb-2">
+          <div class="skel h-11 w-full"></div>
+          <div class="skel h-11 w-full"></div>
+          <div class="skel h-11 w-full"></div>
+          <div class="skel h-12 w-full mt-2"></div>
+        </div>
+        <div id="clerk-sign-up" class="hidden"></div>
 
-          <!-- ERRORS -->
-          <% if (errors.length > 0) { %>
-          <div class="p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-xl flex items-start gap-3 shadow-sm mb-4">
-            <i class="fa-solid fa-circle-exclamation text-rose-600 text-lg mt-0.5"></i>
-            <div>
-              <p class="text-xs font-bold text-rose-800 font-heading">Please fix the following:</p>
-              <ul class="list-disc pl-5 mt-1 text-[11px] text-rose-700 space-y-0.5">
-                <% errors.slice(0,5).forEach(error => { %>
-                  <li><%= error %></li>
-                <% }) %>
-              </ul>
-            </div>
-          </div>
-          <% } %>
+        <p class="text-center text-[11px] text-slate-400 mt-6">
+          Already have an account?
+          <a href="/login" class="text-indigo-600 font-bold hover:underline ml-1">Log in here →</a>
+        </p>
 
-          <!-- FIRST / LAST NAME ROW -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="firstName">First Name</label>
-              <div class="relative">
-                <i class="fa-regular fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  class="input-form-field"
-                  placeholder="John"
-                  value="<%= oldInput.firstName || '' %>"
-                  required
-                />
-              </div>
-            </div>
-            <div class="space-y-2">
-              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="lastName">Last Name</label>
-              <div class="relative">
-                <i class="fa-regular fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  class="input-form-field"
-                  placeholder="Doe"
-                  value="<%= oldInput.lastName || '' %>"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- EMAIL -->
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="email">Email Address</label>
-            <div class="relative">
-              <i class="fa-regular fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                class="input-form-field"
-                placeholder="you@university.edu"
-                value="<%= oldInput.email || '' %>"
-                required
-              />
-            </div>
-          </div>
-
-          <!-- PASSWORD -->
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="password">Password</label>
-            <div class="relative">
-              <i class="fa-solid fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                class="input-form-field"
-                placeholder="Create a password"
-                required
-              />
-            </div>
-          </div>
-
-          <!-- CONFIRM PASSWORD -->
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading" for="confirmPassword">Confirm Password</label>
-            <div class="relative">
-              <i class="fa-solid fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300"></i>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                class="input-form-field"
-                placeholder="Repeat your password"
-                required
-              />
-            </div>
-          </div>
-
-          <!-- ROLE SELECTOR -->
-          <div class="space-y-2 pt-1">
-            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-heading">Register As</span>
-            
-            <div class="grid grid-cols-2 gap-3">
-              <label class="relative block cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="userType" 
-                  value="guest" 
-                  class="peer sr-only" 
-                  <%= oldInput.userType === 'guest' ? 'checked' : '' %> 
-                  required 
-                />
-                <div class="p-4 border border-slate-200 rounded-2xl text-center hover:border-slate-300 transition duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 peer-checked:text-indigo-600 flex flex-col items-center gap-1.5 font-heading text-slate-500">
-                  <i class="fa-solid fa-user-graduate text-lg"></i>
-                  <span class="text-xs font-bold uppercase tracking-wider">Helper</span>
-                </div>
-              </label>
-              
-              <label class="relative block cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="userType" 
-                  value="host" 
-                  class="peer sr-only" 
-                  <%= oldInput.userType === 'host' ? 'checked' : '' %> 
-                />
-                <div class="p-4 border border-slate-200 rounded-2xl text-center hover:border-slate-300 transition duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 peer-checked:text-indigo-600 flex flex-col items-center gap-1.5 font-heading text-slate-500">
-                  <i class="fa-solid fa-house-user text-lg"></i>
-                  <span class="text-xs font-bold uppercase tracking-wider">Host</span>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <!-- TERMS CHECKBOX -->
-          <div class="flex items-start gap-2.5 text-xs text-slate-500 pt-2 select-none">
-            <input 
-              type="checkbox" 
-              name="terms" 
-              id="terms" 
-              class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 accent-indigo-600 mt-0.5 cursor-pointer" 
-              required 
-            />
-            <label for="terms" class="cursor-pointer">
-              I agree to the <a href="#" class="text-indigo-600 font-semibold hover:underline">Terms &amp; Conditions</a>
-            </label>
-          </div>
-
-          <!-- SUBMIT -->
-          <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-heading text-xs font-bold uppercase tracking-wider py-4 rounded-xl transition shadow-md hover:shadow-indigo-500/10 flex items-center justify-center gap-2 mt-4">
-            Register <i class="fa-solid fa-arrow-right text-[10px]"></i>
-          </button>
-
-          <!-- PLATFORM BRAND STAMP -->
-          <div class="flex items-center gap-2 py-2 mt-4">
-            <div class="flex-1 h-px bg-slate-100"></div>
-            <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest font-heading">Campus Jobs Platform</span>
-            <div class="flex-1 h-px bg-slate-100"></div>
-          </div>
-
-        </form>
       </div>
 
     </div>
 
   </div>
+
+  <script>
+    window.addEventListener("load", async function () {
+      try {
+        const origin = window.location.origin;
+        await Clerk.load();
+        document.getElementById('clerk-loading').style.display = 'none';
+        document.getElementById('clerk-sign-up').classList.remove('hidden');
+        Clerk.mountSignUp(document.getElementById('clerk-sign-up'), {
+          afterSignInUrl: origin + '/sso-callback',
+          afterSignUpUrl: origin + '/sso-callback',
+          signInUrl: origin + '/login',
+          appearance: {
+            elements: {
+              card: 'shadow-none border-0 bg-transparent p-0',
+              formButtonPrimary: 'bg-slate-900 hover:bg-indigo-600 font-heading uppercase tracking-wider text-xs transition-all',
+              footerActionLink: 'text-indigo-600 font-bold hover:text-indigo-700',
+            }
+          }
+        });
+      } catch (err) {
+        console.error('Clerk load error:', err);
+        document.getElementById('clerk-loading').innerHTML = '<p class="text-sm text-red-500 text-center py-4">Failed to load sign-up. Please refresh.</p>';
+      }
+    });
+  </script>
 
 </body>
 </html>

@@ -179,13 +179,14 @@
   <script>
     window.addEventListener("load", async function () {
       try {
+        const origin = window.location.origin;
         await Clerk.load();
         document.getElementById('clerk-loading').style.display = 'none';
         document.getElementById('clerk-sign-in').classList.remove('hidden');
         Clerk.mountSignIn(document.getElementById('clerk-sign-in'), {
-          afterSignInUrl: '<%= appUrl %>/sso-callback',
-          afterSignUpUrl: '<%= appUrl %>/sso-callback',
-          signUpUrl: '<%= appUrl %>/signup',
+          afterSignInUrl: origin + '/sso-callback',
+          afterSignUpUrl: origin + '/sso-callback',
+          signUpUrl: origin + '/signup',
           appearance: {
             elements: {
               card: 'shadow-none border-0 bg-transparent p-0',
