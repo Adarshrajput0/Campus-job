@@ -16,7 +16,15 @@ const homeSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
-  photo: String,
+  photo: String,        // legacy single photo (kept for backward compat)
+  photos: [String],     // all uploaded image URLs
+  attachments: [        // non-image files (PDFs, docs, etc.)
+    {
+      url:  String,
+      name: String,
+      type: String,     // mime type e.g. "application/pdf"
+    }
+  ],
   description: String,
   maxguest: {
     type: Number,
@@ -33,3 +41,4 @@ const homeSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("Home", homeSchema);
+

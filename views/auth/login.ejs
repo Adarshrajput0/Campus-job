@@ -1,115 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<%- include('../partials/head', { pageTitle: 'Login' }) %>
 <head>
-  <link rel="stylesheet" href="/css/singinPage.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <%- include('../partials/head', { pageTitle: pageTitle }) %>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-heading { font-family: 'Outfit', sans-serif; }
+
+    /* Clerk component container overrides */
+    #clerk-sign-in {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+    /* Make Clerk's card match our design */
+    #clerk-sign-in .cl-card {
+      box-shadow: none !important;
+      border: none !important;
+      background: transparent !important;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+    .d1 { animation-delay: 0.1s; }
+    .d2 { animation-delay: 0.2s; }
+
+    /* Loading skeleton while Clerk loads */
+    .clerk-loading {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 8px 0;
+    }
+    .skel {
+      border-radius: 12px;
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+
+  <!-- Clerk JS — embed sign-in on this page -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="<%= clerkPublishableKey %>"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"
+  ></script>
 </head>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<body class="min-h-screen flex flex-col bg-slate-50">
 
+  <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
 
+  <div class="flex-grow grid grid-cols-1 md:grid-cols-12 pt-16">
 
-<body>
+    <!-- ── LEFT: DARK BRAND PANEL ─────────────────────────────────── -->
+    <div class="hidden md:flex md:col-span-5 lg:col-span-4 bg-slate-950 text-white flex-col justify-between p-10 lg:p-12 relative overflow-hidden">
+      <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none"></div>
 
-<%- include('../partials/header') %>
-
-<div class="page-shell">
-
-  <!-- LEFT: BRAND PANEL -->
-  <div class="left-panel">
-    <div>
-      <span class="panel-eyebrow"><span class="pulse"></span> Campus Platform</span>
-      <h2 class="panel-headline">Your <em>campus gigs</em><br>are waiting.</h2>
-      <p class="panel-sub">Sign in to browse flexible micro-jobs, apply instantly, and start earning on your schedule.</p>
-
-      <div class="panel-stats">
-        <div>
-          <p class="panel-stat-num">100+</p>
-          <p class="panel-stat-label">Jobs Live</p>
+      <div class="relative z-10 my-auto space-y-8 fade-up">
+        <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 px-4 py-1.5 rounded-full text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+          Campus Jobs Platform
         </div>
-        <div>
-          <p class="panel-stat-num">4.8★</p>
-          <p class="panel-stat-label">Avg Rating</p>
-        </div>
-        <div>
-          <p class="panel-stat-num">50+</p>
-          <p class="panel-stat-label">Earners</p>
-        </div>
-      </div>
-    </div>
 
-    <p class="panel-footer">© Campus Jobs Platform</p>
-  </div>
+        <h2 class="font-heading text-4xl lg:text-5xl font-extrabold leading-[1.1] tracking-tight">
+          Your campus<br>gigs are<br><span class="bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">waiting.</span>
+        </h2>
+        <p class="text-sm text-slate-400 max-w-xs leading-relaxed">
+          Sign in to browse flexible micro-jobs, apply instantly, and start earning on your schedule.
+        </p>
 
-  <!-- RIGHT: LOGIN FORM -->
-  <div class="right-panel">
-    <div class="login-box">
-
-      <div class="login-box__header">
-        <h2 class="login-box__title">Sign In</h2>
-        <p class="login-box__subtitle">Welcome back — let's find your next gig.</p>
-      </div>
-
-      <form action="/login" method="POST">
-
-        <!-- ERRORS -->
-        <% if (errors.length > 0) { %>
-        <div class="error-alert">
-          <i class="fas fa-exclamation-circle"></i>
-          <ul class="error-list">
-            <% errors.slice(0,5).forEach(error => { %>
-              <li><%= error %></li>
-            <% }) %>
-          </ul>
-        </div>
-        <% } %>
-
-        <!-- EMAIL -->
-        <div class="field">
-          <label class="field-label" for="email">Email</label>
-          <div class="input-wrap">
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="you@university.edu"
-              value="<%= oldInput.email ? oldInput.email : '' %>"
-              required
-            />
-            <i class="fa fa-envelope"></i>
+        <!-- Stats strip -->
+        <div class="grid grid-cols-3 gap-3 pt-2">
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+            <p class="font-heading text-2xl font-bold text-white">100+</p>
+            <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider mt-1">Jobs Live</p>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+            <p class="font-heading text-2xl font-bold text-indigo-400">4.8★</p>
+            <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider mt-1">Avg Rating</p>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+            <p class="font-heading text-2xl font-bold text-emerald-400">₹10k+</p>
+            <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider mt-1">Earned</p>
           </div>
         </div>
 
-        <!-- PASSWORD -->
-        <div class="field">
-          <label class="field-label" for="password">Password</label>
-          <div class="input-wrap">
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              required
-            />
-            <i class="fa fa-lock"></i>
+        <!-- Trust badges -->
+        <div class="space-y-3 pt-2">
+          <div class="flex items-center gap-3 text-xs text-slate-400">
+            <i class="fa-solid fa-shield-halved text-indigo-400"></i>
+            Secured by Clerk — enterprise-grade auth
+          </div>
+          <div class="flex items-center gap-3 text-xs text-slate-400">
+            <i class="fa-solid fa-bolt text-yellow-400"></i>
+            Sign in with Google, GitHub, or Email
+          </div>
+          <div class="flex items-center gap-3 text-xs text-slate-400">
+            <i class="fa-solid fa-lock text-emerald-400"></i>
+            Multi-factor authentication supported
           </div>
         </div>
+      </div>
 
-        <!-- REMEMBER -->
-        <div class="remember-row">
-          <input type="checkbox" id="remember" name="remember">
-          <label for="remember">Remember me</label>
+      <p class="relative z-10 text-[10px] text-slate-600 font-semibold tracking-wider uppercase font-heading">
+        © Campus Jobs Platform
+      </p>
+    </div>
+
+    <!-- ── RIGHT: CLERK SIGN-IN PANEL ─────────────────────────────── -->
+    <div class="col-span-1 md:col-span-7 lg:col-span-8 flex flex-col items-center justify-center p-6 sm:p-12 bg-slate-50 overflow-y-auto">
+
+      <div class="w-full max-w-md fade-up d1">
+
+        <!-- Header above Clerk widget -->
+        <div class="mb-6 text-center md:text-left">
+          <h1 class="font-heading text-3xl font-extrabold text-slate-900 tracking-tight">Welcome back 👋</h1>
+          <p class="text-sm text-slate-500 mt-1">Sign in to your Campus Jobs account.</p>
         </div>
 
-        <!-- SUBMIT -->
-        <button type="submit" class="submit-btn">Log In →</button>
+        <!-- Clerk Sign-In Component -->
+        <div id="clerk-loading" class="clerk-loading mb-2">
+          <div class="skel h-11 w-full"></div>
+          <div class="skel h-11 w-full"></div>
+          <div class="flex gap-3"><div class="skel h-11 flex-1"></div><div class="skel h-11 flex-1"></div></div>
+          <div class="skel h-12 w-full mt-2"></div>
+        </div>
+        <div id="clerk-sign-in" class="hidden"></div>
 
-      </form>
+        <!-- Divider -->
+        <div class="flex items-center gap-3 my-6">
+          <div class="flex-1 h-px bg-slate-200"></div>
+          <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-widest font-heading">or</span>
+          <div class="flex-1 h-px bg-slate-200"></div>
+        </div>
+
+        <!-- Guest Login -->
+        <a href="/guest-login" id="guest-login-btn"
+          class="group w-full flex items-center justify-center gap-3 py-3.5 rounded-2xl border-2 border-dashed border-slate-200 hover:border-indigo-300 bg-white hover:bg-indigo-50 transition-all duration-200 text-slate-600 hover:text-indigo-700 shadow-sm fade-up d2">
+          <span class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 group-hover:bg-indigo-100 flex items-center justify-center transition-all">
+            <i class="fa-solid fa-user-secret text-xs text-slate-400 group-hover:text-indigo-600"></i>
+          </span>
+          <div class="text-left">
+            <p class="text-xs font-bold font-heading uppercase tracking-wider">Continue as Guest</p>
+            <p class="text-[10px] text-slate-400 group-hover:text-indigo-400 mt-0.5">Browse & apply — no account needed</p>
+          </div>
+          <i class="fa-solid fa-arrow-right text-[10px] ml-auto opacity-0 group-hover:opacity-100 transition text-indigo-500"></i>
+        </a>
+
+        <p class="text-center text-[11px] text-slate-400 mt-6">
+          Don't have an account?
+          <a href="/signup" class="text-indigo-600 font-bold hover:underline ml-1">Sign up free →</a>
+        </p>
+
+      </div>
     </div>
   </div>
 
-</div>
+  <script>
+    window.addEventListener("load", async function () {
+      try {
+        await Clerk.load();
+        document.getElementById('clerk-loading').style.display = 'none';
+        document.getElementById('clerk-sign-in').classList.remove('hidden');
+        Clerk.mountSignIn(document.getElementById('clerk-sign-in'), {
+          afterSignInUrl: '<%= appUrl %>/sso-callback',
+          afterSignUpUrl: '<%= appUrl %>/sso-callback',
+          signUpUrl: '<%= appUrl %>/signup',
+          appearance: {
+            elements: {
+              card: 'shadow-none border-0 bg-transparent p-0',
+              formButtonPrimary: 'bg-slate-900 hover:bg-indigo-600 font-heading uppercase tracking-wider text-xs transition-all',
+              footerActionLink: 'text-indigo-600 font-bold hover:text-indigo-700',
+            }
+          }
+        });
+      } catch (err) {
+        console.error('Clerk load error:', err);
+        document.getElementById('clerk-loading').innerHTML = '<p class="text-sm text-red-500 text-center py-4">Failed to load sign-in. Please refresh.</p>';
+      }
+    });
+  </script>
 
 </body>
 </html>

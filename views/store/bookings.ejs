@@ -1,7 +1,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="/css/output.css" />
 
@@ -9,31 +9,38 @@
 
 <style>
   :root {
-    --ink: #0d0d0d;
-    --cream: #f5f0e8;
-    --lime: #c8f04a;
-    --lime-dark: #a8cc30;
-    --muted: #6b6b6b;
-    --border: #e4e0d8;
+    --brand-primary: #6366f1; /* Indigo */
+    --brand-emerald: #10b981; /* Emerald */
+    --brand-slate: #0f172a; /* Slate 900 */
+    --bg-light: #f8fafc; /* Slate 50 */
+    --border-soft: #f1f5f9; /* Slate 100 */
+    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.01);
   }
 
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
-  .font-heading { font-family: 'Clash Display', sans-serif; }
-  .font-display { font-family: 'Syne', sans-serif; }
+  body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background: var(--bg-light); 
+    color: #334155; 
+  }
+  .font-heading { font-family: 'Outfit', sans-serif; }
 
   /* Task Card */
   .booking-card {
-    background: white;
-    border: 1.5px solid var(--border);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: 24px;
     overflow: hidden;
-    transition: transform 0.28s cubic-bezier(.22,.68,0,1.2), box-shadow 0.28s ease;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     opacity: 0;
     animation: fadeUp 0.45s ease forwards;
   }
   .booking-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 48px rgba(0,0,0,0.07);
+    box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.3);
   }
   .booking-card:nth-child(1) { animation-delay: 0.05s; }
   .booking-card:nth-child(2) { animation-delay: 0.12s; }
@@ -44,9 +51,9 @@
 
   /* Selected card highlight */
   .card-selected {
-    border-color: #eab308;
-    background: linear-gradient(135deg, #fffef0 0%, #fff 100%);
-    box-shadow: 0 0 0 2px rgba(234,179,8,0.18), 0 12px 32px rgba(234,179,8,0.08);
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, rgba(254, 243, 199, 0.15) 0%, rgba(255, 255, 255, 0.85) 100%);
+    box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.08), var(--card-shadow);
   }
   .card-applied {
     border-color: #93c5fd;
@@ -54,44 +61,44 @@
 
   /* Status pill */
   .status-pill {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 4px 12px;
+    padding: 5px 12px;
     border-radius: 100px;
     display: inline-flex;
     align-items: center;
     gap: 5px;
   }
-  .pill-applied   { background: #dbeafe; color: #1e40af; }
-  .pill-selected  { background: #fef08a; color: #854d0e; }
-  .pill-completed { background: #dcfce7; color: #166534; }
-  .pill-pending   { background: #f3f4f6; color: #6b7280; }
+  .pill-applied   { background: #eff6ff; color: #3b82f6; border: 1px solid #dbeafe; }
+  .pill-selected  { background: #fffbeb; color: #d97706; border: 1px solid #fef08a; }
+  .pill-completed { background: #ecfdf5; color: #10b981; border: 1px solid #dcfce7; }
+  .pill-pending   { background: #f8fafc; color: #64748b; border: 1px solid #f1f5f9; }
 
   /* Section label */
   .section-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: #94a3b8;
   }
 
   /* Remove button */
   .remove-btn {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    padding: 9px 18px;
-    border-radius: 10px;
-    border: 1px solid #fecaca;
-    background: #fff0f0;
-    color: #dc2626;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid #fee2e2;
+    background: #fff5f5;
+    color: #ef4444;
     cursor: pointer;
     transition: all 0.15s;
     display: inline-flex;
@@ -102,9 +109,9 @@
 
   /* Selected banner inside card */
   .selected-banner {
-    background: linear-gradient(90deg, #fef08a 0%, #fde68a 100%);
-    border-bottom: 1px solid #fcd34d;
-    padding: 8px 20px;
+    background: linear-gradient(90deg, #fef3c7 0%, #fffbeb 100%);
+    border-bottom: 1px solid #fde68a;
+    padding: 10px 24px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -115,19 +122,160 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Confetti-like shimmer for selected */
-  @keyframes shimmer {
-    0%   { background-position: -200% 0; }
-    100% { background-position:  200% 0; }
+  /* ── Celebration Modal ─────────────────────────────────── */
+  #celebrationModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
   }
-  .shimmer-badge {
-    background: linear-gradient(90deg, #fef08a, #fcd34d, #fbbf24, #fcd34d, #fef08a);
-    background-size: 200% auto;
-    animation: shimmer 2.5s linear infinite;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  #celebrationModal.show {
+    display: flex;
+    animation: modalFadeIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  @keyframes modalFadeIn {
+    from { opacity:0; } to { opacity:1; }
+  }
+  .modal-box {
+    background: #fff;
+    border-radius: 32px;
+    padding: 48px 40px 40px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.25);
+    animation: boxPop 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+  }
+  @keyframes boxPop {
+    from { transform: scale(0.8) translateY(40px); opacity:0; }
+    to   { transform: scale(1) translateY(0); opacity:1; }
+  }
+  .modal-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% -20%, rgba(251,191,36,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .modal-emoji {
+    font-size: 72px;
+    line-height: 1;
+    margin-bottom: 16px;
+    animation: emojiWiggle 0.6s cubic-bezier(0.16,1,0.3,1) 0.3s both;
+  }
+  @keyframes emojiWiggle {
+    0%  { transform: scale(0) rotate(-20deg); }
+    60% { transform: scale(1.2) rotate(10deg); }
+    100%{ transform: scale(1) rotate(0deg); }
+  }
+  .modal-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
     font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .modal-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.7;
+    margin-top: 12px;
+  }
+  .modal-reward {
+    margin: 24px 0;
+    background: linear-gradient(135deg, #fef3c7, #fffbeb);
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 16px 24px;
+    display: inline-block;
+    width: 100%;
+  }
+  .modal-reward-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #b45309;
+  }
+  .modal-reward-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #d97706;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-top: 4px;
+  }
+  .modal-close {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1e293b;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    justify-content: center;
+  }
+  .modal-close:hover {
+    background: #6366f1;
+    box-shadow: 0 10px 25px -5px rgba(99,102,241,0.4);
+    transform: translateY(-2px);
+  }
+
+  /* ── Confetti Canvas ─────────────────────────────────── */
+  #confettiCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+  }
+
+  /* ── Enhanced Selected Card ─────────────────────────── */
+  .card-selected {
+    border-color: #fbbf24 !important;
+    background: linear-gradient(135deg, rgba(254,243,199,0.3) 0%, rgba(255,255,255,0.95) 100%) !important;
+    box-shadow: 0 0 0 3px rgba(251,191,36,0.2), 0 20px 40px -15px rgba(245,158,11,0.15) !important;
+  }
+  .selected-banner {
+    background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%) !important;
+    border-bottom: none !important;
+    padding: 12px 24px !important;
+  }
+  .selected-banner span { color: #fff !important; }
+  .selected-banner i { color: rgba(255,255,255,0.9) !important; }
+
+  /* Shine sweep on selected card */
+  .card-selected::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shine 2.5s ease 0.5s infinite;
+    pointer-events: none;
+    border-radius: 24px;
+  }
+  @keyframes shine {
+    0%   { left: -100%; }
+    40%  { left: 120%; }
+    100% { left: 120%; }
   }
 </style>
 
@@ -137,18 +285,18 @@
 
 <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
 
-<main class="max-w-5xl mx-auto px-5 sm:px-8 pt-28 pb-28">
+<main class="max-w-5xl mx-auto px-5 sm:px-8 pt-32 pb-28">
 
   <!-- PAGE HEADER -->
   <section class="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
     <div>
-      <div class="inline-flex items-center gap-2 bg-white border border-[var(--border)] px-4 py-1.5 rounded-full text-xs font-semibold text-gray-500 shadow-sm">
-        <i class="fa-solid fa-clipboard-check text-[var(--lime-dark)]"></i> Student Dashboard
+      <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-xs font-semibold shadow-sm">
+        <i class="fa-solid fa-clipboard-check"></i> Student Dashboard
       </div>
-      <h1 class="font-heading text-4xl sm:text-5xl font-bold mt-4 tracking-tight text-gray-900">
+      <h1 class="font-heading text-4xl sm:text-5xl font-extrabold mt-4 tracking-tight text-slate-900">
         My Applications
       </h1>
-      <p class="mt-1 text-gray-500 text-sm">Track all the campus micro-tasks you've applied to.</p>
+      <p class="mt-2 text-slate-500 text-sm">Track all the campus micro-tasks you've applied to.</p>
     </div>
 
     <!-- STATS STRIP -->
@@ -157,34 +305,61 @@
       const appliedCount  = bookings.filter(b => b.status === 'Applied').length;
     %>
     <div class="flex gap-3">
-      <div class="bg-white border border-[var(--border)] rounded-2xl px-5 py-3 text-center shadow-sm">
-        <p class="font-heading text-2xl font-bold text-gray-900"><%= bookings.length %></p>
-        <p class="section-label mt-0.5">Total</p>
+      <div class="premium-card px-5 py-3 text-center min-w-[80px]">
+        <p class="font-heading text-2xl font-extrabold text-slate-900"><%= bookings.length %></p>
+        <p class="section-label mt-1 text-[9px]">Total</p>
       </div>
       <% if (selectedCount > 0) { %>
-      <div class="bg-amber-50 border border-amber-300 rounded-2xl px-5 py-3 text-center shadow-sm">
-        <p class="font-heading text-2xl font-bold text-amber-700"><%= selectedCount %></p>
-        <p class="section-label mt-0.5 text-amber-600">🎉 Selected</p>
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3 text-center min-w-[80px] shadow-sm">
+        <p class="font-heading text-2xl font-extrabold text-amber-700"><%= selectedCount %></p>
+        <p class="section-label mt-1 text-amber-600 text-[9px]">🎉 Hired</p>
       </div>
       <% } %>
-      <div class="bg-white border border-[var(--border)] rounded-2xl px-5 py-3 text-center shadow-sm">
-        <p class="font-heading text-2xl font-bold text-blue-700"><%= appliedCount %></p>
-        <p class="section-label mt-0.5">Pending</p>
+      <div class="premium-card px-5 py-3 text-center min-w-[80px]">
+        <p class="font-heading text-2xl font-extrabold text-indigo-600"><%= appliedCount %></p>
+        <p class="section-label mt-1 text-indigo-500 text-[9px]">Pending</p>
       </div>
     </div>
   </section>
 
-  <!-- SELECTED ALERT (if any selected) -->
+  <!-- ── CELEBRATION MODAL ──────────────────────────────── -->
   <% if (selectedCount > 0) { %>
-  <div class="mb-8 p-5 bg-amber-50 border-2 border-amber-300 rounded-2xl flex items-start gap-4 shadow-sm">
-    <div class="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center flex-shrink-0 text-white">
-      <i class="fa-solid fa-trophy text-sm"></i>
+  <canvas id="confettiCanvas"></canvas>
+  <div id="celebrationModal">
+    <div class="modal-box">
+      <div class="modal-glow"></div>
+      <div class="modal-emoji">🎉</div>
+      <h2 class="modal-title">You got the job!</h2>
+      <p class="modal-subtitle">
+        A host has chosen you! This is your moment — show up, deliver great work, and earn your reward.
+      </p>
+      <% const selectedBooking = bookings.find(b => b.status === 'Selected'); %>
+      <% if (selectedBooking && selectedBooking.home) { %>
+      <div class="modal-reward">
+        <div class="modal-reward-label">Your reward for</div>
+        <div style="font-size:13px; font-weight:700; color:#92400e; margin-top:2px;">
+          <%= selectedBooking.home.houseName %>
+        </div>
+        <div class="modal-reward-value">₹ <%= selectedBooking.totalPrice || selectedBooking.home.price %></div>
+      </div>
+      <% } %>
+      <button class="modal-close" onclick="closeModal()">
+        <i class="fa-solid fa-rocket"></i> Let's Go!
+      </button>
+    </div>
+  </div>
+  <% } %>
+
+  <!-- ── SELECTED TOP ALERT ──────────────────────────────── -->
+  <% if (selectedCount > 0) { %>
+  <div class="mb-8 p-5 bg-gradient-to-r from-amber-500 to-yellow-400 rounded-3xl flex items-start gap-4 shadow-lg" style="animation: fadeUp 0.4s ease">
+    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow">
+      <i class="fa-solid fa-trophy"></i>
     </div>
     <div>
-      <p class="font-display font-bold text-amber-800 text-sm uppercase tracking-wider">🎉 You've Been Hired!</p>
-      <p class="text-amber-700 text-sm mt-0.5">
-        A host has selected you for <%= selectedCount > 1 ? selectedCount + ' tasks' : 'a task' %>. 
-        Check the card(s) below — coordinate with the host and complete the task to earn your reward!
+      <p class="font-heading font-extrabold text-white text-sm uppercase tracking-wider">🎉 Hired for <%= selectedCount > 1 ? selectedCount + ' tasks' : 'a task' %>!</p>
+      <p class="text-white/90 text-sm mt-1 leading-relaxed">
+        A host has selected you. Coordinate with them via chat, complete the task, and collect your reward!
       </p>
     </div>
   </div>
@@ -192,12 +367,12 @@
 
   <% if (bookings.length === 0) { %>
     <!-- EMPTY STATE -->
-    <div class="max-w-md mx-auto text-center border-2 border-dashed border-[var(--border)] rounded-[28px] p-12 mt-10">
+    <div class="max-w-md mx-auto text-center border-2 border-dashed border-slate-200 rounded-[28px] p-12 mt-10">
       <div class="text-5xl mb-4">📋</div>
-      <h2 class="font-heading text-2xl font-bold text-gray-800">No applications yet</h2>
-      <p class="text-sm text-gray-500 mt-2">Browse campus tasks and apply to start earning!</p>
-      <a href="/homes" class="inline-block mt-8 bg-[var(--ink)] text-[var(--lime)] font-display font-bold text-sm uppercase tracking-wider px-8 py-3 rounded-xl hover:bg-[#222] transition">
-        Browse Tasks →
+      <h2 class="font-heading text-2xl font-bold text-slate-800">No applications yet</h2>
+      <p class="text-sm text-slate-500 mt-2 leading-relaxed">Browse campus tasks and apply to start earning!</p>
+      <a href="/homes" class="inline-block mt-8 bg-slate-900 text-white font-heading font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-xl hover:bg-slate-800 transition shadow">
+        Browse Tasks &rarr;
       </a>
     </div>
 
@@ -215,8 +390,8 @@
         <!-- Selected Banner -->
         <% if (isSelected) { %>
         <div class="selected-banner">
-          <i class="fa-solid fa-star text-amber-600 text-sm"></i>
-          <span class="font-display font-bold text-amber-800 text-xs uppercase tracking-widest">You Were Hired! Coordinate with the host</span>
+          <i class="fa-solid fa-star text-amber-500 text-xs"></i>
+          <span class="font-heading font-bold text-amber-800 text-[10px] uppercase tracking-wider">You Were Hired! Coordinate with the host</span>
         </div>
         <% } %>
 
@@ -226,11 +401,11 @@
           <!-- Task Name & Status -->
           <div class="flex items-start justify-between gap-3">
             <div class="flex-1 min-w-0">
-              <h3 class="font-heading text-lg font-bold text-gray-900 truncate">
+              <h3 class="font-heading text-lg font-bold text-slate-900 truncate leading-snug">
                 <%= booking.home ? booking.home.houseName : 'Task Removed' %>
               </h3>
-              <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
-                <i class="fa-solid fa-location-dot"></i>
+              <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                <i class="fa-solid fa-map-pin text-slate-300"></i>
                 <%= booking.home ? booking.home.location : '—' %>
               </p>
             </div>
@@ -251,33 +426,33 @@
           <!-- Details Grid -->
           <div class="grid grid-cols-2 gap-3">
 
-            <div class="bg-gray-50 rounded-xl p-3">
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3">
               <p class="section-label">Reward</p>
-              <p class="font-heading text-lg font-bold text-emerald-600 mt-1">
+              <p class="font-heading text-lg font-bold text-emerald-600 mt-0.5">
                 ₹ <%= booking.totalPrice || (booking.home ? booking.home.price : '—') %>
               </p>
             </div>
 
-            <div class="bg-gray-50 rounded-xl p-3">
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3">
               <p class="section-label">Type</p>
-              <p class="font-semibold text-gray-800 text-sm mt-1 truncate">
+              <p class="font-bold text-slate-700 text-xs mt-1 truncate">
                 <%= booking.home ? booking.home.propertytype : '—' %>
               </p>
             </div>
 
             <% if (booking.checkInDate) { %>
-            <div class="bg-gray-50 rounded-xl p-3">
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3">
               <p class="section-label">Start</p>
-              <p class="font-semibold text-gray-700 text-xs mt-1">
+              <p class="font-semibold text-slate-500 text-[10px] mt-1">
                 <%= booking.checkInDate.toDateString() %>
               </p>
             </div>
             <% } %>
 
             <% if (booking.checkOutDate) { %>
-            <div class="bg-gray-50 rounded-xl p-3">
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3">
               <p class="section-label">End</p>
-              <p class="font-semibold text-gray-700 text-xs mt-1">
+              <p class="font-semibold text-slate-500 text-[10px] mt-1">
                 <%= booking.checkOutDate.toDateString() %>
               </p>
             </div>
@@ -287,26 +462,55 @@
 
           <!-- Selected: action hint -->
           <% if (isSelected) { %>
-          <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center gap-2">
-            <i class="fa-solid fa-circle-info text-amber-600 text-sm"></i>
-            <p class="text-xs text-amber-700 font-medium">
-              🎯 Contact the host to coordinate task completion. Once done, the host will mark it complete.
-            </p>
-          </div>
+            <% if (booking.releaseRequested) { %>
+              <div class="bg-red-50/50 border border-red-200 rounded-xl p-3 flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-triangle-exclamation text-red-500 text-sm"></i>
+                  <p class="text-[11px] text-red-700 font-semibold leading-relaxed">
+                    Host requested to reassign this gig to someone else. Do you agree to release it?
+                  </p>
+                </div>
+                <form action="/bookings/release/<%= booking._id %>" method="POST" onsubmit="return confirm('Release this gig?')">
+                  <button type="submit" class="w-full bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-bold uppercase tracking-wider py-2 rounded-lg transition">
+                    Approve Release
+                  </button>
+                </form>
+              </div>
+            <% } else { %>
+              <div class="bg-amber-50/50 border border-amber-100 rounded-xl p-3 flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-amber-500 text-sm"></i>
+                <p class="text-[11px] text-amber-700 font-semibold leading-relaxed">
+                  Coordinate with the host to finish the gig. They'll mark it complete!
+                </p>
+              </div>
+            <% } %>
           <% } %>
 
-          <!-- Footer: remove button -->
-          <div class="pt-2 border-t border-[var(--border)]">
+          <!-- Footer: actions -->
+          <div class="pt-3 border-t border-slate-100 flex gap-2">
             <% if (booking.home) { %>
-            <form action="/bookings/delete/<%= booking._id %>" method="POST"
-                  onsubmit="return confirm('Remove this application?')">
-              <button class="remove-btn w-full justify-center">
-                <i class="fa-solid fa-xmark text-[10px]"></i>
-                Remove Application
-              </button>
-            </form>
+            <a href="/chat/<%= booking._id %>" class="relative flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-heading font-bold text-[11px] uppercase tracking-wider py-2.5 rounded-xl text-center transition flex items-center justify-center gap-2">
+              <i class="fa-regular fa-comments"></i> Message Host
+              <% if (booking.unreadCount > 0) { %>
+                <span class="absolute -top-1.5 -right-1.5 flex h-4 w-4">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 text-[9px] font-bold text-white items-center justify-center shadow-sm"><%= booking.unreadCount %></span>
+                </span>
+              <% } %>
+            </a>
+            <% if (booking.status !== 'Selected') { %>
+              <form action="/bookings/cancel/<%= booking._id %>" method="POST" onsubmit="return confirm('Cancel this application?')" class="flex-1">
+                <button class="remove-btn w-full justify-center py-2.5 m-0">
+                  <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
+              </form>
             <% } else { %>
-            <p class="text-center text-xs text-gray-400 italic">This task was removed by the host.</p>
+              <div class="flex-1 flex items-center justify-center">
+                <p class="text-[10px] text-gray-400 italic">Cannot cancel while hired</p>
+              </div>
+            <% } %>
+            <% } else { %>
+            <p class="text-center text-xs text-slate-400 italic w-full">This task was removed by the host.</p>
             <% } %>
           </div>
 
@@ -320,6 +524,117 @@
 </main>
 
   <%- include('../partials/chatbot-widget') %>
+
+  <script>
+    // ── Celebration Logic ──────────────────────────────────────────
+    const hasSelected = <%= selectedCount > 0 ? 'true' : 'false' %>;
+
+    function closeModal() {
+      const modal = document.getElementById('celebrationModal');
+      if (modal) {
+        modal.style.animation = 'modalFadeIn 0.25s reverse forwards';
+        setTimeout(() => { modal.style.display = 'none'; }, 250);
+      }
+      stopConfetti();
+      // Remember that we've shown the modal this session
+      sessionStorage.setItem('celebrationShown', 'true');
+    }
+
+    // ── Confetti Engine ───────────────────────────────────────────
+    let confettiInterval = null;
+    const canvas = document.getElementById('confettiCanvas');
+
+    function launchConfetti() {
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      const colors = ['#fbbf24','#f59e0b','#6366f1','#10b981','#ec4899','#f43f5e','#3b82f6','#a78bfa'];
+      const shapes = ['rect','circle','triangle'];
+
+      for (let i = 0; i < 180; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: -20 - Math.random() * 200,
+          w: 6 + Math.random() * 10,
+          h: 4 + Math.random() * 8,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          shape: shapes[Math.floor(Math.random() * shapes.length)],
+          speedY: 2 + Math.random() * 4,
+          speedX: -1.5 + Math.random() * 3,
+          angle: Math.random() * 360,
+          spin: -3 + Math.random() * 6,
+          opacity: 0.8 + Math.random() * 0.2,
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach((p, idx) => {
+          ctx.save();
+          ctx.globalAlpha = p.opacity;
+          ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+          ctx.rotate((p.angle * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          if (p.shape === 'rect') {
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          } else if (p.shape === 'circle') {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            ctx.beginPath();
+            ctx.moveTo(0, -p.h / 2);
+            ctx.lineTo(p.w / 2, p.h / 2);
+            ctx.lineTo(-p.w / 2, p.h / 2);
+            ctx.closePath();
+            ctx.fill();
+          }
+          ctx.restore();
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.angle += p.spin;
+          if (p.y > canvas.height + 20) {
+            pieces[idx].y = -20;
+            pieces[idx].x = Math.random() * canvas.width;
+          }
+        });
+      }
+      confettiInterval = setInterval(draw, 16);
+
+      // Auto-stop after 5s
+      setTimeout(stopConfetti, 5000);
+    }
+
+    function stopConfetti() {
+      if (confettiInterval) {
+        clearInterval(confettiInterval);
+        confettiInterval = null;
+        if (canvas) {
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+    }
+
+    // ── Show on page load (once per session) ─────────────────────
+    if (hasSelected && !sessionStorage.getItem('celebrationShown')) {
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const modal = document.getElementById('celebrationModal');
+          if (modal) modal.classList.add('show');
+          launchConfetti();
+        }, 400);
+      });
+    }
+
+    // Handle resize
+    window.addEventListener('resize', () => {
+      if (canvas) { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    });
+  </script>
 
 </body>
 </html>

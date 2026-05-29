@@ -4,6 +4,7 @@ const DB_PATH =
 
 const path = require("path");
 const express = require("express");
+const { clerkMiddleware } = require("@clerk/express");
 const storeRouter = require("./routes/storeRouter");
 const hostRouter = require("./routes/hostRouter");
 const authRouter = require("./routes/authRouter");
@@ -18,6 +19,8 @@ const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 app.use(express.json());
+// Clerk middleware — must be first so req.auth is available everywhere
+app.use(clerkMiddleware());
 app.get("/chatbot", (req, res) => {
   res.render("chatbot");
 });
@@ -50,9 +53,25 @@ app.use(
   }),
 );
 
-app.use((req, res, next) => {
+const Message = require("./models/message");
+
+app.use(async (req, res, next) => {
   res.locals.isLoggedIn = req.session.isLoggedIn || false;
   res.locals.user = req.session.user || null;
+
+  if (req.session.isLoggedIn && req.session.user) {
+    try {
+      res.locals.unreadCount = await Message.countDocuments({
+        recipient: req.session.user._id,
+        read: false
+      });
+    } catch (err) {
+      console.error("Error fetching unread count:", err);
+      res.locals.unreadCount = 0;
+    }
+  } else {
+    res.locals.unreadCount = 0;
+  }
 
   next();
 });
@@ -62,11 +81,17 @@ app.use("/ai", aiRoutes);
 app.use(storeRouter);
 app.use(authRouter);
 app.use(bookingRouter);
+const messageRouter = require("./routes/messageRouter");
+app.use(messageRouter);
+// Host-only middleware — checks session, not req.user
 app.use("/host", (req, res, next) => {
-  if (req.user && req.user.userType === "host") {
+  if (req.session.isLoggedIn && req.session.user && req.session.user.userType === "host") {
     next();
-  } else {
+  } else if (!req.session.isLoggedIn) {
     res.redirect("/login");
+  } else {
+    // Logged in but not a host
+    res.redirect("/");
   }
 });
 app.use(hostRouter);

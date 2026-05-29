@@ -9,8 +9,8 @@ exports.getIndex = (req, res, next) => {
       registeredHomes: registeredHomes,
       pageTitle: "campus jobs",
       currentPage: "index",
-      isLoggedIn: req.isLoggedIn,
-      user: req.session.user,
+      isLoggedIn: req.session.isLoggedIn || false,
+      user: req.session.user || null,
     });
   });
 };
@@ -20,8 +20,8 @@ exports.getHomes = (req, res, next) => {
       registeredHomes: registeredHomes,
       pageTitle: "Homes List",
       currentPage: "Home",
-      isLoggedIn: req.isLoggedIn,
-      user: req.session.user,
+      isLoggedIn: req.session.isLoggedIn || false,
+      user: req.session.user || null,
     });
   });
 };
@@ -34,8 +34,8 @@ exports.getFavouriteList = async (req, res, next) => {
     favouriteHomes: user.favourites,
     pageTitle: "My Favourites",
     currentPage: "favourites",
-    isLoggedIn: req.isLoggedIn,
-    user: req.session.user,
+    isLoggedIn: req.session.isLoggedIn || false,
+    user: req.session.user || null,
   });
 };
 
@@ -73,8 +73,8 @@ exports.getHomeDetails = (req, res, next) => {
         home: home,
         pageTitle: "Home Detail",
         currentPage: "Home",
-        isLoggedIn: req.isLoggedIn,
-        user: req.session.user,
+        isLoggedIn: req.session.isLoggedIn || false,
+        user: req.session.user || null,
       });
     }
   });
@@ -82,9 +82,16 @@ exports.getHomeDetails = (req, res, next) => {
 
 exports.getBookings = async (req, res) => {
   if (!req.session.user) return res.redirect("/login");
-  const bookings = await Booking.find({
+  const Message = require("../models/message");
+  
+  let bookings = await Booking.find({
     user: req.session.user._id,
-  }).populate("home");
+  }).populate("home").lean();
+
+  bookings = await Promise.all(bookings.map(async (booking) => {
+    const unreadCount = await Message.countDocuments({ booking: booking._id, recipient: req.session.user._id, read: false });
+    return { ...booking, unreadCount };
+  }));
 
   res.render("store/bookings", {
     pageTitle: "My Applications",

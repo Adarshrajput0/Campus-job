@@ -220,6 +220,37 @@
     #cam-panel { width: calc(100vw - 24px); right: 12px; }
     #cam-btn   { right: 16px; bottom: 20px; }
   }
+  /* Wide mode */
+  #cam-panel.wide { width: 520px; max-height: 640px; }
+  @media (max-width: 560px) { #cam-panel.wide { width: calc(100vw - 24px); } }
+  /* Expand button */
+  #cam-expand {
+    background: none; border: none; cursor: pointer;
+    color: #475569; font-size: 13px; padding: 4px 6px; border-radius: 8px;
+    transition: color .15s;
+  }
+  #cam-expand:hover { color: #a5b4fc; }
+  /* Voice button */
+  #cam-voice {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #f1f5f9; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #64748b; font-size: 13px;
+    transition: all .2s; flex-shrink: 0;
+  }
+  #cam-voice:hover { background: #e0e7ff; color: #6366f1; }
+  #cam-voice.listening { background: #fee2e2; color: #ef4444; animation: voicePulse 1s ease-in-out infinite; }
+  @keyframes voicePulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+  /* Reaction row */
+  .cam-reactions { display:flex; gap:4px; margin-top:5px; }
+  .cam-react-btn {
+    background:none; border:1px solid #e2e8f0; border-radius:100px;
+    padding:3px 9px; font-size:.68rem; cursor:pointer; color:#94a3b8;
+    transition:all .15s;
+  }
+  .cam-react-btn:hover { border-color:#6366f1; color:#6366f1; background:#eef2ff; }
+  .cam-react-btn.liked { border-color:#10b981; color:#10b981; background:#ecfdf5; }
+  .cam-react-btn.disliked { border-color:#f87171; color:#ef4444; background:#fef2f2; }
 </style>
 
 <!-- ── Floating Button ── -->
@@ -243,9 +274,14 @@
         </div>
       </div>
     </div>
-    <button id="cam-clear" title="Clear chat" onclick="camClear()">
-      <i class="fa-solid fa-rotate-right"></i>
-    </button>
+    <div style="display:flex;gap:4px;">
+      <button id="cam-expand" title="Expand" onclick="camExpand()">
+        <i class="fa-solid fa-expand" id="cam-expand-icon"></i>
+      </button>
+      <button id="cam-clear" title="Clear chat" onclick="camClear()">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
   </div>
 
   <!-- Messages -->
@@ -262,14 +298,32 @@
   <!-- Chips -->
   <div id="cam-chips">
     <button class="cam-chip" onclick="camChip(this)">🔍 Find live tasks</button>
-    <button class="cam-chip" onclick="camChip(this)">💰 How do I get paid?</button>
-    <button class="cam-chip" onclick="camChip(this)">📚 Library hours</button>
+    <button class="cam-chip" onclick="camChip(this)">💰 Highest paying tasks</button>
+    <button class="cam-chip" onclick="camChip(this)">📋 My application status</button>
     <button class="cam-chip" onclick="camChip(this)">🤖 AI job match</button>
+    <button class="cam-chip" onclick="camChip(this)">📊 Skill gap analysis</button>
+    <button class="cam-chip" onclick="camChip(this)">👤 My profile score</button>
+    <button class="cam-chip" onclick="camChip(this)">🆕 Latest tasks</button>
+    <button class="cam-chip" onclick="camChip(this)">💸 My earnings</button>
+    <button class="cam-chip" onclick="camChip(this)">📚 Library hours</button>
     <button class="cam-chip" onclick="camChip(this)">🍕 Cafeteria today</button>
+    <button class="cam-chip" onclick="camChip(this)">🧠 Fun GK facts</button>
+    <button class="cam-chip" onclick="camChip(this)">⚛️ Newton's laws</button>
+    <button class="cam-chip" onclick="camChip(this)">💻 What is OOP</button>
+    <button class="cam-chip" onclick="camChip(this)">🤖 What is AI</button>
+    <button class="cam-chip" onclick="camChip(this)">📄 Resume tips</button>
+    <button class="cam-chip" onclick="camChip(this)">🏛️ Indian history</button>
+    <button class="cam-chip" onclick="camChip(this)">🌍 Geography facts</button>
+    <button class="cam-chip" onclick="camChip(this)">💚 Study tips</button>
+    <button class="cam-chip" onclick="camChip(this)">🌟 Motivate me</button>
+    <button class="cam-chip" onclick="camChip(this)">🌐 Internet basics</button>
   </div>
 
   <!-- Input bar -->
   <div id="cam-inputbar">
+    <button id="cam-voice" onclick="camVoice()" title="Voice input" aria-label="Voice input">
+      <i class="fa-solid fa-microphone" id="cam-voice-icon"></i>
+    </button>
     <input id="cam-input" type="text" placeholder="Ask anything about campus…" autocomplete="off" />
     <button id="cam-send" onclick="camSend()" aria-label="Send">
       <i class="fa-solid fa-paper-plane"></i>
@@ -303,7 +357,7 @@
     row.className = `cam-row ${role === 'user' ? 'user' : 'bot'}`;
 
     const wrap = document.createElement('div');
-    wrap.style.maxWidth = '82%';
+    wrap.style.maxWidth = '84%';
 
     const bubble = document.createElement('div');
     bubble.className = `cam-bubble ${role === 'user' ? 'user' : 'bot'}`;
@@ -315,12 +369,32 @@
 
     wrap.appendChild(bubble);
     wrap.appendChild(time);
+
+    // Add reaction buttons to bot messages
+    if (role !== 'user') {
+      const reactions = document.createElement('div');
+      reactions.className = 'cam-reactions';
+      reactions.innerHTML = `
+        <button class="cam-react-btn" title="Helpful" onclick="camReact(this,'liked')">👍 Helpful</button>
+        <button class="cam-react-btn" title="Not helpful" onclick="camReact(this,'disliked')">👎 Not great</button>
+      `;
+      wrap.appendChild(reactions);
+    }
+
     row.appendChild(wrap);
     msgs.appendChild(row);
     msgs.scrollTop = msgs.scrollHeight;
 
     history.push({ role: role === 'user' ? 'user' : 'assistant', content });
   }
+
+  /* ── Reactions ── */
+  window.camReact = function(btn, type) {
+    const sibs = btn.parentElement.querySelectorAll('.cam-react-btn');
+    sibs.forEach(b => { b.classList.remove('liked','disliked'); });
+    btn.classList.add(type);
+    btn.textContent = type === 'liked' ? '👍 Thanks!' : '👎 Got it';
+  };
 
   /* ── Typing indicator ── */
   function showTyping() {
@@ -331,13 +405,25 @@
     typingEl.style.display = 'none';
   }
 
+  let isWide = false;
+
   /* ── Toggle ── */
   window.camToggle = function() {
     isOpen = !isOpen;
-    panel.className = isOpen ? 'open' : 'closed';
+    const baseClass = isWide ? 'wide' : '';
+    panel.className = isOpen ? `open ${baseClass}`.trim() : `closed ${baseClass}`.trim();
     btn.classList.toggle('open', isOpen);
     badge.style.display = isOpen ? 'none' : '';
     if (isOpen) input.focus();
+  };
+
+  /* ── Expand ── */
+  window.camExpand = function() {
+    isWide = !isWide;
+    panel.classList.toggle('wide', isWide);
+    document.getElementById('cam-expand-icon').className = isWide
+      ? 'fa-solid fa-compress'
+      : 'fa-solid fa-expand';
   };
 
   /* ── Clear ── */
@@ -390,13 +476,62 @@
 
   /* ── Chip shortcut ── */
   window.camChip = function(el) {
-    input.value = el.textContent.replace(/^[^\s]+\s/, '').trim(); // strip emoji
+    // Strip leading emoji + space
+    const text = el.textContent.replace(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F])[\s]*/u, '').trim();
+    input.value = text;
     camSend();
   };
 
-  /* ── Enter key ── */
+  /* ── Voice Input (Web Speech API) ── */
+  let recognition = null;
+  window.camVoice = function() {
+    const voiceBtn = document.getElementById('cam-voice');
+    const voiceIcon = document.getElementById('cam-voice-icon');
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      addMsg('⚠️ Voice input is not supported in your browser. Try Chrome!', 'bot');
+      return;
+    }
+    if (recognition) {
+      recognition.stop();
+      recognition = null;
+      voiceBtn.classList.remove('listening');
+      voiceIcon.className = 'fa-solid fa-microphone';
+      return;
+    }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.lang = 'en-IN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    voiceBtn.classList.add('listening');
+    voiceIcon.className = 'fa-solid fa-microphone-slash';
+    recognition.start();
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      input.value = transcript;
+      camSend();
+    };
+    recognition.onend = () => {
+      voiceBtn.classList.remove('listening');
+      voiceIcon.className = 'fa-solid fa-microphone';
+      recognition = null;
+    };
+    recognition.onerror = () => {
+      voiceBtn.classList.remove('listening');
+      voiceIcon.className = 'fa-solid fa-microphone';
+      recognition = null;
+    };
+  };
+
+  /* ── Enter key + Ctrl+/ shortcut ── */
   input.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); camSend(); }
+  });
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+      e.preventDefault();
+      camToggle();
+    }
   });
 
   /* ── Opening greeting sequence ── */

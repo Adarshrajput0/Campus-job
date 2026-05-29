@@ -50,6 +50,33 @@ exports.postBooking = async (req, res) => {
   }
 };
 
+  // ✅ POST: Cancel Booking (Guest) with penalties
+  exports.postCancelBooking = async (req, res) => {
+    try {
+      if (!req.session.user) return res.redirect('/login');
+      const bookingId = req.params.id;
+      const booking = await Booking.findById(bookingId);
+      if (!booking) return res.redirect('/bookings');
+      // Ensure the booking belongs to the guest
+      if (booking.user.toString() !== req.session.user._id.toString()) {
+        return res.redirect('/bookings');
+      }
+      // If already selected (hired), apply penalty and deny cancellation
+      if (booking.status === 'Selected') {
+        const { applyGuestPenalty } = require('../utils/penalty');
+        await applyGuestPenalty(booking.user);
+        // Optionally flash a message – here we just redirect
+        return res.redirect('/bookings');
+      }
+      // Otherwise safe to delete
+      await Booking.findByIdAndDelete(bookingId);
+      res.redirect('/bookings');
+    } catch (err) {
+      console.error('[postCancelBooking Error]', err);
+      res.redirect('/bookings');
+    }
+  };
+
 // ✅ DELETE BOOKING (SEPARATE FUNCTION)
 exports.deleteBooking = async (req, res) => {
   try {
@@ -72,3 +99,6 @@ exports.deleteBooking = async (req, res) => {
     res.redirect("/bookings");
   }
 };
+
+
+exports.postReleaseBooking = async (req, res) => { try { if (!req.session.user) return res.redirect('/login'); const bookingId = req.params.id; const booking = require('../models/booking').findById(bookingId); booking.then(async b => { if(b && b.user.toString() === req.session.user._id.toString() && b.status === 'Selected' && b.releaseRequested) { b.status = 'Released'; b.releaseRequested = false; await b.save(); } res.redirect('/bookings'); }); } catch(err) { res.redirect('/bookings'); } };

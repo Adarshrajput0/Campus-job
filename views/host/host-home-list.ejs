@@ -286,13 +286,29 @@
                       <span class="status-pill <%= booking.status === 'Applied' ? 'status-applied' : booking.status === 'Selected' ? 'status-selected' : booking.status === 'Completed' ? 'status-done' : 'status-default' %>">
                         <%= booking.status || 'Pending' %>
                       </span>
-                      <% if (booking.status === 'Applied') { %>
-                        <form action="/bookings/select/<%= booking._id %>" method="POST">
-                          <button type="submit" class="text-[9px] bg-[var(--ink)] text-[var(--lime)] hover:bg-[#222] font-display font-bold uppercase tracking-wider px-2 py-1 rounded-md transition shadow-sm cursor-pointer">
-                            Select
-                          </button>
-                        </form>
+                      <% if (booking.status === 'Selected' && booking.releaseRequested) { %>
+                        <span class="text-[8px] text-amber-600 font-bold uppercase tracking-wider bg-amber-50 px-2 py-1 rounded border border-amber-200 text-center mt-1">
+                          Waiting Release Approval
+                        </span>
                       <% } %>
+                      <div class="flex gap-1.5 mt-1">
+                        <a href="/chat/<%= booking._id %>" class="relative text-[9px] bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 font-display font-bold uppercase tracking-wider px-2 py-1 rounded-md transition shadow-sm flex items-center justify-center">
+                          <i class="fa-regular fa-comments mr-1"></i> Chat
+                          <% if (booking.unreadCount > 0) { %>
+                            <span class="absolute -top-1.5 -right-1.5 flex h-4 w-4">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 text-[9px] font-bold text-white items-center justify-center shadow-sm"><%= booking.unreadCount %></span>
+                            </span>
+                          <% } %>
+                        </a>
+                        <% if (booking.status === 'Applied') { %>
+                          <form action="/bookings/select/<%= booking._id %>" method="POST">
+                            <button type="submit" class="text-[9px] bg-[var(--ink)] text-[var(--lime)] hover:bg-[#222] font-display font-bold uppercase tracking-wider px-2 py-1 rounded-md transition shadow-sm cursor-pointer h-full">
+                              Select
+                            </button>
+                          </form>
+                        <% } %>
+                      </div>
                     </div>
 
                   </div>
