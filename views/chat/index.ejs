@@ -14,12 +14,22 @@
         }
         .font-heading { font-family: 'Outfit', sans-serif; }
         .message-bubble {
-            max-width: 75%;
+            max-width: 85%;
             word-wrap: break-word;
         }
+        @media (min-width: 640px) {
+            .message-bubble {
+                max-width: 75%;
+            }
+        }
         .chat-container {
-            height: calc(100vh - 280px);
+            height: calc(100dvh - 230px);
             overflow-y: auto;
+        }
+        @media (min-width: 640px) {
+            .chat-container {
+                height: calc(100vh - 280px);
+            }
         }
     </style>
 </head>
@@ -27,18 +37,18 @@
 
     <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
 
-    <main class="flex-grow max-w-4xl w-full mx-auto px-4 pt-28 pb-10 flex flex-col">
+    <main class="flex-grow max-w-4xl w-full mx-auto px-2 sm:px-4 pt-24 sm:pt-28 pb-4 sm:pb-10 flex flex-col">
         <!-- Header -->
-        <div class="bg-white rounded-t-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <a href="<%= isHost ? '/host-home-list' : '/bookings' %>" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition">
-                    <i class="fa-solid fa-arrow-left"></i>
+        <div class="bg-white rounded-t-2xl border border-slate-200 p-3 sm:p-5 shadow-sm flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 sm:gap-4 overflow-hidden">
+                <a href="<%= isHost ? '/host-home-list' : '/bookings' %>" class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition">
+                    <i class="fa-solid fa-arrow-left text-sm sm:text-base"></i>
                 </a>
-                <div>
-                    <h1 class="font-heading text-xl font-bold text-slate-900">
+                <div class="min-w-0">
+                    <h1 class="font-heading text-base sm:text-xl font-bold text-slate-900 truncate">
                         <%= booking.home ? booking.home.houseName : 'Task Removed' %>
                     </h1>
-                    <p class="text-xs text-slate-500 mt-1">
+                    <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 truncate">
                         <% if (isHost) { %>
                             Chat with applicant: <%= booking.user.firstName %> <%= booking.user.lastName %>
                         <% } else { %>
@@ -47,15 +57,15 @@
                     </p>
                 </div>
             </div>
-            <div class="text-xs font-semibold px-3 py-1 rounded-full <%= booking.status === 'Selected' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700' %>">
+            <div class="text-[10px] sm:text-xs font-semibold px-2 sm:px-3 py-1 rounded-full shrink-0 <%= booking.status === 'Selected' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700' %>">
                 <%= booking.status %>
             </div>
         </div>
 
         <!-- Chat Box -->
-        <div class="bg-slate-50 border-x border-slate-200 flex-grow chat-container p-6 space-y-4 flex flex-col" id="chatContainer">
+        <div class="bg-slate-50 border-x border-slate-200 flex-grow chat-container p-3 sm:p-6 space-y-4 flex flex-col" id="chatContainer">
             <% if (messages.length === 0) { %>
-                <div class="m-auto text-center text-slate-400">
+                <div class="m-auto text-center text-slate-400" id="noMessages">
                     <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
                         <i class="fa-regular fa-comments text-2xl"></i>
                     </div>
@@ -65,10 +75,10 @@
                 <% messages.forEach(message => { 
                     const isMe = message.sender._id.toString() === user._id.toString();
                 %>
-                    <div class="flex w-full <%= isMe ? 'justify-end' : 'justify-start' %> group relative">
-                        <div class="message-bubble <%= isMe ? 'bg-indigo-600 text-white rounded-2xl rounded-tr-sm' : 'bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm' %> px-5 py-3 shadow-sm relative">
+                    <div class="flex w-full <%= isMe ? 'justify-end' : 'justify-start' %> group relative" id="msg-<%= message._id %>">
+                        <div class="message-bubble <%= isMe ? 'bg-indigo-600 text-white rounded-2xl rounded-tr-sm' : 'bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm' %> px-3 py-2 sm:px-5 sm:py-3 shadow-sm relative">
                             <% if (!isMe) { %>
-                                <p class="text-[10px] font-bold <%= isMe ? 'text-indigo-200' : 'text-slate-400' %> mb-1 uppercase tracking-wider">
+                                <p class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-wider">
                                     <%= message.sender.firstName %>
                                 </p>
                             <% } %>
@@ -91,11 +101,11 @@
                             </p>
                         </div>
                         <% if (isMe) { %>
-                            <form action="/message/delete/<%= message._id %>" method="POST" class="absolute top-1/2 -left-10 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" onsubmit="return confirm('Delete this message?')">
-                                <button type="submit" class="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center transition shadow-sm border border-red-100" title="Delete Message">
-                                    <i class="fa-solid fa-trash text-xs"></i>
+                            <div class="ml-1 sm:ml-2 flex-shrink-0 self-end mb-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                <button onclick="deleteMessage('<%= message._id %>')" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center transition shadow-sm border border-red-100" title="Delete Message">
+                                    <i class="fa-solid fa-trash text-[10px] sm:text-xs"></i>
                                 </button>
-                            </form>
+                            </div>
                         <% } %>
                     </div>
                 <% }) %>
@@ -103,27 +113,144 @@
         </div>
 
         <!-- Input Area -->
-        <div class="bg-white rounded-b-2xl border border-slate-200 p-4 shadow-sm">
-            <form action="/chat/<%= booking._id %>" method="POST" enctype="multipart/form-data" class="flex gap-3 items-center">
-                <label class="cursor-pointer text-slate-400 hover:text-indigo-600 transition p-2">
-                    <i class="fa-solid fa-paperclip text-xl"></i>
+        <div class="bg-white rounded-b-2xl border border-slate-200 p-2 sm:p-4 shadow-sm">
+            <form id="chatForm" action="/chat/<%= booking._id %>" method="POST" enctype="multipart/form-data" class="flex gap-1 sm:gap-3 items-center">
+                <label class="cursor-pointer text-slate-400 hover:text-indigo-600 transition p-2 shrink-0">
+                    <i class="fa-solid fa-paperclip text-lg sm:text-xl"></i>
                     <input type="file" name="attachment" class="hidden" onchange="document.getElementById('fileName').textContent = this.files[0] ? this.files[0].name : ''">
                 </label>
                 <div class="flex-grow relative">
-                    <input type="text" name="content" placeholder="Type a message..." class="w-full bg-slate-100 border-none rounded-xl px-5 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" autocomplete="off" autofocus>
+                    <input type="text" name="content" placeholder="Type a message..." class="w-full bg-slate-100 border-none rounded-xl px-3 py-2 sm:px-5 sm:py-3 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" autocomplete="off" autofocus>
                     <span id="fileName" class="absolute left-2 -top-5 text-[10px] font-bold text-indigo-600 truncate max-w-xs"></span>
                 </div>
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition shadow-sm flex items-center gap-2">
-                    Send <i class="fa-solid fa-paper-plane"></i>
+                <button id="submitBtn" type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition shadow-sm flex items-center gap-2 shrink-0">
+                    <span class="hidden sm:inline">Send</span> <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </form>
         </div>
     </main>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
-        // Scroll to bottom of chat automatically
         const chatContainer = document.getElementById('chatContainer');
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        scrollToBottom();
+
+        const socket = io();
+        const bookingId = '<%= booking._id %>';
+        const myUserId = '<%= user._id %>';
+
+        socket.emit('joinRoom', bookingId);
+
+        const chatForm = document.getElementById('chatForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const inputField = document.querySelector('input[name="content"]');
+        const fileInput = document.querySelector('input[name="attachment"]');
+        const fileNameSpan = document.getElementById('fileName');
+        
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const content = inputField.value.trim();
+            const file = fileInput.files[0];
+            
+            if (!content && !file) return;
+            
+            const formData = new FormData(chatForm);
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            try {
+                const response = await fetch(chatForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    chatForm.reset();
+                    fileNameSpan.textContent = '';
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span class="hidden sm:inline">Send</span> <i class="fa-solid fa-paper-plane"></i>';
+            }
+        });
+
+        async function deleteMessage(messageId) {
+            if (confirm('Delete this message?')) {
+                try {
+                    await fetch(`/message/delete/${messageId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error deleting message:', error);
+                }
+            }
+        }
+
+        socket.on('newMessage', (message) => {
+            const noMessages = document.getElementById('noMessages');
+            if (noMessages) noMessages.remove();
+
+            const isMe = message.sender._id === myUserId;
+            const timeStr = new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            let attachmentHtml = '';
+            if (message.attachment && message.attachment.url) {
+                if (message.attachment.type && message.attachment.type.startsWith('image/')) {
+                    attachmentHtml = `<div class="mb-2 rounded-xl overflow-hidden"><img src="${message.attachment.url}" alt="attachment" class="max-w-full h-auto max-h-60 object-contain"></div>`;
+                } else {
+                    attachmentHtml = `<div class="mb-2 rounded-xl overflow-hidden"><a href="${message.attachment.url}" target="_blank" class="flex items-center gap-2 bg-black/10 hover:bg-black/20 px-3 py-2 rounded-lg transition text-sm"><i class="fa-solid fa-file-arrow-down"></i> ${message.attachment.name || 'Download File'}</a></div>`;
+                }
+            }
+            
+            const deleteBtnHtml = isMe ? `
+                <div class="ml-1 sm:ml-2 flex-shrink-0 self-end mb-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                    <button onclick="deleteMessage('${message._id}')" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center transition shadow-sm border border-red-100" title="Delete Message">
+                        <i class="fa-solid fa-trash text-[10px] sm:text-xs"></i>
+                    </button>
+                </div>
+            ` : '';
+
+            const senderNameHtml = !isMe ? `<p class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-wider">${message.sender.firstName}</p>` : '';
+            
+            const bubbleClass = isMe ? 'bg-indigo-600 text-white rounded-2xl rounded-tr-sm' : 'bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm';
+            const timeClass = isMe ? 'text-indigo-200' : 'text-slate-400';
+            
+            const messageHtml = `
+                <div class="flex w-full ${isMe ? 'justify-end' : 'justify-start'} group relative" id="msg-${message._id}">
+                    <div class="message-bubble ${bubbleClass} px-3 py-2 sm:px-5 sm:py-3 shadow-sm relative">
+                        ${senderNameHtml}
+                        ${attachmentHtml}
+                        ${message.content ? `<p class="text-sm leading-relaxed">${message.content}</p>` : ''}
+                        <p class="text-[10px] ${timeClass} mt-2 text-right">${timeStr}</p>
+                    </div>
+                    ${deleteBtnHtml}
+                </div>
+            `;
+            
+            chatContainer.insertAdjacentHTML('beforeend', messageHtml);
+            scrollToBottom();
+        });
+
+        socket.on('messageDeleted', (messageId) => {
+            const msgEl = document.getElementById(`msg-${messageId}`);
+            if (msgEl) {
+                msgEl.remove();
+            }
+        });
     </script>
 </body>
 </html>
