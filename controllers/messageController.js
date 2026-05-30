@@ -112,10 +112,24 @@ exports.postMessage = async (req, res, next) => {
     await newMessage.save();
     console.log("Message saved successfully");
 
+    await newMessage.populate("sender", "firstName lastName _id");
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to(bookingId).emit('newMessage', newMessage);
+    }
+
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('json'))) {
+      return res.status(200).json({ success: true, message: newMessage });
+    }
+
     res.redirect(`/chat/${bookingId}`);
 
   } catch (err) {
     console.error("[postMessage Error]", err);
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('json'))) {
+      return res.status(500).json({ success: false, error: "Server error" });
+    }
     const bookingId = req.params.bookingId;
     res.redirect(`/chat/${bookingId || ""}`);
   }
@@ -144,10 +158,23 @@ exports.deleteMessage = async (req, res, next) => {
     }
 
     await Message.findByIdAndDelete(messageId);
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to(message.booking.toString()).emit('messageDeleted', messageId);
+    }
+
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('json'))) {
+      return res.status(200).json({ success: true });
+    }
+
     res.redirect(`/chat/${message.booking}`);
 
   } catch (err) {
     console.error("[deleteMessage Error]", err);
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('json'))) {
+      return res.status(500).json({ success: false, error: "Server error" });
+    }
     res.redirect("back");
   }
 };

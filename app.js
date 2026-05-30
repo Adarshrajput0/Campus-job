@@ -4,6 +4,8 @@ const DB_PATH =
 
 const path = require("path");
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const { clerkMiddleware } = require("@clerk/express");
 const storeRouter = require("./routes/storeRouter");
 const hostRouter = require("./routes/hostRouter");
@@ -18,6 +20,17 @@ const bookingRouter = require("./routes/bookingRouter");
 const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  socket.on('joinRoom', (bookingId) => {
+    socket.join(bookingId);
+  });
+});
+
 app.use(express.json());
 // Clerk middleware — must be first so req.auth is available everywhere
 app.use(clerkMiddleware());
@@ -107,7 +120,7 @@ mongoose
   .connect(DB_PATH)
   .then(() => {
     console.log("Connected to Mongo");
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
     });
   })
