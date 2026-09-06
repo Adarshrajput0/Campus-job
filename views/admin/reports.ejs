@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0b0f19; color: #f8fafc; }
+    .font-heading { font-family: 'Outfit', sans-serif; }
+    .card-panel { background: #131c2e; border: 1px solid #1e293b; border-radius: 24px; padding: 24px; }
+  </style>
+</head>
+<body class="min-h-screen pb-20">
+
+  <!-- Header Nav -->
+  <header class="bg-[#131c2e]/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/admin/dashboard" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div>
+        <h1 class="font-heading font-extrabold text-lg text-white leading-tight">Parul University MIS Analytics</h1>
+        <p class="text-xs text-indigo-400 font-semibold">Departmental Reports & CSV Exports</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="/admin/export-csv?type=students" class="bg-indigo-600 hover:bg-indigo-500 text-xs font-bold px-3.5 py-2 rounded-xl transition text-white flex items-center gap-2 shadow">
+        <i class="fa-solid fa-file-csv"></i> Export Students CSV
+      </a>
+      <a href="/admin/export-csv?type=applications" class="bg-purple-600 hover:bg-purple-500 text-xs font-bold px-3.5 py-2 rounded-xl transition text-white flex items-center gap-2 shadow">
+        <i class="fa-solid fa-file-csv"></i> Export Applications CSV
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 pt-8 space-y-8">
+
+    <!-- Filters Strip -->
+    <div class="card-panel">
+      <form action="/admin/reports" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase mb-1.5">Filter by Department</label>
+          <input type="text" name="department" value="<%= filters.department %>" placeholder="e.g. PIET - Engineering" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase mb-1.5">Filter by Branch</label>
+          <input type="text" name="branch" value="<%= filters.branch %>" placeholder="e.g. Computer Science" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase mb-1.5">Filter Status</label>
+          <select name="status" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white outline-none">
+            <option value="">All Verification Statuses</option>
+            <option value="approved" <%= filters.status === 'approved' ? 'selected' : '' %>>Approved</option>
+            <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending</option>
+          </select>
+        </div>
+        <div>
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs py-2.5 rounded-xl transition shadow flex items-center justify-center gap-2">
+            <i class="fa-solid fa-filter"></i> Apply Filters
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Aggregate Charts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- Dept Distribution -->
+      <div class="card-panel space-y-3">
+        <h3 class="font-heading font-bold text-base text-indigo-400 flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap"></i> Students by Department
+        </h3>
+        <div class="space-y-2 text-xs">
+          <% departmentStats.forEach(stat => { %>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
+              <span class="text-slate-300 truncate max-w-[180px]"><%= stat._id || 'Unassigned' %></span>
+              <span class="font-bold font-mono text-indigo-400"><%= stat.count %></span>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- Categories Distribution -->
+      <div class="card-panel space-y-3">
+        <h3 class="font-heading font-bold text-base text-emerald-400 flex items-center gap-2">
+          <i class="fa-solid fa-layer-group"></i> Gigs by Category
+        </h3>
+        <div class="space-y-2 text-xs">
+          <% categoryStats.forEach(cat => { %>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
+              <span class="text-slate-300"><%= cat._id || 'General' %></span>
+              <span class="font-bold font-mono text-emerald-400"><%= cat.count %></span>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- Application Status Distribution -->
+      <div class="card-panel space-y-3">
+        <h3 class="font-heading font-bold text-base text-purple-400 flex items-center gap-2">
+          <i class="fa-solid fa-chart-line"></i> Applications by Lifecycle
+        </h3>
+        <div class="space-y-2 text-xs">
+          <% applicationStatusStats.forEach(appStat => { %>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
+              <span class="text-slate-300 capitalize"><%= appStat._id || 'Applied' %></span>
+              <span class="font-bold font-mono text-purple-400"><%= appStat.count %></span>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Student Directory Results Table -->
+    <div class="card-panel space-y-4">
+      <h3 class="font-heading font-bold text-lg text-white">Parul University Student Segregation Directory</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-900/80 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-800">
+            <tr>
+              <th class="p-3">Student</th>
+              <th class="p-3">Email</th>
+              <th class="p-3">Enrollment</th>
+              <th class="p-3">Department</th>
+              <th class="p-3">Branch</th>
+              <th class="p-3">Sem</th>
+              <th class="p-3">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60">
+            <% students.forEach(stu => { %>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-bold text-white"><%= stu.firstName %> <%= stu.lastName || '' %></td>
+                <td class="p-3 text-slate-400"><%= stu.email %></td>
+                <td class="p-3 font-mono text-indigo-300"><%= stu.enrollmentNo || 'N/A' %></td>
+                <td class="p-3 text-slate-200"><%= stu.department || 'N/A' %></td>
+                <td class="p-3 text-slate-300"><%= stu.branch || 'N/A' %></td>
+                <td class="p-3"><%= stu.semester || '1' %></td>
+                <td class="p-3">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase <%= stu.verificationStatus === 'approved' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800' %>">
+                    <%= stu.verificationStatus || 'pending' %>
+                  </span>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>

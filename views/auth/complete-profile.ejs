@@ -9,183 +9,467 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: #f8fafc; }
     .font-heading { font-family: 'Outfit', sans-serif; }
 
     .role-card input[type="radio"] { display: none; }
     .role-card .card-inner {
-      border: 2px solid #e2e8f0;
+      border: 2px solid #334155;
       border-radius: 24px;
-      padding: 32px 24px;
+      padding: 24px 20px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
-      background: #fff;
+      transition: all 0.25s ease;
+      background: #1e293b;
       position: relative;
-      overflow: hidden;
-    }
-    .role-card .card-inner::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(99,102,241,0.04) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.25s;
     }
     .role-card input[type="radio"]:checked + .card-inner {
       border-color: #6366f1;
-      box-shadow: 0 0 0 4px rgba(99,102,241,0.12), 0 20px 40px -15px rgba(99,102,241,0.2);
-      transform: translateY(-4px);
-    }
-    .role-card input[type="radio"]:checked + .card-inner::before { opacity: 1; }
-    .role-card input[type="radio"]:checked + .card-inner .check-ring {
-      background: #6366f1;
-      border-color: #6366f1;
-    }
-    .role-card input[type="radio"]:checked + .card-inner .check-ring::after {
-      opacity: 1;
-    }
-    .check-ring {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      border: 2px solid #e2e8f0;
-      background: #f8fafc;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px;
-      transition: all 0.2s;
-      position: relative;
-    }
-    .check-ring::after {
-      content: '✓';
-      color: white;
-      font-size: 12px;
-      font-weight: 800;
-      opacity: 0;
-      transition: opacity 0.15s;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.25);
+      background: #1e1b4b;
     }
 
     .icon-wrap {
-      width: 64px; height: 64px;
-      border-radius: 18px;
+      width: 56px; height: 56px;
+      border-radius: 16px;
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 28px;
+      margin: 0 auto 12px;
+      font-size: 24px;
     }
-    .guest-icon { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #7c3aed; }
-    .host-icon  { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #059669; }
+    .student-icon { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+    .host-icon    { background: rgba(16, 185, 129, 0.2); color: #34d399; }
 
-    @keyframes fadeUp {
-      from { opacity:0; transform: translateY(20px); }
-      to   { opacity:1; transform: translateY(0); }
+    .input-field {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: #f8fafc;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
     }
-    .fade-up { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both; }
-    .d1 { animation-delay: 0.1s; }
-    .d2 { animation-delay: 0.2s; }
-    .d3 { animation-delay: 0.3s; }
+    .input-field:focus {
+      border-color: #6366f1;
+    }
+    optgroup {
+      background: #1e293b;
+      color: #818cf8;
+      font-weight: bold;
+    }
+    option {
+      background: #0f172a;
+      color: #f8fafc;
+    }
   </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-6">
 
-  <!-- Background orbs -->
-  <div class="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-    <div class="absolute -top-48 -left-48 w-96 h-96 rounded-full bg-indigo-100 blur-3xl opacity-60"></div>
-    <div class="absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-emerald-100 blur-3xl opacity-50"></div>
-  </div>
+  <div class="max-w-2xl w-full my-8">
 
-  <div class="relative max-w-xl w-full">
-
-    <!-- Logo -->
-    <div class="text-center mb-10 fade-up">
-      <div class="inline-flex items-center gap-2 bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-full text-sm font-semibold text-slate-600 font-heading mb-4">
-        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-        Campus Jobs Platform
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 bg-indigo-950/80 border border-indigo-500/30 px-4 py-1.5 rounded-full text-xs font-semibold text-indigo-300 mb-3">
+        <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+        Parul University Campus Micro Job MIS
       </div>
-      <h1 class="font-heading text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-        One last step! 🎓
+      <h1 class="font-heading text-3xl font-extrabold tracking-tight">
+        Complete Your Registration 🎓
       </h1>
-      <p class="text-slate-500 mt-2 text-sm leading-relaxed">
-        Your account is ready. Tell us how you want to use the platform.
+      <p class="text-slate-400 mt-2 text-sm">
+        Choose your role and provide your details to get started. Parul University emails get auto-verified!
       </p>
     </div>
 
     <!-- Errors -->
     <% if (errors && errors.length > 0) { %>
-    <div class="mb-6 p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-xl fade-up">
-      <p class="text-xs font-bold text-rose-700"><%= errors[0] %></p>
+    <div class="mb-6 p-4 bg-rose-950/60 border border-rose-500/50 rounded-xl text-rose-300 text-xs font-bold">
+      <i class="fa-solid fa-triangle-exclamation mr-2"></i> <%= errors[0] %>
     </div>
     <% } %>
 
-    <!-- Role Card Form -->
-    <form action="/complete-profile" method="POST">
-      <div class="grid grid-cols-2 gap-5 mb-8 fade-up d1">
-
-        <!-- Guest / Helper Card -->
-        <label class="role-card">
-          <input type="radio" name="userType" value="guest" required>
-          <div class="card-inner">
-            <div class="check-ring"></div>
-            <div class="icon-wrap guest-icon">
-              <i class="fa-solid fa-user-graduate"></i>
+    <form action="/complete-profile" method="POST" class="space-y-6">
+      
+      <!-- Role Selection -->
+      <div>
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Select Account Type</label>
+        <div class="grid grid-cols-2 gap-4">
+          <label class="role-card">
+            <input type="radio" name="userType" value="student" id="role-student" checked onchange="toggleRoleFields()">
+            <div class="card-inner">
+              <div class="icon-wrap student-icon">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+              <h3 class="font-heading text-base font-bold text-white">Student</h3>
+              <p class="text-xs text-slate-400 mt-1">Apply for campus jobs & build portfolio</p>
             </div>
-            <h3 class="font-heading text-lg font-bold text-slate-900">Helper</h3>
-            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-              Browse and apply to campus micro-gigs. Earn rewards for completing tasks.
-            </p>
-            <ul class="mt-4 space-y-1.5 text-left">
-              <li class="flex items-center gap-2 text-xs text-slate-600">
-                <i class="fa-solid fa-check text-indigo-500 text-[10px]"></i> Apply to any task
-              </li>
-              <li class="flex items-center gap-2 text-xs text-slate-600">
-                <i class="fa-solid fa-check text-indigo-500 text-[10px]"></i> Earn ₹ per gig
-              </li>
-              <li class="flex items-center gap-2 text-xs text-slate-600">
-                <i class="fa-solid fa-check text-indigo-500 text-[10px]"></i> Build your reputation
-              </li>
-            </ul>
-          </div>
-        </label>
+          </label>
 
-        <!-- Host Card -->
-        <label class="role-card">
-          <input type="radio" name="userType" value="host">
-          <div class="card-inner">
-            <div class="check-ring"></div>
-            <div class="icon-wrap host-icon">
-              <i class="fa-solid fa-bullhorn"></i>
+          <label class="role-card">
+            <input type="radio" name="userType" value="host" id="role-host" onchange="toggleRoleFields()">
+            <div class="card-inner">
+              <div class="icon-wrap host-icon">
+                <i class="fa-solid fa-building-columns"></i>
+              </div>
+              <h3 class="font-heading text-base font-bold text-white">Host / Recruiter</h3>
+              <p class="text-xs text-slate-400 mt-1">Post micro-jobs & manage applicants</p>
             </div>
-            <h3 class="font-heading text-lg font-bold text-slate-900">Host</h3>
-            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-              Post tasks you need done and hire the best campus helpers for your gigs.
-            </p>
-            <ul class="mt-4 space-y-1.5 text-left">
-              <li class="flex items-center gap-2 text-xs text-slate-600">
-                <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Post unlimited tasks
-              </li>
-              <li class="flex items-center gap-2 text-xs text-slate-600">
-                <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Review applicants
-              </li>
-              <li class="flex items-center gap-2 text-xs text-slate-600">
-                <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Chat with helpers
-              </li>
-            </ul>
-          </div>
-        </label>
-
+          </label>
+        </div>
       </div>
 
-      <div class="fade-up d2">
-        <button type="submit"
-          class="w-full bg-slate-900 hover:bg-indigo-600 text-white font-heading font-bold text-sm uppercase tracking-wider py-4 rounded-2xl transition-all duration-200 shadow-md hover:shadow-indigo-500/30 flex items-center justify-center gap-2">
-          Continue to Dashboard <i class="fa-solid fa-arrow-right text-xs"></i>
-        </button>
+      <!-- Common Name & Email -->
+      <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Full Name *</label>
+            <input type="text" name="fullName" value="<%= (typeof user !== 'undefined' && user.firstName) ? (user.firstName + ' ' + (user.lastName || '')) : '' %>" placeholder="e.g. Adarsh Rajput" class="input-field" required>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Your Email (Auto-filled) *</label>
+            <input type="email" name="universityEmail" value="<%= (typeof user !== 'undefined' && user.email) ? user.email : '' %>" placeholder="e.g. adarsh@gmail.com" class="input-field" required readonly>
+          </div>
+        </div>
       </div>
 
-      <p class="text-center text-[11px] text-slate-400 mt-5 fade-up d3">
-        You can change your role later from your profile settings.
-      </p>
+      <!-- Student Fields -->
+      <div id="student-fields" class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-4">
+        <h4 class="font-heading font-bold text-sm text-indigo-400 flex items-center gap-2">
+          <i class="fa-solid fa-id-card"></i> Parul University Student Details
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Enrollment Number <span class="text-indigo-400">(Parul students only)</span></label>
+            <input type="text" name="enrollmentNo" id="enrollmentNo" placeholder="e.g. 210303126000 (leave blank if not a Parul student)" class="input-field">
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Student Campus Location / Building *</label>
+            <select name="campusLocation" id="studentCampusLocation" class="input-field" required>
+              <option value="">-- Select Your Campus Location --</option>
+              
+              <optgroup label="🏛️ Academic Blocks (A)">
+                <option value="A1 - Parul Institute of Engineering & Technology">A1 - Parul Institute of Engineering & Technology</option>
+                <option value="A2 - Parul Institute of Engineering & Technology (Diploma Studies)">A2 - Parul Institute of Engineering & Technology (Diploma Studies)</option>
+                <option value="A3 - Parul Institute of Engineering & Technology (D Block)">A3 - Parul Institute of Engineering & Technology (D Block)</option>
+                <option value="A4 - Parul Institute of Pharmacy">A4 - Parul Institute of Pharmacy</option>
+                <option value="A5 - Parul Institute of Engineering & Tech (Diploma & Gymnasium)">A5 - Parul Institute of Engineering & Tech (Diploma & Gymnasium)</option>
+                <option value="A6 - Parul Institute of Nursing">A6 - Parul Institute of Nursing</option>
+                <option value="A7 - JNHMC Homoeopathic College & Physiotherapy">A7 - JNHMC Homoeopathic College & Physiotherapy</option>
+                <option value="A8 - Parul Institute of Pharmacy & Research">A8 - Parul Institute of Pharmacy & Research</option>
+                <option value="A9 - Parul Polytechnic Institute">A9 - Parul Polytechnic Institute</option>
+                <option value="A10 - School of Pharmacy">A10 - School of Pharmacy</option>
+                <option value="A11 - Medical Library & Insights-Centre & PIPER">A11 - Medical Library & Insights-Centre & PIPER</option>
+                <option value="A12 - Parul Institute of Medical Sciences & Symphony Hall">A12 - Parul Institute of Medical Sciences & Symphony Hall</option>
+                <option value="A13 - Parul Institute of Ayurved">A13 - Parul Institute of Ayurved</option>
+                <option value="A14 - Parul Institute of Business Administration">A14 - Parul Institute of Business Administration</option>
+                <option value="A15 - Faculty of Management Studies">A15 - Faculty of Management Studies</option>
+                <option value="A16 - Parul Institute of Architecture & Physiotherapy Research">A16 - Parul Institute of Architecture & Physiotherapy Research</option>
+                <option value="A17 - Parul Institute of Homeopathy & Research">A17 - Parul Institute of Homeopathy & Research</option>
+                <option value="A18 - Parul Institute of Ayurved & Research">A18 - Parul Institute of Ayurved & Research</option>
+                <option value="A19 - Parul Institute of Tech & Hotel Management">A19 - Parul Institute of Tech & Hotel Management</option>
+                <option value="A20 - Vikram Sarabhai Center">A20 - Vikram Sarabhai Center</option>
+                <option value="A21 - Parul Institute of Applied Sciences">A21 - Parul Institute of Applied Sciences</option>
+                <option value="A22 - Parul Institute of Design, Fine Arts & Performing Arts">A22 - Parul Institute of Design, Fine Arts & Performing Arts</option>
+                <option value="A23 - Subhash Chandra Bose Bhawan (Law, Commerce, Arts, Agriculture)">A23 - Subhash Chandra Bose Bhawan (Law, Commerce, Arts, Agriculture)</option>
+                <option value="A24 - Bhagat Singh Bhawan (Computer Application & Engineering)">A24 - Bhagat Singh Bhawan (Computer Application & Engineering)</option>
+                <option value="A25 - C.V. Raman Centre - Center Of Excellence">A25 - C.V. Raman Centre - Center Of Excellence</option>
+                <option value="A26 - 24 Frames Studio">A26 - 24 Frames Studio</option>
+                <option value="A27 - Proposed Library Building">A27 - Proposed Library Building</option>
+                <option value="A28 - Lakshya 2047: Center for Future Skills">A28 - Lakshya 2047: Center for Future Skills</option>
+                <option value="A29 - Parul Institute of Performing Arts">A29 - Parul Institute of Performing Arts</option>
+              </optgroup>
+
+              <optgroup label="🏢 Administrative Block (C)">
+                <option value="C1 - Student Section / Scholarship / Accounts / Central Library">C1 - Student Section / Scholarship / Accounts / Central Library</option>
+                <option value="C2 - Admission Cell / Placement Cell / IQAC / MIS Cell">C2 - Admission Cell / Placement Cell / IQAC / MIS Cell</option>
+                <option value="C3 - Centre of International Relations / CEO Office / Alumni">C3 - Centre of International Relations / CEO Office / Alumni</option>
+                <option value="C4 - HR & Administration / Doctoral Studies / Cultural Affairs">C4 - HR & Administration / Doctoral Studies / Cultural Affairs</option>
+                <option value="C5 - Office of Hostel Superintendent & Chief Rector">C5 - Office of Hostel Superintendent & Chief Rector</option>
+              </optgroup>
+
+              <optgroup label="🏠 Hostels (H)">
+                <option value="H1 - Shastri Bhawan - A">H1 - Shastri Bhawan - A</option>
+                <option value="H2 - Shastri Bhawan - B">H2 - Shastri Bhawan - B</option>
+                <option value="H3 - Shastri Bhawan - C">H3 - Shastri Bhawan - C</option>
+                <option value="H4 - Marie Curie Residence">H4 - Marie Curie Residence</option>
+                <option value="H5 - Sarojini Bhawan - A">H5 - Sarojini Bhawan - A</option>
+                <option value="H6 - Sarojini Bhawan - B">H6 - Sarojini Bhawan - B</option>
+                <option value="H7 - Sarojini Bhawan - C">H7 - Sarojini Bhawan - C</option>
+                <option value="H8 - Indira Bhawan - A">H8 - Indira Bhawan - A</option>
+                <option value="H9 - Indira Bhawan - B">H9 - Indira Bhawan - B</option>
+                <option value="H10 - Indira Bhawan - C">H10 - Indira Bhawan - C</option>
+                <option value="H11 - Albert Einstein Residence">H11 - Albert Einstein Residence</option>
+                <option value="H12 - Kalam Bhawan - A">H12 - Kalam Bhawan - A</option>
+                <option value="H13 - Kalam Bhawan - B">H13 - Kalam Bhawan - B</option>
+                <option value="H14 - Kalam Bhawan - C">H14 - Kalam Bhawan - C</option>
+                <option value="H15 - Tagore Bhawan - A">H15 - Tagore Bhawan - A</option>
+                <option value="H16 - Tagore Bhawan - B">H16 - Tagore Bhawan - B</option>
+                <option value="H17 - Dhyan Bhawan">H17 - Dhyan Bhawan</option>
+                <option value="H18 - Janki Bhawan">H18 - Janki Bhawan</option>
+                <option value="H19 - Teresa Bhawan - A">H19 - Teresa Bhawan - A</option>
+                <option value="H20 - Teresa Bhawan - B">H20 - Teresa Bhawan - B</option>
+                <option value="H21 - Teresa Bhawan - C">H21 - Teresa Bhawan - C</option>
+                <option value="H22 - Teresa Bhawan - D">H22 - Teresa Bhawan - D</option>
+                <option value="H23 - Shakuntala Bhawan - A">H23 - Shakuntala Bhawan - A</option>
+                <option value="H24 - Shakuntala Bhawan - B">H24 - Shakuntala Bhawan - B</option>
+                <option value="H25 - Atal Bhawan - A1">H25 - Atal Bhawan - A1</option>
+                <option value="H26 - Atal Bhawan - A2">H26 - Atal Bhawan - A2</option>
+                <option value="H27 - Milkha Bhawan - A">H27 - Milkha Bhawan - A</option>
+                <option value="H28 - Kalpana Bhawan - A">H28 - Kalpana Bhawan - A</option>
+                <option value="H29 - Kalpana Bhawan - B">H29 - Kalpana Bhawan - B</option>
+                <option value="H30 - Sardar Bhawan - A">H30 - Sardar Bhawan - A</option>
+                <option value="H31 - Sardar Bhawan - B">H31 - Sardar Bhawan - B</option>
+                <option value="H32 - Atal Bhawan - B">H32 - Atal Bhawan - B</option>
+                <option value="H33 - Azad Bhawan - A">H33 - Azad Bhawan - A</option>
+                <option value="H34 - Tagore Bhawan - C">H34 - Tagore Bhawan - C</option>
+                <option value="H35 - Rani Laxmibai Bhawan - A">H35 - Rani Laxmibai Bhawan - A</option>
+                <option value="H36 - Rani Laxmibai Bhawan - B">H36 - Rani Laxmibai Bhawan - B</option>
+              </optgroup>
+
+              <optgroup label="🏥 Hospitals (E)">
+                <option value="E1 - Parul Ayurved Hospital">E1 - Parul Ayurved Hospital</option>
+                <option value="E2 - Parul Sevashram Hospital">E2 - Parul Sevashram Hospital</option>
+                <option value="E3 - Khemdas Ayurved Hospital">E3 - Khemdas Ayurved Hospital</option>
+                <option value="E4 - Parul Institute of Homeopathy Hospital">E4 - Parul Institute of Homeopathy Hospital</option>
+                <option value="E5 - JNHMC Medical College Hospital">E5 - JNHMC Medical College Hospital</option>
+                <option value="E6 - Proposed Cancer Hospital">E6 - Proposed Cancer Hospital</option>
+              </optgroup>
+
+              <optgroup label="💳 Bank & Transport (B & TS)">
+                <option value="B1 - Central Bank of India">B1 - Central Bank of India</option>
+                <option value="TS - Transport Office / Pick & Drop Point">TS - Transport Office / Pick & Drop Point</option>
+              </optgroup>
+
+              <optgroup label="🅿️ Campus Parking (P)">
+                <option value="P1 - Visitor's Parking">P1 - Visitor's Parking</option>
+                <option value="P2 - Staff 2-Wheeler Parking">P2 - Staff 2-Wheeler Parking</option>
+                <option value="P3 - Student 2-Wheeler Parking">P3 - Student 2-Wheeler Parking</option>
+                <option value="P4 - Bus Parking">P4 - Bus Parking</option>
+                <option value="P5 to P8 - Staff 4-Wheeler Parking">P5 to P8 - Staff 4-Wheeler Parking</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Department *</label>
+            <select name="department" class="input-field" required>
+              <option value="PIET - Engineering & Tech">PIET - Engineering & Tech</option>
+              <option value="PIT - Institute of Tech">PIT - Institute of Tech</option>
+              <option value="PIMR - Management & Research">PIMR - Management & Research</option>
+              <option value="Parul Institute of Pharmacy">Parul Institute of Pharmacy</option>
+              <option value="Applied Sciences">Applied Sciences</option>
+              <option value="Computer Applications (BCA/MCA)">Computer Applications (BCA/MCA)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Branch / Course *</label>
+            <input type="text" name="branch" placeholder="e.g. Computer Science Engineering" class="input-field" required>
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Semester *</label>
+            <select name="semester" class="input-field" required>
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+              <option value="5">Semester 5</option>
+              <option value="6">Semester 6</option>
+              <option value="7">Semester 7</option>
+              <option value="8">Semester 8</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Division / Section</label>
+            <input type="text" name="division" placeholder="e.g. Div A" class="input-field">
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Graduation Year *</label>
+            <input type="number" name="graduationYear" placeholder="2026" min="2024" max="2030" class="input-field" required>
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Resume Link / Portfolio URL</label>
+            <input type="url" name="resume" placeholder="https://drive.google.com/..." class="input-field">
+          </div>
+        </div>
+      </div>
+
+      <!-- Host Fields -->
+      <div id="host-fields" class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-4 hidden">
+        <h4 class="font-heading font-bold text-sm text-emerald-400 flex items-center gap-2">
+          <i class="fa-solid fa-briefcase"></i> Host / Organization Details
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Organization / Department Name *</label>
+            <input type="text" name="organization" id="organization" placeholder="e.g. Coding Club / PIET Lab" class="input-field">
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Host Office Location / Building *</label>
+            <select name="hostCampusLocation" id="hostCampusLocation" class="input-field">
+              <option value="">-- Select Host Location --</option>
+              
+              <optgroup label="🏛️ Academic Blocks (A)">
+                <option value="A1 - Parul Institute of Engineering & Technology">A1 - Parul Institute of Engineering & Technology</option>
+                <option value="A2 - Parul Institute of Engineering & Technology (Diploma Studies)">A2 - Parul Institute of Engineering & Technology (Diploma Studies)</option>
+                <option value="A3 - Parul Institute of Engineering & Technology (D Block)">A3 - Parul Institute of Engineering & Technology (D Block)</option>
+                <option value="A4 - Parul Institute of Pharmacy">A4 - Parul Institute of Pharmacy</option>
+                <option value="A5 - Parul Institute of Engineering & Tech (Diploma & Gymnasium)">A5 - Parul Institute of Engineering & Tech (Diploma & Gymnasium)</option>
+                <option value="A6 - Parul Institute of Nursing">A6 - Parul Institute of Nursing</option>
+                <option value="A7 - JNHMC Homoeopathic College & Physiotherapy">A7 - JNHMC Homoeopathic College & Physiotherapy</option>
+                <option value="A8 - Parul Institute of Pharmacy & Research">A8 - Parul Institute of Pharmacy & Research</option>
+                <option value="A9 - Parul Polytechnic Institute">A9 - Parul Polytechnic Institute</option>
+                <option value="A10 - School of Pharmacy">A10 - School of Pharmacy</option>
+                <option value="A11 - Medical Library & Insights-Centre & PIPER">A11 - Medical Library & Insights-Centre & PIPER</option>
+                <option value="A12 - Parul Institute of Medical Sciences & Symphony Hall">A12 - Parul Institute of Medical Sciences & Symphony Hall</option>
+                <option value="A13 - Parul Institute of Ayurved">A13 - Parul Institute of Ayurved</option>
+                <option value="A14 - Parul Institute of Business Administration">A14 - Parul Institute of Business Administration</option>
+                <option value="A15 - Faculty of Management Studies">A15 - Faculty of Management Studies</option>
+                <option value="A16 - Parul Institute of Architecture & Physiotherapy Research">A16 - Parul Institute of Architecture & Physiotherapy Research</option>
+                <option value="A17 - Parul Institute of Homeopathy & Research">A17 - Parul Institute of Homeopathy & Research</option>
+                <option value="A18 - Parul Institute of Ayurved & Research">A18 - Parul Institute of Ayurved & Research</option>
+                <option value="A19 - Parul Institute of Tech & Hotel Management">A19 - Parul Institute of Tech & Hotel Management</option>
+                <option value="A20 - Vikram Sarabhai Center">A20 - Vikram Sarabhai Center</option>
+                <option value="A21 - Parul Institute of Applied Sciences">A21 - Parul Institute of Applied Sciences</option>
+                <option value="A22 - Parul Institute of Design, Fine Arts & Performing Arts">A22 - Parul Institute of Design, Fine Arts & Performing Arts</option>
+                <option value="A23 - Subhash Chandra Bose Bhawan (Law, Commerce, Arts, Agriculture)">A23 - Subhash Chandra Bose Bhawan (Law, Commerce, Arts, Agriculture)</option>
+                <option value="A24 - Bhagat Singh Bhawan (Computer Application & Engineering)">A24 - Bhagat Singh Bhawan (Computer Application & Engineering)</option>
+                <option value="A25 - C.V. Raman Centre - Center Of Excellence">A25 - C.V. Raman Centre - Center Of Excellence</option>
+                <option value="A26 - 24 Frames Studio">A26 - 24 Frames Studio</option>
+                <option value="A27 - Proposed Library Building">A27 - Proposed Library Building</option>
+                <option value="A28 - Lakshya 2047: Center for Future Skills">A28 - Lakshya 2047: Center for Future Skills</option>
+                <option value="A29 - Parul Institute of Performing Arts">A29 - Parul Institute of Performing Arts</option>
+              </optgroup>
+
+              <optgroup label="🏢 Administrative Block (C)">
+                <option value="C1 - Student Section / Scholarship / Accounts / Central Library">C1 - Student Section / Scholarship / Accounts / Central Library</option>
+                <option value="C2 - Admission Cell / Placement Cell / IQAC / MIS Cell">C2 - Admission Cell / Placement Cell / IQAC / MIS Cell</option>
+                <option value="C3 - Centre of International Relations / CEO Office / Alumni">C3 - Centre of International Relations / CEO Office / Alumni</option>
+                <option value="C4 - HR & Administration / Doctoral Studies / Cultural Affairs">C4 - HR & Administration / Doctoral Studies / Cultural Affairs</option>
+                <option value="C5 - Office of Hostel Superintendent & Chief Rector">C5 - Office of Hostel Superintendent & Chief Rector</option>
+              </optgroup>
+
+              <optgroup label="🏠 Hostels (H)">
+                <option value="H1 - Shastri Bhawan - A">H1 - Shastri Bhawan - A</option>
+                <option value="H2 - Shastri Bhawan - B">H2 - Shastri Bhawan - B</option>
+                <option value="H3 - Shastri Bhawan - C">H3 - Shastri Bhawan - C</option>
+                <option value="H4 - Marie Curie Residence">H4 - Marie Curie Residence</option>
+                <option value="H5 - Sarojini Bhawan - A">H5 - Sarojini Bhawan - A</option>
+                <option value="H6 - Sarojini Bhawan - B">H6 - Sarojini Bhawan - B</option>
+                <option value="H7 - Sarojini Bhawan - C">H7 - Sarojini Bhawan - C</option>
+                <option value="H8 - Indira Bhawan - A">H8 - Indira Bhawan - A</option>
+                <option value="H9 - Indira Bhawan - B">H9 - Indira Bhawan - B</option>
+                <option value="H10 - Indira Bhawan - C">H10 - Indira Bhawan - C</option>
+                <option value="H11 - Albert Einstein Residence">H11 - Albert Einstein Residence</option>
+                <option value="H12 - Kalam Bhawan - A">H12 - Kalam Bhawan - A</option>
+                <option value="H13 - Kalam Bhawan - B">H13 - Kalam Bhawan - B</option>
+                <option value="H14 - Kalam Bhawan - C">H14 - Kalam Bhawan - C</option>
+                <option value="H15 - Tagore Bhawan - A">H15 - Tagore Bhawan - A</option>
+                <option value="H16 - Tagore Bhawan - B">H16 - Tagore Bhawan - B</option>
+                <option value="H17 - Dhyan Bhawan">H17 - Dhyan Bhawan</option>
+                <option value="H18 - Janki Bhawan">H18 - Janki Bhawan</option>
+                <option value="H19 - Teresa Bhawan - A">H19 - Teresa Bhawan - A</option>
+                <option value="H20 - Teresa Bhawan - B">H20 - Teresa Bhawan - B</option>
+                <option value="H21 - Teresa Bhawan - C">H21 - Teresa Bhawan - C</option>
+                <option value="H22 - Teresa Bhawan - D">H22 - Teresa Bhawan - D</option>
+                <option value="H23 - Shakuntala Bhawan - A">H23 - Shakuntala Bhawan - A</option>
+                <option value="H24 - Shakuntala Bhawan - B">H24 - Shakuntala Bhawan - B</option>
+                <option value="H25 - Atal Bhawan - A1">H25 - Atal Bhawan - A1</option>
+                <option value="H26 - Atal Bhawan - A2">H26 - Atal Bhawan - A2</option>
+                <option value="H27 - Milkha Bhawan - A">H27 - Milkha Bhawan - A</option>
+                <option value="H28 - Kalpana Bhawan - A">H28 - Kalpana Bhawan - A</option>
+                <option value="H29 - Kalpana Bhawan - B">H29 - Kalpana Bhawan - B</option>
+                <option value="H30 - Sardar Bhawan - A">H30 - Sardar Bhawan - A</option>
+                <option value="H31 - Sardar Bhawan - B">H31 - Sardar Bhawan - B</option>
+                <option value="H32 - Atal Bhawan - B">H32 - Atal Bhawan - B</option>
+                <option value="H33 - Azad Bhawan - A">H33 - Azad Bhawan - A</option>
+                <option value="H34 - Tagore Bhawan - C">H34 - Tagore Bhawan - C</option>
+                <option value="H35 - Rani Laxmibai Bhawan - A">H35 - Rani Laxmibai Bhawan - A</option>
+                <option value="H36 - Rani Laxmibai Bhawan - B">H36 - Rani Laxmibai Bhawan - B</option>
+              </optgroup>
+
+              <optgroup label="🏥 Hospitals (E)">
+                <option value="E1 - Parul Ayurved Hospital">E1 - Parul Ayurved Hospital</option>
+                <option value="E2 - Parul Sevashram Hospital">E2 - Parul Sevashram Hospital</option>
+                <option value="E3 - Khemdas Ayurved Hospital">E3 - Khemdas Ayurved Hospital</option>
+                <option value="E4 - Parul Institute of Homeopathy Hospital">E4 - Parul Institute of Homeopathy Hospital</option>
+                <option value="E5 - JNHMC Medical College Hospital">E5 - JNHMC Medical College Hospital</option>
+                <option value="E6 - Proposed Cancer Hospital">E6 - Proposed Cancer Hospital</option>
+              </optgroup>
+
+              <optgroup label="💳 Bank & Transport (B & TS)">
+                <option value="B1 - Central Bank of India">B1 - Central Bank of India</option>
+                <option value="TS - Transport Office / Pick & Drop Point">TS - Transport Office / Pick & Drop Point</option>
+              </optgroup>
+
+              <optgroup label="🅿️ Campus Parking (P)">
+                <option value="P1 - Visitor's Parking">P1 - Visitor's Parking</option>
+                <option value="P2 - Staff 2-Wheeler Parking">P2 - Staff 2-Wheeler Parking</option>
+                <option value="P3 - Student 2-Wheeler Parking">P3 - Student 2-Wheeler Parking</option>
+                <option value="P4 - Bus Parking">P4 - Bus Parking</option>
+                <option value="P5 to P8 - Staff 4-Wheeler Parking">P5 to P8 - Staff 4-Wheeler Parking</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">University Affiliation *</label>
+            <input type="text" name="universityAffiliation" id="universityAffiliation" placeholder="e.g. Faculty / Department Head / Event Lead" class="input-field">
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Contact Phone / Info *</label>
+            <input type="text" name="contactInfo" id="contactInfo" placeholder="+91 9876543210" class="input-field">
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">Host Description</label>
+            <textarea name="hostDescription" placeholder="Briefly describe your team or micro-job posting needs..." class="input-field rows-3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit"
+        class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-heading font-bold text-sm uppercase tracking-wider py-4 rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+        Submit Registration for Verification <i class="fa-solid fa-arrow-right text-xs"></i>
+      </button>
     </form>
 
   </div>
 
+  <script>
+    function toggleRoleFields() {
+      const isStudent = document.getElementById('role-student').checked;
+      const studentFields = document.getElementById('student-fields');
+      const hostFields = document.getElementById('host-fields');
+      
+      const studentInputs = studentFields.querySelectorAll('input, select');
+      const hostInputs = hostFields.querySelectorAll('input, select, textarea');
+
+      if (isStudent) {
+        studentFields.classList.remove('hidden');
+        hostFields.classList.add('hidden');
+        studentInputs.forEach(i => { if (i.name !== 'division' && i.name !== 'resume') i.required = true; });
+        hostInputs.forEach(i => i.required = false);
+      } else {
+        studentFields.classList.add('hidden');
+        hostFields.classList.remove('hidden');
+        studentInputs.forEach(i => i.required = false);
+        document.getElementById('organization').required = true;
+        document.getElementById('hostCampusLocation').required = true;
+        document.getElementById('universityAffiliation').required = true;
+        document.getElementById('contactInfo').required = true;
+      }
+    }
+    toggleRoleFields();
+  </script>
 </body>
 </html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0b0f19; color: #f8fafc; }
+    .font-heading { font-family: 'Outfit', sans-serif; }
+    .kpi-card { background: #131c2e; border: 1px solid #1e293b; border-radius: 20px; padding: 20px; }
+    .table-container { background: #131c2e; border: 1px solid #1e293b; border-radius: 24px; overflow: hidden; }
+  </style>
+</head>
+<body class="min-h-screen pb-20">
+
+  <!-- Admin Header Nav -->
+  <header class="bg-[#131c2e]/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg">
+        <i class="fa-solid fa-shield-halved text-lg"></i>
+      </div>
+      <div>
+        <h1 class="font-heading font-extrabold text-lg text-white leading-tight">Parul University MIS</h1>
+        <p class="text-xs text-indigo-400 font-semibold">Admin Executive Console</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <a href="/admin/reports" class="bg-slate-800 hover:bg-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-chart-pie"></i> Analytics & Reports
+      </a>
+      <a href="/admin/export-csv?type=students" class="bg-indigo-600 hover:bg-indigo-500 text-xs font-bold px-4 py-2 rounded-xl transition text-white flex items-center gap-2 shadow">
+        <i class="fa-solid fa-download"></i> Export CSV
+      </a>
+      <a href="/logout" class="bg-rose-950/60 hover:bg-rose-900 border border-rose-800/50 text-xs font-bold px-3.5 py-2 rounded-xl transition text-rose-300">
+        Sign Out
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 pt-8 space-y-10">
+
+    <!-- KPI Metric Strip -->
+    <section class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      
+      <div class="kpi-card">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Students</p>
+        <p class="font-heading text-3xl font-extrabold text-white mt-2"><%= stats.totalStudents %></p>
+        <p class="text-[11px] text-amber-400 mt-1 font-semibold"><%= stats.pendingStudents %> Pending Review</p>
+      </div>
+
+      <div class="kpi-card">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Verified Students</p>
+        <p class="font-heading text-3xl font-extrabold text-emerald-400 mt-2"><%= stats.verifiedStudents %></p>
+        <p class="text-[11px] text-slate-500 mt-1">Parul University Verified</p>
+      </div>
+
+      <div class="kpi-card">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Hosts</p>
+        <p class="font-heading text-3xl font-extrabold text-indigo-400 mt-2"><%= stats.totalHosts %></p>
+        <p class="text-[11px] text-amber-400 mt-1 font-semibold"><%= stats.pendingHosts %> Pending Review</p>
+      </div>
+
+      <div class="kpi-card">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Job Listings</p>
+        <p class="font-heading text-3xl font-extrabold text-white mt-2"><%= stats.totalJobs %></p>
+        <p class="text-[11px] text-amber-400 mt-1 font-semibold"><%= stats.pendingJobs %> Pending Moderation</p>
+      </div>
+
+      <div class="kpi-card col-span-2 md:col-span-1">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Applications</p>
+        <p class="font-heading text-3xl font-extrabold text-purple-400 mt-2"><%= stats.totalApplications %></p>
+        <p class="text-[11px] text-slate-500 mt-1">Total Submissions</p>
+      </div>
+
+    </section>
+
+    <!-- SECTION 1: Student Verification Queue -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-user-graduate text-indigo-400"></i> Student Verification Queue
+          </h2>
+          <p class="text-xs text-slate-400">Verify enrollment credentials for official Parul University students</p>
+        </div>
+        <span class="bg-amber-950/60 border border-amber-500/40 text-amber-300 text-xs font-bold px-3 py-1 rounded-full">
+          <%= pendingStudents.length %> Pending Request<%= pendingStudents.length !== 1 ? 's' : '' %>
+        </span>
+      </div>
+
+      <div class="table-container">
+        <% if (pendingStudents.length === 0) { %>
+          <div class="p-8 text-center text-slate-500 text-sm">
+            <i class="fa-solid fa-circle-check text-2xl text-emerald-500 mb-2"></i>
+            <p>No pending student verifications at this time.</p>
+          </div>
+        <% } else { %>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900/80 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-800">
+                <tr>
+                  <th class="p-4">Student Name</th>
+                  <th class="p-4">Enrollment No / ID</th>
+                  <th class="p-4">Email</th>
+                  <th class="p-4">Dept / Branch</th>
+                  <th class="p-4">Sem / Div</th>
+                  <th class="p-4 text-center">Resume</th>
+                  <th class="p-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <% pendingStudents.forEach(stu => { %>
+                  <tr class="hover:bg-slate-900/40 transition">
+                    <td class="p-4 font-bold text-white flex items-center gap-3">
+                      <img src="<%= stu.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + stu.firstName %>" class="w-8 h-8 rounded-full bg-slate-800">
+                      <span><%= stu.firstName %> <%= stu.lastName || '' %></span>
+                    </td>
+                    <td class="p-4">
+                      <span class="font-mono text-indigo-300 font-semibold"><%= stu.enrollmentNo || 'N/A' %></span>
+                      <br><span class="text-[10px] text-slate-500"><%= stu.studentId || '' %></span>
+                    </td>
+                    <td class="p-4 text-slate-400"><%= stu.email %></td>
+                    <td class="p-4">
+                      <span class="font-semibold text-slate-200"><%= stu.department || 'N/A' %></span>
+                      <br><span class="text-[10px] text-slate-500"><%= stu.branch || '' %></span>
+                    </td>
+                    <td class="p-4">Sem <%= stu.semester || 'N/A' %> (<%= stu.division || 'A' %>)</td>
+                    <td class="p-4 text-center">
+                      <% if (stu.resume) { %>
+                        <a href="<%= stu.resume %>" target="_blank" class="text-indigo-400 hover:underline font-bold text-[11px]">
+                          <i class="fa-solid fa-file-pdf"></i> View
+                        </a>
+                      <% } else { %>
+                        <span class="text-slate-600">None</span>
+                      <% } %>
+                    </td>
+                    <td class="p-4 text-right">
+                      <div class="inline-flex gap-2">
+                        <form action="/admin/students/<%= stu._id %>/approve" method="POST">
+                          <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition shadow">
+                            <i class="fa-solid fa-check"></i> Approve
+                          </button>
+                        </form>
+                        <form action="/admin/students/<%= stu._id %>/reject" method="POST">
+                          <button class="bg-rose-900/60 hover:bg-rose-800 text-rose-300 font-bold px-3 py-1.5 rounded-lg text-[11px] transition border border-rose-800">
+                            <i class="fa-solid fa-xmark"></i> Reject
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Host Verification Queue -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-building-columns text-emerald-400"></i> Host Organization Approval Queue
+          </h2>
+          <p class="text-xs text-slate-400">Verify faculty, department leads, and campus organizations submitting job listings</p>
+        </div>
+        <span class="bg-amber-950/60 border border-amber-500/40 text-amber-300 text-xs font-bold px-3 py-1 rounded-full">
+          <%= pendingHosts.length %> Pending Request<%= pendingHosts.length !== 1 ? 's' : '' %>
+        </span>
+      </div>
+
+      <div class="table-container">
+        <% if (pendingHosts.length === 0) { %>
+          <div class="p-8 text-center text-slate-500 text-sm">
+            <i class="fa-solid fa-circle-check text-2xl text-emerald-500 mb-2"></i>
+            <p>No pending host verifications at this time.</p>
+          </div>
+        <% } else { %>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900/80 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-800">
+                <tr>
+                  <th class="p-4">Host Name</th>
+                  <th class="p-4">Organization / Department</th>
+                  <th class="p-4">Affiliation</th>
+                  <th class="p-4">Contact Info</th>
+                  <th class="p-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <% pendingHosts.forEach(host => { %>
+                  <tr class="hover:bg-slate-900/40 transition">
+                    <td class="p-4 font-bold text-white flex items-center gap-3">
+                      <img src="<%= host.avatar || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + host.firstName %>" class="w-8 h-8 rounded-full bg-slate-800">
+                      <div>
+                        <span><%= host.firstName %> <%= host.lastName || '' %></span>
+                        <p class="text-[10px] text-slate-500 font-normal"><%= host.email %></p>
+                      </div>
+                    </td>
+                    <td class="p-4 font-bold text-emerald-400"><%= host.organization || 'N/A' %></td>
+                    <td class="p-4 text-slate-300"><%= host.universityAffiliation || 'N/A' %></td>
+                    <td class="p-4 text-slate-400"><%= host.contactInfo || 'N/A' %></td>
+                    <td class="p-4 text-right">
+                      <div class="inline-flex gap-2">
+                        <form action="/admin/hosts/<%= host._id %>/approve" method="POST">
+                          <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition shadow">
+                            <i class="fa-solid fa-check"></i> Approve Host
+                          </button>
+                        </form>
+                        <form action="/admin/hosts/<%= host._id %>/reject" method="POST">
+                          <button class="bg-rose-900/60 hover:bg-rose-800 text-rose-300 font-bold px-3 py-1.5 rounded-lg text-[11px] transition border border-rose-800">
+                            <i class="fa-solid fa-xmark"></i> Reject
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Job Listing Moderation Queue -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-briefcase text-purple-400"></i> Job Listing Moderation Queue
+          </h2>
+          <p class="text-xs text-slate-400">Review newly posted micro-jobs before making them public to students</p>
+        </div>
+        <span class="bg-amber-950/60 border border-amber-500/40 text-amber-300 text-xs font-bold px-3 py-1 rounded-full">
+          <%= pendingJobs.length %> Pending Job Listing<%= pendingJobs.length !== 1 ? 's' : '' %>
+        </span>
+      </div>
+
+      <div class="table-container">
+        <% if (pendingJobs.length === 0) { %>
+          <div class="p-8 text-center text-slate-500 text-sm">
+            <i class="fa-solid fa-circle-check text-2xl text-emerald-500 mb-2"></i>
+            <p>No job listings pending moderation.</p>
+          </div>
+        <% } else { %>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900/80 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-800">
+                <tr>
+                  <th class="p-4">Job Title</th>
+                  <th class="p-4">Host / Recruiter</th>
+                  <th class="p-4">Category</th>
+                  <th class="p-4">Stipend / Price</th>
+                  <th class="p-4">Positions</th>
+                  <th class="p-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <% pendingJobs.forEach(job => { %>
+                  <tr class="hover:bg-slate-900/40 transition">
+                    <td class="p-4 font-bold text-white">
+                      <span><%= job.title || job.houseName %></span>
+                      <p class="text-[10px] text-slate-500 line-clamp-1 font-normal"><%= job.description %></p>
+                    </td>
+                    <td class="p-4">
+                      <% const h = job.host || job.owner; %>
+                      <span class="font-semibold text-slate-200"><%= h ? (h.firstName + ' ' + (h.lastName || '')) : 'Unknown' %></span>
+                      <br><span class="text-[10px] text-emerald-400"><%= h ? (h.organization || 'Faculty') : '' %></span>
+                    </td>
+                    <td class="p-4">
+                      <span class="bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                        <%= job.category || 'General' %>
+                      </span>
+                    </td>
+                    <td class="p-4 font-bold text-emerald-400 font-mono">₹ <%= job.price || job.stipend || 0 %></td>
+                    <td class="p-4 text-slate-300"><%= job.numberOfPositions || job.maxguest || 1 %> Spot(s)</td>
+                    <td class="p-4 text-right">
+                      <div class="inline-flex gap-2">
+                        <form action="/admin/jobs/<%= job._id %>/approve" method="POST">
+                          <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition shadow">
+                            <i class="fa-solid fa-check"></i> Approve Job
+                          </button>
+                        </form>
+                        <form action="/admin/jobs/<%= job._id %>/reject" method="POST">
+                          <button class="bg-rose-900/60 hover:bg-rose-800 text-rose-300 font-bold px-3 py-1.5 rounded-lg text-[11px] transition border border-rose-800">
+                            <i class="fa-solid fa-xmark"></i> Reject
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

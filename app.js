@@ -1,6 +1,15 @@
+const dns = require("dns");
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch (e) {
+  console.warn("DNS setServers warning:", e.message);
+}
+
 require("dotenv").config();
 const DB_PATH =
-  "mongodb+srv://root:root@cluster0.mcc5pm2.mongodb.net/job_db?appName=Cluster0";
+  process.env.MONGO_URI ||
+  process.env.DB_PATH ||
+  "mongodb+srv://root:root@cluster0.mcc5pm2.mongodb.net/?appName=Cluster0";
 
 const path = require("path");
 const express = require("express");
@@ -19,15 +28,28 @@ require("dotenv").config();
 const bookingRouter = require("./routes/bookingRouter");
 const aiRoutes = require("./routes/aiRoutes");
 
+// Pre-load Mongoose models & aliases
+require("./models/user");
+require("./models/job");
+require("./models/home");
+require("./models/application");
+require("./models/booking");
+require("./models/notification");
+require("./models/message");
+
 const app = express();
+
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.set('io', io);
+app.set("io", io);
 
-io.on('connection', (socket) => {
-  socket.on('joinRoom', (bookingId) => {
+io.on("connection", (socket) => {
+  socket.on("joinRoom", (bookingId) => {
     socket.join(bookingId);
+  });
+  socket.on("joinUserRoom", (userId) => {
+    if (userId) socket.join(`user_${userId}`);
   });
 });
 
@@ -76,7 +98,7 @@ app.use(async (req, res, next) => {
     try {
       res.locals.unreadCount = await Message.countDocuments({
         recipient: req.session.user._id,
-        read: false
+        read: false,
       });
     } catch (err) {
       console.error("Error fetching unread count:", err);
@@ -94,11 +116,17 @@ app.use("/ai", aiRoutes);
 app.use(storeRouter);
 app.use(authRouter);
 app.use(bookingRouter);
+const adminRouter = require("./routes/adminRouter");
+app.use(adminRouter);
 const messageRouter = require("./routes/messageRouter");
 app.use(messageRouter);
 // Host-only middleware — checks session, not req.user
 app.use("/host", (req, res, next) => {
-  if (req.session.isLoggedIn && req.session.user && req.session.user.userType === "host") {
+  if (
+    req.session.isLoggedIn &&
+    req.session.user &&
+    req.session.user.userType === "host"
+  ) {
     next();
   } else if (!req.session.isLoggedIn) {
     res.redirect("/login");
@@ -114,7 +142,7 @@ app.use(hostRouter);
 
 app.use(errorsController.pageNotFound);
 
-const PORT = 3010;
+const PORT = process.env.PORT || 3005;
 
 mongoose
   .connect(DB_PATH)
@@ -127,3 +155,4 @@ mongoose
   .catch((err) => {
     console.log("Error While Connecting to Mongo:", err);
   });
+

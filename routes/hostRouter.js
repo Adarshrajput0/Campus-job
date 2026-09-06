@@ -4,22 +4,16 @@ const hostController = require("../controllers/hostController");
 const upload = require("../utils/multer");
 
 // 🔒 Host-only guard — applied to every route in this router
-const isHost = (req, res, next) => {
-  if (!req.session.isLoggedIn) {
-    return res.redirect("/login");
-  }
-  if (!req.session.user || req.session.user.userType !== "host") {
-    // Logged in but not a host → send back to index
-    return res.redirect("/");
-  }
-  next();
-};
+const { requireRole, requireVerifiedHost } = require("../middleware/authMiddleware");
 
-hostRouter.get("/add-home", isHost, hostController.getAddHome);
+const isHost = requireRole("host");
+
+hostRouter.get("/add-home", isHost, requireVerifiedHost, hostController.getAddHome);
 
 hostRouter.post(
   "/add-home",
   isHost,
+  requireVerifiedHost,
   upload.array("files", 10),
   hostController.postAddHome,
 );
@@ -28,19 +22,25 @@ hostRouter.get("/home-added", isHost, hostController.getHomeAdded);
 
 hostRouter.get("/host-home-list", isHost, hostController.getHostHomes);
 
-hostRouter.get("/edithome/:homeId", isHost, hostController.getEditHome);
+hostRouter.get("/edithome/:homeId", isHost, requireVerifiedHost, hostController.getEditHome);
 
 hostRouter.post(
   "/edithome",
   isHost,
+  requireVerifiedHost,
   upload.array("files", 10),
   hostController.postEditHome,
 );
 
-hostRouter.post("/delete-home/:homeId", isHost, hostController.postDeleteHome);
+hostRouter.post("/delete-home/:homeId", isHost, requireVerifiedHost, hostController.postDeleteHome);
 
-hostRouter.post("/complete-home/:homeId", isHost, hostController.postCompleteHome);
+hostRouter.post("/complete-home/:homeId", isHost, requireVerifiedHost, hostController.postCompleteHome);
 
-hostRouter.post("/bookings/select/:bookingId", isHost, hostController.postSelectBooking);
+hostRouter.post("/bookings/select/:bookingId", isHost, requireVerifiedHost, hostController.postSelectBooking);
+
+// Host Applicant Management Routes
+hostRouter.post("/applications/:id/shortlist", isHost, requireVerifiedHost, hostController.postShortlistApplicant);
+hostRouter.post("/applications/:id/interview", isHost, requireVerifiedHost, hostController.postScheduleInterview);
+hostRouter.post("/applications/:id/reject", isHost, requireVerifiedHost, hostController.postRejectApplicant);
 
 module.exports = hostRouter;

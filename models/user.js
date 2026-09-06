@@ -20,13 +20,44 @@ const userSchema = mongoose.Schema({
   },
   userType: {
     type: String,
-    enum: ["guest", "host"],
-    default: "guest",
+    enum: ["student", "host", "admin", "guest"],
+    default: "student",
   },
   profileComplete: {
     type: Boolean,
-    default: false, // set to true after role is chosen
+    default: false, // set to true after role is chosen & details filled
   },
+
+  // Parul University Student Fields & Verification
+  universityEmail: { type: String, default: "" },
+  enrollmentNo: { type: String, default: "" },
+  campusLocation: { type: String, default: "" },
+  department: { type: String, default: "" },
+  branch: { type: String, default: "" },
+  semester: { type: String, default: "" },
+  division: { type: String, default: "" },
+  graduationYear: { type: Number, default: null },
+  resume: { type: String, default: "" },
+  isVerified: { type: Boolean, default: false },
+  verificationStatus: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
+  },
+  rejectionReason: { type: String, default: "" },
+
+  // Parul University Host Fields & Verification
+  organization: { type: String, default: "" },
+  universityAffiliation: { type: String, default: "" },
+  contactInfo: { type: String, default: "" },
+  hostDescription: { type: String, default: "" },
+  isHostVerified: { type: Boolean, default: false },
+  hostVerificationStatus: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
+  },
+
   favourites: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -34,7 +65,7 @@ const userSchema = mongoose.Schema({
     },
   ],
 
-  bio: { type: String, maxlength: 200, default: "" },
+  bio: { type: String, maxlength: 500, default: "" },
   skills: { type: [String], default: [] },
   location: { type: String, default: "" },
   avatar: { type: String, default: "" },
@@ -44,7 +75,7 @@ const userSchema = mongoose.Schema({
   expectedPrice: { type: Number, default: 0 },
   trustScore: { type: Number, default: 100 },
   distance: { type: Number, default: 0 },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);
 

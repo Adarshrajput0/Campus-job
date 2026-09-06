@@ -541,23 +541,62 @@
                                   </div>
                                   <!-- Status Pill -->
                                   <span class="status-pill 
-              <%= booking.status === 'Applied'   ? 'pill-applied'   :
-                  booking.status === 'Selected'  ? 'pill-selected'  :
-                  booking.status === 'Completed' ? 'pill-completed' :
+              <%= (booking.status === 'Applied' || booking.status === 'applied') ? 'pill-applied' :
+                  (booking.status === 'shortlisted' || booking.status === 'Shortlisted') ? 'pill-applied' :
+                  (booking.status === 'interview' || booking.status === 'Interview') ? 'pill-applied' :
+                  (booking.status === 'Selected' || booking.status === 'selected') ? 'pill-selected' :
+                  (booking.status === 'Completed' || booking.status === 'completed') ? 'pill-completed' :
                   'pill-pending' %>
-              flex-shrink-0">
-                                    <% if (booking.status==='Selected' ) { %><i
-                                        class="fa-solid fa-trophy text-[9px]"></i>
-                                      <% } %>
-                                        <% if (booking.status==='Applied' ) { %><i
-                                            class="fa-solid fa-hourglass-half text-[9px]"></i>
-                                          <% } %>
-                                            <% if (booking.status==='Completed' ) { %><i
-                                                class="fa-solid fa-circle-check text-[9px]"></i>
-                                              <% } %>
-                                                <%= booking.status || 'Pending' %>
+              flex-shrink-0 capitalize">
+                                    <%= booking.status || 'Applied' %>
                                   </span>
                                 </div>
+
+                                <!-- Application Progress Pipeline -->
+                                <% 
+                                  const st = (booking.status || 'applied').toLowerCase();
+                                  const steps = ['applied', 'shortlisted', 'interview', 'selected'];
+                                  const currentIdx = st === 'rejected' ? -1 : steps.indexOf(st);
+                                %>
+                                <% if (st === 'rejected') { %>
+                                  <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 text-xs text-rose-700 font-semibold flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-xmark text-rose-500"></i> Application was not selected for this position.
+                                  </div>
+                                <% } else { %>
+                                  <div class="bg-slate-50 border border-slate-100 rounded-xl p-3">
+                                    <p class="section-label mb-2">Application Pipeline</p>
+                                    <div class="flex items-center justify-between text-[10px] font-bold text-slate-400">
+                                      <div class="flex flex-col items-center gap-1 <%= currentIdx >= 0 ? 'text-indigo-600' : '' %>">
+                                        <span class="w-5 h-5 rounded-full flex items-center justify-center <%= currentIdx >= 0 ? 'bg-indigo-600 text-white' : 'bg-slate-200' %>">1</span>
+                                        <span>Applied</span>
+                                      </div>
+                                      <div class="h-0.5 flex-1 mx-1 <%= currentIdx >= 1 ? 'bg-indigo-600' : 'bg-slate-200' %>"></div>
+                                      <div class="flex flex-col items-center gap-1 <%= currentIdx >= 1 ? 'text-indigo-600' : '' %>">
+                                        <span class="w-5 h-5 rounded-full flex items-center justify-center <%= currentIdx >= 1 ? 'bg-indigo-600 text-white' : 'bg-slate-200' %>">2</span>
+                                        <span>Shortlisted</span>
+                                      </div>
+                                      <div class="h-0.5 flex-1 mx-1 <%= currentIdx >= 2 ? 'bg-indigo-600' : 'bg-slate-200' %>"></div>
+                                      <div class="flex flex-col items-center gap-1 <%= currentIdx >= 2 ? 'text-indigo-600' : '' %>">
+                                        <span class="w-5 h-5 rounded-full flex items-center justify-center <%= currentIdx >= 2 ? 'bg-indigo-600 text-white' : 'bg-slate-200' %>">3</span>
+                                        <span>Interview</span>
+                                      </div>
+                                      <div class="h-0.5 flex-1 mx-1 <%= currentIdx >= 3 ? 'bg-amber-500' : 'bg-slate-200' %>"></div>
+                                      <div class="flex flex-col items-center gap-1 <%= currentIdx >= 3 ? 'text-amber-600' : '' %>">
+                                        <span class="w-5 h-5 rounded-full flex items-center justify-center <%= currentIdx >= 3 ? 'bg-amber-500 text-white' : 'bg-slate-200' %>">4</span>
+                                        <span>Selected</span>
+                                      </div>
+                                    </div>
+
+                                    <% if (st === 'interview' && booking.interviewDetails) { %>
+                                      <div class="mt-3 pt-2 border-t border-slate-200 text-xs text-indigo-900 bg-indigo-50/80 p-2.5 rounded-lg space-y-1">
+                                        <p class="font-bold text-indigo-700"><i class="fa-solid fa-calendar-check"></i> Interview Scheduled:</p>
+                                        <p><strong>Date/Time:</strong> <%= booking.interviewDetails.date ? new Date(booking.interviewDetails.date).toDateString() : '' %> at <%= booking.interviewDetails.time %></p>
+                                        <p><strong>Location:</strong> <%= booking.interviewDetails.location %></p>
+                                        <% if (booking.interviewDetails.notes) { %><p><strong>Notes:</strong> <%= booking.interviewDetails.notes %></p><% } %>
+                                      </div>
+                                    <% } %>
+                                  </div>
+                                <% } %>
 
                                 <!-- Details Grid -->
                                 <div class="grid grid-cols-2 gap-3">

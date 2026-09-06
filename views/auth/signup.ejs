@@ -149,6 +149,20 @@
           <p class="text-sm text-slate-500 mt-1">Join the Campus Jobs community.</p>
         </div>
 
+        <!-- Existing Account Alert -->
+        <div id="existing-account-notice" class="hidden mb-5 p-4 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 text-sm">
+            <i class="fa-solid fa-circle-info"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-bold text-indigo-800">Account already exists!</p>
+            <p class="text-xs text-indigo-600 mt-0.5">An account with this email already exists. Please <strong>Sign In</strong> instead.</p>
+            <a href="/login" class="inline-flex items-center gap-1.5 mt-2 px-4 py-1.5 rounded-xl bg-indigo-600 text-white font-heading font-bold text-xs uppercase tracking-wider hover:bg-indigo-500 transition">
+              <i class="fa-solid fa-right-to-bracket text-[10px]"></i> Go to Sign In
+            </a>
+          </div>
+        </div>
+
         <!-- Clerk Sign-Up Component -->
         <div id="clerk-loading" class="clerk-loading mb-2">
           <div class="skel h-11 w-full"></div>
@@ -188,12 +202,28 @@
             }
           }
         });
+
+        // Watch for "email taken" error and show the redirect notice
+        const container = document.getElementById('clerk-sign-up');
+        const observer = new MutationObserver(() => {
+          const errors = container.querySelectorAll('[data-localization-key], .cl-formFieldError, .cl-alert');
+          const allText = container.innerText || '';
+          const notice = document.getElementById('existing-account-notice');
+          if (allText.includes('taken') || allText.includes('already') || allText.includes('exists')) {
+            notice.classList.remove('hidden');
+          } else {
+            notice.classList.add('hidden');
+          }
+        });
+        observer.observe(container, { childList: true, subtree: true, characterData: true });
+
       } catch (err) {
         console.error('Clerk load error:', err);
         document.getElementById('clerk-loading').innerHTML = '<p class="text-sm text-red-500 text-center py-4">Failed to load sign-up. Please refresh.</p>';
       }
     });
   </script>
+
 
 </body>
 </html>
