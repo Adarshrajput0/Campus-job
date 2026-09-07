@@ -12,7 +12,20 @@ const isAuth = (req, res, next) => {
   next();
 };
 
-storeRouter.get("/", storeController.getIndex);
+// Blocks users who are logged in but haven't completed the registration form yet
+const requireProfileComplete = (req, res, next) => {
+  if (!req.session.isLoggedIn || !req.session.user) {
+    return res.redirect("/login");
+  }
+  const u = req.session.user;
+  // guest userType means they authenticated via Clerk but skipped /complete-profile
+  if (!u.profileComplete || u.userType === "guest") {
+    return res.redirect("/complete-profile");
+  }
+  next();
+};
+
+storeRouter.get("/", requireProfileComplete, storeController.getIndex);
 storeRouter.get("/homes", storeController.getHomes);
 storeRouter.get("/bookings", storeController.getBookings);
 storeRouter.get("/favourites", storeController.getFavouriteList);
@@ -30,4 +43,5 @@ storeRouter.post("/profile", isAuth, aiController.postProfile);
 storeRouter.get("/smart-matches", isAuth, aiController.getSmartMatches);
 
 module.exports = storeRouter;
+
 

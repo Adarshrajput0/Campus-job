@@ -247,6 +247,7 @@
               </div>
 
             <% } else { %>
+              <% const hasHired = home.bookings.some(b => (b.status || '').toLowerCase() === 'selected'); %>
               <div id="bookings-container-<%= home._id %>" class="space-y-2 max-h-48 overflow-y-auto pr-1">
                 <% home.bookings.forEach(booking => { %>
                   <div class="applicant-row" data-price="<%= booking.user ? booking.user.expectedPrice || 0 : 0 %>" data-distance="<%= booking.user ? booking.user.distance || 0 : 0 %>">
@@ -283,16 +284,17 @@
 
                     <!-- STATUS & ACTION -->
                     <div class="text-right flex-shrink-0 flex flex-col items-end gap-1.5">
-                      <span class="status-pill <%= booking.status === 'Applied' ? 'status-applied' : booking.status === 'Selected' ? 'status-selected' : booking.status === 'Completed' ? 'status-done' : 'status-default' %>">
-                        <%= booking.status || 'Pending' %>
+                      <% const bStatus = (booking.status || 'applied').toLowerCase(); %>
+                      <span class="status-pill <%= bStatus === 'applied' ? 'status-applied' : bStatus === 'selected' ? 'status-selected' : bStatus === 'completed' ? 'status-done' : 'status-default' %> flex-shrink-0 capitalize">
+                        <%= bStatus === 'selected' ? 'Hired' : (booking.status || 'Applied') %>
                       </span>
-                      <% if (booking.status === 'Selected' && booking.releaseRequested) { %>
+                      <% if (bStatus === 'selected' && booking.releaseRequested) { %>
                         <span class="text-[8px] text-amber-600 font-bold uppercase tracking-wider bg-amber-50 px-2 py-1 rounded border border-amber-200 text-center mt-1">
                           Waiting Release Approval
                         </span>
                       <% } %>
                       <div class="flex gap-1.5 mt-1">
-                        <a href="/chat/<%= booking._id %>" class="relative text-[9px] bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 font-display font-bold uppercase tracking-wider px-2 py-1 rounded-md transition shadow-sm flex items-center justify-center">
+                        <a href="/chat/<%= booking._id %>" class="relative text-[9px] bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 font-display font-bold uppercase tracking-wider px-2.5 py-1 rounded-md transition shadow-sm flex items-center justify-center">
                           <i class="fa-regular fa-comments mr-1"></i> Chat
                           <% if (booking.unreadCount > 0) { %>
                             <span class="absolute -top-1.5 -right-1.5 flex h-4 w-4">
@@ -301,15 +303,26 @@
                             </span>
                           <% } %>
                         </a>
-                        <% if (booking.status === 'Applied') { %>
-                          <form action="/bookings/select/<%= booking._id %>" method="POST">
-                            <button type="submit" class="text-[9px] bg-[var(--ink)] text-[var(--lime)] hover:bg-[#222] font-display font-bold uppercase tracking-wider px-2 py-1 rounded-md transition shadow-sm cursor-pointer h-full">
-                              Select
+                        <% if (bStatus === 'selected') { %>
+                          <span class="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-200 font-display font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1 font-semibold">
+                            <i class="fa-solid fa-circle-check text-emerald-500"></i> Hired
+                          </span>
+                        <% } else if (hasHired) { %>
+                          <span class="text-[9px] bg-slate-100 text-slate-400 border border-slate-200 font-display font-bold uppercase tracking-wider px-2 py-1 rounded-md flex items-center gap-1">
+                            Filled
+                          </span>
+                        <% } else if (bStatus !== 'completed') { %>
+                          <form action="/bookings/select/<%= booking._id %>" method="POST" onsubmit="return confirm('Hire this student for the job?')">
+                            <button type="submit" class="text-[9px] bg-emerald-600 hover:bg-emerald-700 text-white font-display font-bold uppercase tracking-wider px-3 py-1 rounded-md transition shadow-sm cursor-pointer h-full flex items-center gap-1">
+                              <i class="fa-solid fa-user-check text-[9px]"></i> Hire
                             </button>
                           </form>
                         <% } %>
                       </div>
+
                     </div>
+
+
 
                   </div>
                 <% }) %>

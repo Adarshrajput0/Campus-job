@@ -2,64 +2,139 @@ const Home = require("../models/home");
 const User = require("../models/user");
 const Booking = require("../models/booking");
 
-exports.getIndex = (req, res, next) => {
-  console.log("Session value:", req.session);
-  Home.find().then((registeredHomes) => {
+exports.getIndex = async (req, res, next) => {
+  try {
+    const registeredHomes = await Home.find().sort({ createdAt: -1 });
+    let dbUser = null;
+    if (req.session && req.session.user && req.session.user._id) {
+      dbUser = await User.findById(req.session.user._id);
+    }
     res.render("store/index", {
       registeredHomes: registeredHomes,
-      pageTitle: "campus jobs",
+      pageTitle: "Campus Micro Job Portal",
       currentPage: "index",
       isLoggedIn: req.session.isLoggedIn || false,
-      user: req.session.user || null,
+      user: dbUser || req.session.user || null,
     });
-  });
+  } catch (err) {
+    console.error("[getIndex Error]", err);
+    res.redirect("/homes");
+  }
 };
-exports.getHomes = (req, res, next) => {
-  Home.find().then((registeredHomes) => {
+
+exports.getHomes = async (req, res, next) => {
+  try {
+    const registeredHomes = await Home.find().sort({ createdAt: -1 });
+    let dbUser = null;
+    if (req.session && req.session.user && req.session.user._id) {
+      dbUser = await User.findById(req.session.user._id);
+    }
     res.render("store/home-list", {
       registeredHomes: registeredHomes,
-      pageTitle: "Homes List",
+      pageTitle: "Campus Tasks Directory",
       currentPage: "Home",
       isLoggedIn: req.session.isLoggedIn || false,
-      user: req.session.user || null,
+      user: dbUser || req.session.user || null,
     });
-  });
+  } catch (err) {
+    console.error("[getHomes Error]", err);
+    res.redirect("/");
+  }
 };
+
 
 
 exports.getFavouriteList = async (req, res, next) => {
-  const userId = req.session.user._id;
-  const user = await User.findById(userId).populate("favourites");
-  res.render("store/favourite-list", {
-    favouriteHomes: user.favourites,
-    pageTitle: "My Favourites",
-    currentPage: "favourites",
-    isLoggedIn: req.session.isLoggedIn || false,
-    user: req.session.user || null,
-  });
+  try {
+    if (!req.session || !req.session.user) {
+      return res.redirect("/login");
+    }
+    const userId = req.session.user._id;
+    const user = await User.findById(userId).populate("favourites");
+    const validFavourites = user && user.favourites ? user.favourites.filter(item => item !== null) : [];
+    
+    // Update session user to stay in sync
+    if (user) req.session.user = user.toObject();
+
+    res.render("store/favourite-list", {
+      favouriteHomes: validFavourites,
+      pageTitle: "Saved Tasks",
+      currentPage: "favourites",
+      isLoggedIn: req.session.isLoggedIn || false,
+      user: user || req.session.user || null,
+    });
+  } catch (err) {
+    console.error("[getFavouriteList Error]", err);
+    res.redirect("/homes");
+  }
 };
 
 exports.postAddToFavourite = async (req, res, next) => {
-  const homeId = req.body.id;
-  const userId = req.session.user._id;
-  const user = await User.findById(userId);
-  if (!user.favourites.includes(homeId)) {
-    user.favourites.push(homeId);
-    await user.save();
+  try {
+    if (!req.session || !req.session.user) {
+      if (req.xhr || req.headers.accept?.includes("application/json")) {
+        return res.status(401).json({ success: false, message: "Please login to save tasks." });
+      }
+      return res.redirect("/login");
+    }
+    const homeId = req.body.id || req.body.homeId;
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
+
+    if (user && homeId) {
+      const exists = user.favourites.some(fav => fav && fav.toString() === homeId.toString());
+      if (!exists) {
+        user.favourites.push(homeId);
+        await user.save();
+      }
+      req.session.user = user.toObject();
+    }
+
+    if (req.xhr || req.headers.accept?.includes("application/json")) {
+      return res.json({ success: true, isSaved: true });
+    }
+    res.redirect("/favourites");
+  } catch (err) {
+    console.error("[postAddToFavourite Error]", err);
+    if (req.xhr || req.headers.accept?.includes("application/json")) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+    res.redirect("/favourites");
   }
-  res.redirect("/favourites");
 };
 
 exports.postRemoveFromFavourite = async (req, res, next) => {
-  const homeId = req.params.homeId;
-  const userId = req.session.user._id;
-  const user = await User.findById(userId);
-  if (user.favourites.includes(homeId)) {
-    user.favourites = user.favourites.filter((fav) => fav != homeId);
-    await user.save();
+  try {
+    if (!req.session || !req.session.user) {
+      if (req.xhr || req.headers.accept?.includes("application/json")) {
+        return res.status(401).json({ success: false, message: "Please login." });
+      }
+      return res.redirect("/login");
+    }
+    const homeId = req.params.homeId || req.body.id || req.body.homeId;
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
+
+    if (user && homeId) {
+      user.favourites = user.favourites.filter(fav => fav && fav.toString() !== homeId.toString());
+      await user.save();
+      req.session.user = user.toObject();
+    }
+
+    if (req.xhr || req.headers.accept?.includes("application/json")) {
+      return res.json({ success: true, isSaved: false });
+    }
+    res.redirect("/favourites");
+  } catch (err) {
+    console.error("[postRemoveFromFavourite Error]", err);
+    if (req.xhr || req.headers.accept?.includes("application/json")) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+    res.redirect("/favourites");
   }
-  res.redirect("/favourites");
 };
+
+
 
 exports.getHomeDetails = (req, res, next) => {
   const homeId = req.params.homeId;

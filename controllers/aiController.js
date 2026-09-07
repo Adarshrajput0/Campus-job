@@ -860,6 +860,10 @@ You are the AI Smart Matcher for a Campus Micro-Job Portal.
 Analyze the following student's profile (skills, bio, expected hourly rate, and distance from campus center) against a list of active campus micro-jobs.
 
 STUDENT PROFILE:
+- Name: ${user.firstName} ${user.lastName || ''}
+- Department: ${user.department || 'N/A'}
+- Branch: ${user.branch || 'N/A'}
+- Semester: ${user.semester || 1}
 - Skills: ${JSON.stringify(user.skills)}
 - Bio: ${JSON.stringify(user.bio)}
 - Expected Rate: ₹${user.expectedPrice || 0}/hr

@@ -1,19 +1,33 @@
-<form action="/favourites" method="POST" class="flex justify-center">
-  <input type="hidden" name="id" value="<%= home._id %>" />
+<% 
+  let isSaved = false;
+  if (typeof user !== 'undefined' && user && user.favourites && Array.isArray(user.favourites)) {
+    isSaved = user.favourites.some(fav => {
+      const favId = fav._id ? fav._id.toString() : fav.toString();
+      return favId === home._id.toString();
+    });
+  }
+%>
 
-  <button
-    type="submit"
-    class="group flex items-center justify-center gap-2 w-full max-w-xs px-6 py-2.5 rounded-full bg-green-600 text-white font-semibold text-sm shadow-md hover:bg-green-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-      class="w-4 h-4 group-hover:scale-110 transition"
+<% if (isSaved) { %>
+  <form action="/favourites/delete/<%= home._id %>" method="POST" class="flex justify-center w-full">
+    <button
+      type="submit"
+      class="group flex items-center justify-center gap-2 w-full px-5 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 font-heading font-bold text-xs shadow-sm hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all duration-200"
     >
-      <path d="M6 2c-1.1 0-2 .9-2 2v18l8-5 8 5V4c0-1.1-.9-2-2-2H6z" />
-    </svg>
+      <i class="fa-solid fa-bookmark text-emerald-500 group-hover:text-rose-500"></i>
+      Saved Task
+    </button>
+  </form>
+<% } else { %>
+  <form action="/favourites" method="POST" class="flex justify-center w-full">
+    <input type="hidden" name="id" value="<%= home._id %>" />
+    <button
+      type="submit"
+      class="group flex items-center justify-center gap-2 w-full px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-heading font-bold text-xs shadow-sm hover:bg-indigo-700 hover:shadow-md transition-all duration-200"
+    >
+      <i class="fa-regular fa-bookmark group-hover:scale-110 transition"></i>
+      Save Task
+    </button>
+  </form>
+<% } %>
 
-    Save Task
-  </button>
-</form>

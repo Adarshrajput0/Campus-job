@@ -1,193 +1,373 @@
-<header class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all duration-300">
+<header id="site-header" class="fixed top-0 left-0 w-full z-50 bg-white/85 dark:bg-[#0F1117]/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 transition-all duration-300">
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
+    <div class="flex items-center justify-between h-16 sm:h-18">
 
-      <!-- LOGO -->
-      <a href="/" class="flex items-center gap-2 group">
-        <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-sm">
-          <svg viewBox="0 0 24 24" class="w-5 h-5 fill-indigo-400 group-hover:fill-emerald-400 transition-colors duration-300">
-            <path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5s2.5 1.1 2.5 2.5S13.4 11.5 12 11.5z"/>
-          </svg>
+      <!-- LEFT: LOGO -->
+      <a href="/" class="flex items-center gap-2.5 group">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-blue-500 flex items-center justify-center shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-300">
+          <i class="fa-solid fa-briefcase text-white text-base"></i>
         </div>
-        <span class="font-heading font-extrabold text-lg text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600">
-          Campus Job
-        </span>
+        <div class="flex flex-col">
+          <span class="font-heading font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight leading-none group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+            Campus <span class="text-indigo-600 dark:text-indigo-400">Job</span>
+          </span>
+          <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase leading-none mt-0.5">
+            Micro Gigs
+          </span>
+        </div>
       </a>
 
-      <!-- RIGHT SIDE: NAVIGATION LINKS -->
-      <div class="flex items-center gap-1 sm:gap-2">
+      <!-- CENTER: NAVIGATION LINKS (DESKTOP) -->
+      <div class="hidden md:flex items-center gap-1 bg-slate-100/70 dark:bg-slate-800/50 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-700/50">
+        <a href="/homes" class="nav-link-pill <%= typeof currentPage !== 'undefined' && currentPage === 'Home' ? 'active' : '' %>">
+          <i class="fa-solid fa-compass text-xs"></i>
+          <span>Explore Tasks</span>
+        </a>
+        <a href="<%= (typeof user !== 'undefined' && user && user.userType === 'host') ? '/host-home-list' : ((typeof user !== 'undefined' && user && user.userType === 'admin') ? '/admin/dashboard' : '/bookings') %>" class="nav-link-pill <%= typeof currentPage !== 'undefined' && (currentPage === 'host-dashboard' || currentPage === 'admin-dashboard') ? 'active' : '' %>">
+          <i class="fa-solid fa-chart-pie text-xs"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/bookings" class="nav-link-pill <%= typeof currentPage !== 'undefined' && currentPage === 'bookings' ? 'active' : '' %>">
+          <i class="fa-solid fa-list-check text-xs"></i>
+          <span>My Tasks</span>
+        </a>
+        <a href="/favourites" class="nav-link-pill <%= typeof currentPage !== 'undefined' && currentPage === 'favourites' ? 'active' : '' %>">
+          <i class="fa-solid fa-bookmark text-xs"></i>
+          <span>Saved</span>
+        </a>
+      </div>
 
-        <% if (isLoggedIn) { %>
-          <% if (typeof user !== 'undefined' && user && user.userType === 'guest') { %>
+      <!-- RIGHT: ACTIONS & USER PROFILE -->
+      <div class="flex items-center gap-2 sm:gap-3">
 
-            <a href="/homes" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'Home' ? 'active' : '' %>">
-              <i class="fa-solid fa-list-check text-xs"></i>
-              <span>Tasks</span>
-            </a>
-            <a href="/smart-matches" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'bookings' && typeof user !== 'undefined' ? '' : (typeof currentPage !== 'undefined' && currentPage === 'favourites' ? '' : (typeof currentPage !== 'undefined' && currentPage === 'profile' ? '' : (typeof currentPage !== 'undefined' && currentPage === 'Home' ? '' : 'active'))) %>">
-              <i class="fa-solid fa-circle-nodes text-xs"></i>
-              <span>Smart Matches</span>
-            </a>
-            <a href="/favourites" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'favourites' ? 'active' : '' %>">
-              <i class="fa-solid fa-bookmark text-xs"></i>
-              <span>Saved</span>
-            </a>
-            <a href="/bookings" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'bookings' ? 'active' : '' %>">
-              <i class="fa-solid fa-clipboard-check text-xs"></i>
-              <span>My Tasks</span>
-            </a>
-            <a href="/profile" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'profile' ? 'active' : '' %>">
-              <i class="fa-solid fa-user-gear text-xs"></i>
-              <span>Profile</span>
-            </a>
+        <!-- Quick Search Icon Button -->
+        <a href="#live-tasks" onclick="document.getElementById('task-search-input')?.focus();" class="icon-nav-btn" title="Search tasks">
+          <i class="fa-solid fa-magnifying-glass text-sm"></i>
+        </a>
 
-          <% } else { %>
+        <!-- Dark/Light Mode Toggle -->
+        <button type="button" id="theme-toggle-btn" onclick="toggleDarkMode()" class="icon-nav-btn" title="Toggle Theme">
+          <i id="theme-toggle-icon" class="fa-solid fa-moon text-sm"></i>
+        </button>
 
-            <a href="/host-home-list" class="nav-link-item <%= typeof currentPage !== 'undefined' && currentPage === 'host-dashboard' ? 'active' : '' %>">
-              <i class="fa-solid fa-bars-progress text-xs"></i>
-              <span>Dashboard</span>
-            </a>
-            <a href="/add-home" class="cta-btn-gradient">
-              <i class="fa-solid fa-plus text-xs"></i>
-              <span>Post Task</span>
-            </a>
+        <% if (isLoggedIn && typeof user !== 'undefined' && user) { %>
 
-          <% } %>
-        <% } else { %>
-
-          <a href="/login" class="login-ghost-btn">Login</a>
-          <a href="/signup" class="cta-btn-gradient">Signup</a>
-
-        <% } %>
-
-        <% if (isLoggedIn) { %>
-          <a href="<%= (typeof user !== 'undefined' && user.userType === 'host') ? '/host-home-list' : '/bookings' %>" class="relative inline-flex items-center ml-1 sm:ml-2">
-            <div class="w-9 h-9 rounded-xl border border-slate-200 bg-white text-slate-500 flex items-center justify-center hover:bg-slate-50 hover:text-indigo-600 transition shadow-sm" title="Messages">
-              <i class="fa-regular fa-comment-dots"></i>
-              <% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %>
-                <span class="absolute -top-1 -right-1 flex h-4 w-4">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 text-[9px] font-bold text-white items-center justify-center shadow-sm"><%= unreadCount %></span>
-                </span>
-              <% } %>
-            </div>
+          <!-- Notifications Bell -->
+          <a href="/bookings" class="icon-nav-btn relative" title="Notifications & Messages">
+            <i class="fa-regular fa-bell text-sm"></i>
+            <% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %>
+              <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-indigo-600 text-[9px] font-bold text-white items-center justify-center shadow-sm"><%= unreadCount %></span>
+              </span>
+            <% } else { %>
+              <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500"></span>
+            <% } %>
           </a>
 
-          <form action="/logout" method="POST" class="inline-block ml-2">
-            <button type="submit" class="logout-btn-item" title="Logout">
-              <i class="fa-solid fa-right-from-bracket"></i>
+          <!-- Primary "+ Post Task" Button -->
+          <a href="/add-home" class="post-task-btn hidden sm:inline-flex">
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span>Post Task</span>
+          </a>
+
+          <!-- User Profile Dropdown Button -->
+          <div class="relative">
+            <button type="button" onclick="toggleProfileDropdown()" class="flex items-center gap-2 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-xs flex items-center justify-center shadow-sm uppercase">
+                <%= user.firstName ? user.firstName.charAt(0) : 'U' %>
+              </div>
+              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 mr-1.5 hidden sm:inline-block"></i>
             </button>
-          </form>
+
+            <!-- Dropdown Menu -->
+            <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-3 w-56 bg-white dark:bg-[#161B22] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div class="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800">
+                <p class="text-xs font-bold text-slate-900 dark:text-white truncate">
+                  <%= user.firstName %> <%= user.lastName || '' %>
+                </p>
+                <p class="text-[11px] text-slate-400 truncate mt-0.5"><%= user.email %></p>
+                <span class="inline-block mt-1.5 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                  <%= user.userType === 'host' ? '🏛️ Host / Employer' : (user.userType === 'admin' ? '🛡️ Admin' : '🎓 Student') %>
+                </span>
+              </div>
+
+              <div class="py-1">
+                <a href="/profile" class="dropdown-item">
+                  <i class="fa-solid fa-user-gear text-slate-400"></i>
+                  <span>Profile Settings</span>
+                </a>
+                <a href="<%= user.userType === 'host' ? '/host-home-list' : '/bookings' %>" class="dropdown-item">
+                  <i class="fa-solid fa-clipboard-list text-slate-400"></i>
+                  <span>My Dashboard</span>
+                </a>
+                <a href="/favourites" class="dropdown-item">
+                  <i class="fa-solid fa-bookmark text-slate-400"></i>
+                  <span>Saved Tasks</span>
+                </a>
+              </div>
+
+              <div class="pt-1 border-t border-slate-100 dark:border-slate-800">
+                <form action="/logout" method="POST">
+                  <button type="submit" class="dropdown-item w-full text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Log Out</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+        <% } else { %>
+
+          <!-- Logged out CTA -->
+          <a href="/login" class="px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            Log In
+          </a>
+          <a href="/signup" class="post-task-btn">
+            <span>Sign Up</span>
+            <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
+          </a>
+
         <% } %>
+
+        <!-- Mobile Drawer Toggle -->
+        <button type="button" onclick="toggleMobileNav()" class="icon-nav-btn md:hidden" title="Toggle Menu">
+          <i class="fa-solid fa-bars text-sm"></i>
+        </button>
 
       </div>
     </div>
   </nav>
+
+  <!-- Mobile Collapsible Menu Drawer -->
+  <div id="mobile-nav-drawer" class="hidden md:hidden border-t border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-[#0F1117]/95 backdrop-blur-xl px-4 py-4 space-y-2">
+    <a href="/homes" class="mobile-drawer-item">
+      <i class="fa-solid fa-compass"></i> Explore Tasks
+    </a>
+    <a href="/bookings" class="mobile-drawer-item">
+      <i class="fa-solid fa-list-check"></i> My Tasks
+    </a>
+    <a href="/favourites" class="mobile-drawer-item">
+      <i class="fa-solid fa-bookmark"></i> Saved Tasks
+    </a>
+    <a href="/add-home" class="mobile-drawer-item text-indigo-600 font-bold">
+      <i class="fa-solid fa-plus-circle"></i> Post a Micro Task
+    </a>
+    <% if (isLoggedIn && typeof user !== 'undefined' && user) { %>
+      <a href="/profile" class="mobile-drawer-item">
+        <i class="fa-solid fa-user-gear"></i> Profile
+      </a>
+    <% } %>
+  </div>
 </header>
 
 <style>
-  .nav-link-item {
+  .nav-link-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
+    gap: 7px;
+    padding: 7px 14px;
     border-radius: 12px;
     font-size: 0.82rem;
     font-weight: 600;
-    color: #64748b; /* slate-500 */
+    color: #64748b;
     transition: all 0.2s ease;
     text-decoration: none;
-    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .nav-link-item:hover {
-    color: #0f172a; /* slate-900 */
-    background-color: #f1f5f9; /* slate-100 */
+  .dark .nav-link-pill { color: #94a3b8; }
+
+  .nav-link-pill:hover {
+    color: #4f46e5;
+    background-color: rgba(255, 255, 255, 0.8);
   }
-  .nav-link-item.active {
-    color: #6366f1; /* indigo-500 */
-    background-color: #eeebff; /* indigo-50 */
+  .dark .nav-link-pill:hover {
+    color: #818cf8;
+    background-color: rgba(30, 41, 59, 0.6);
   }
 
-  .cta-btn-gradient {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 18px;
+  .nav-link-pill.active {
+    color: #4f46e5;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  .dark .nav-link-pill.active {
+    color: #ffffff;
+    background-color: #4f46e5;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  }
+
+  .icon-nav-btn {
+    width: 38px;
+    height: 38px;
     border-radius: 14px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    background: linear-gradient(135deg, #4f46e5 0%, #10b981 100%);
-    color: white;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.2);
-    transition: all 0.2s ease;
-    text-decoration: none;
-  }
-  .cta-btn-gradient:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
-    opacity: 0.95;
-  }
-
-  .login-ghost-btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 16px;
-    border-radius: 14px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #0f172a;
-    border: 1.5px solid #e2e8f0;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
-  .login-ghost-btn:hover {
-    border-color: #0f172a;
-    background-color: #f8fafc;
-  }
-
-  .logout-btn-item {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-    border: 1.5px solid #fee2e2;
-    background: transparent;
-    color: #ef4444;
-    font-size: 0.82rem;
-    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
     transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
   }
-  .logout-btn-item:hover {
-    border-color: #ef4444;
-    background-color: #fee2e2;
+  .dark .icon-nav-btn {
+    background-color: #161B22;
+    border-color: #1F2633;
+    color: #94a3b8;
   }
 
-  /* Responsive styling */
-  @media (max-width: 768px) {
-    .nav-link-item span {
-      display: none;
-    }
-    .nav-link-item {
-      padding: 10px;
-    }
-    .nav-link-item i {
-      font-size: 1.05rem;
-    }
-    .cta-btn-gradient span {
-      display: none;
-    }
-    .cta-btn-gradient {
-      padding: 10px;
-    }
-    .cta-btn-gradient i {
-      font-size: 1.05rem;
-      margin: 0;
-    }
+  .icon-nav-btn:hover {
+    color: #4f46e5;
+    border-color: #c7d2fe;
+    background-color: #eef2ff;
+  }
+  .dark .icon-nav-btn:hover {
+    color: #818cf8;
+    border-color: #3730a3;
+    background-color: #1e1b4b;
+  }
+
+  .post-task-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+    color: white;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+  }
+  .post-task-btn:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 8px 22px rgba(79, 70, 229, 0.35);
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+  .dark .dropdown-item { color: #cbd5e1; }
+  .dropdown-item:hover {
+    background-color: #f1f5f9;
+  }
+  .dark .dropdown-item:hover {
+    background-color: #1F2633;
+  }
+
+  .mobile-drawer-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none;
+    background-color: #f8fafc;
+  }
+  .dark .mobile-drawer-item {
+    color: #e2e8f0;
+    background-color: #161B22;
   }
 </style>
+
+<script>
+  // Dark Mode Engine
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      document.documentElement.classList.add('dark');
+      updateThemeIcon(true);
+    } else {
+      document.documentElement.classList.remove('dark');
+      updateThemeIcon(false);
+    }
+  }
+
+  function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeIcon(isDark);
+  }
+
+  function updateThemeIcon(isDark) {
+    const icon = document.getElementById('theme-toggle-icon');
+    if (icon) {
+      icon.className = isDark ? 'fa-solid fa-sun text-amber-400 text-sm' : 'fa-solid fa-moon text-slate-600 text-sm';
+    }
+  }
+
+  function toggleProfileDropdown() {
+    const menu = document.getElementById('profile-dropdown-menu');
+    if (menu) menu.classList.toggle('hidden');
+  }
+
+  function toggleMobileNav() {
+    const drawer = document.getElementById('mobile-nav-drawer');
+    if (drawer) drawer.classList.toggle('hidden');
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[onclick="toggleProfileDropdown()"]');
+    const menu = document.getElementById('profile-dropdown-menu');
+    if (!btn && menu && !menu.contains(e.target)) {
+      menu.classList.add('hidden');
+    }
+  });
+
+  initTheme();
+</script>
+
+<% if (isLoggedIn && typeof user !== 'undefined' && user) { %>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof io !== 'undefined') {
+        const socket = io();
+        const userId = "<%= user._id %>";
+        socket.emit('joinUserRoom', userId);
+
+        socket.on('notification', (data) => {
+          const toast = document.createElement('div');
+          toast.className = 'fixed bottom-5 right-5 z-[99999] bg-slate-900 text-white border border-indigo-500/50 p-4 rounded-2xl shadow-2xl flex items-start gap-3 max-w-sm transition-all duration-300 transform translate-y-10 opacity-0';
+          toast.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-white text-xs flex-shrink-0">
+              🔔
+            </div>
+            <div class="flex-1">
+              <h4 class="font-heading text-xs font-bold text-indigo-300">${data.title || 'New Notification'}</h4>
+              <p class="text-[11px] text-slate-300 mt-0.5 leading-snug">${data.message || ''}</p>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-slate-500 hover:text-white text-xs">✕</button>
+          `;
+          document.body.appendChild(toast);
+          requestAnimationFrame(() => {
+            toast.classList.remove('translate-y-10', 'opacity-0');
+          });
+          setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-y-10');
+            setTimeout(() => toast.remove(), 400);
+          }, 6000);
+        });
+      }
+    });
+  </script>
+<% } %>

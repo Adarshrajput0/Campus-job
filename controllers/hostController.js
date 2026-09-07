@@ -66,8 +66,10 @@ exports.getHostHomes = async (req, res, next) => {
   try {
     const hostId = req.session.user._id;
 
-    // 🔒 ONLY show tasks that THIS host owns — no more legacy/ownerless tasks
-    const registeredHomes = await Home.find({ owner: hostId });
+    // 🔒 ONLY show tasks that THIS host owns — match either owner or host field
+    const registeredHomes = await Home.find({
+      $or: [{ owner: hostId }, { host: hostId }]
+    }).sort({ createdAt: -1 });
 
     const Message = require("../models/message");
 
@@ -101,16 +103,17 @@ exports.getHostHomes = async (req, res, next) => {
   }
 };
 
-// ─── POST: Add Home ───────────────────────────────────────────────────────────
+// ─── POST: Add Home / Job ───────────────────────────────────────────────────
 exports.postAddHome = (req, res, next) => {
   const {
-    houseName, price, location, rating, description, maxguest, propertytype,
+    houseName, title, price, stipend, location, rating, description, maxguest, propertytype,
+    category, requiredSkills, jobType, duration, numberOfPositions, applicationDeadline
   } = req.body;
 
   // Separate uploaded files into images and other attachments
   const files = req.files || [];
-  const imageFiles = files.filter(f => f.mimetype.startsWith("image/"));
-  const otherFiles = files.filter(f => !f.mimetype.startsWith("image/"));
+  const imageFiles = files.filter(f => f.mimetype && f.mimetype.startsWith("image/"));
+  const otherFiles = files.filter(f => !f.mimetype || !f.mimetype.startsWith("image/"));
 
   const photos = imageFiles.map(f => f.path);
   const attachments = otherFiles.map(f => ({
@@ -123,17 +126,45 @@ exports.postAddHome = (req, res, next) => {
   const defaultPhoto = "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200";
   const photo = photos[0] || defaultPhoto;
 
+  const parsedSkills = typeof requiredSkills === "string"
+    ? requiredSkills.split(",").map(s => s.trim()).filter(Boolean)
+    : (Array.isArray(requiredSkills) ? requiredSkills : []);
+
+  // Validate jobType against Mongoose schema enum: ["Part-Time", "Full-Time", "Project-Based", "Gig", "Internship"]
+  const validJobTypes = ["Part-Time", "Full-Time", "Project-Based", "Gig", "Internship"];
+  const safeJobType = validJobTypes.includes(jobType) ? jobType : "Part-Time";
+
+  // Auto-approve task for verified hosts
+  const hostUser = req.session.user;
+  const isVerifiedHost = hostUser && (hostUser.isHostVerified || hostUser.hostVerificationStatus === "approved");
+  const initialStatus = isVerifiedHost ? "approved" : "pending";
+
   const home = new Home({
-    houseName, price, location, rating,
+    title: title || houseName || "Campus Micro Job",
+    houseName: houseName || title || "Campus Micro Job",
+    price: Number(price || stipend || 0),
+    stipend: Number(stipend || price || 0),
+    location: location || "Parul University Campus",
+    rating: Number(rating) || 5,
     photo,           // first image (card thumbnail)
     photos,          // all images
     attachments,     // all non-image files
-    description, maxguest, propertytype,
-    owner: req.session.user._id,
+    description: description || "No description provided.",
+    maxguest: Number(maxguest || numberOfPositions || 1),
+    numberOfPositions: Number(numberOfPositions || maxguest || 1),
+    propertytype: propertytype || safeJobType || "Task",
+    category: category || "General",
+    requiredSkills: parsedSkills,
+    jobType: safeJobType,
+    duration: duration || "Flexible",
+    applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : null,
+    host: hostUser._id,
+    owner: hostUser._id,
+    status: initialStatus,
   });
 
   home.save().then(() => {
-    console.log("Home Saved Successfully");
+    console.log(`Job Saved Successfully with status: ${initialStatus}`);
     res.redirect("/home-added");
   }).catch((err) => {
     console.error("[postAddHome Error]", err);
@@ -270,40 +301,189 @@ exports.postSelectBooking = async (req, res, next) => {
     const bookingToSelect = await Booking.findById(bookingId).populate('home');
     if (!bookingToSelect) return res.redirect('/host-home-list');
 
-    const home = await Home.findById(bookingToSelect.home);
-    if (!home || !isOwner(home, hostId)) {
+    // Properly extract home document (handling populated object vs ObjectId)
+    const home = bookingToSelect.home && bookingToSelect.home._id ? bookingToSelect.home : await Home.findById(bookingToSelect.home);
+    if (!home) return res.redirect('/host-home-list');
+
+    const homeId = home._id;
+
+    if (!isOwner(home, hostId)) {
       console.log('Unauthorized postSelectBooking attempt by host:', hostId);
       return res.redirect('/host-home-list');
     }
 
-    // Check if a guest is already selected for this home
-    const existingSelected = await Booking.findOne({ home: bookingToSelect.home, status: 'Selected' });
-    if (existingSelected && existingSelected._id.toString() !== bookingId) {
+    // Check if another guest is already selected for this home
+    const existingSelected = await Booking.findOne({
+      home: homeId,
+      _id: { $ne: bookingId },
+      status: { $in: ['Selected', 'selected'] }
+    });
+
+    if (existingSelected) {
       if (existingSelected.releaseRequested) {
-        // We already asked them, just redirect
         return res.redirect('/host-home-list');
       }
-      
       // Host is trying to select another guest – apply penalty and ask current guest to release
       await applyHostPenalty(hostId);
       existingSelected.releaseRequested = true;
       await existingSelected.save();
-      
-      // Keep the original selection unchanged until the guest approves
       return res.redirect('/host-home-list');
     }
 
     bookingToSelect.status = 'Selected';
     await bookingToSelect.save();
 
+    // 1. Send In-App Notification
+    const { createNotification } = require('../utils/notificationUtil');
+    await createNotification({
+      app: req.app,
+      userId: bookingToSelect.user,
+      title: "🎉 Congratulations! You are Hired!",
+      message: `Great news! The host of "${home.title || home.houseName}" has officially hired you for this task. Check your chat to coordinate details!`,
+      type: "application_status",
+      relatedJob: homeId,
+      relatedApplication: bookingToSelect._id,
+    });
+
+    // 2. Auto-send Congratulatory Message in Chat
+    const Message = require('../models/message');
+    try {
+      const existingMsg = await Message.findOne({
+        booking: bookingToSelect._id,
+        content: { $regex: /congratulations/i }
+      });
+      if (!existingMsg) {
+        await Message.create({
+          booking: bookingToSelect._id,
+          sender: hostId,
+          recipient: bookingToSelect.user,
+          content: `🎉 Congratulations! I have officially hired you for "${home.title || home.houseName}". Let's chat here to coordinate the details!`,
+          read: false,
+        });
+      }
+    } catch (msgErr) {
+      console.error("[postSelectBooking Message Creation Error]", msgErr);
+    }
+
     await Booking.updateMany(
-      { home: bookingToSelect.home, _id: { $ne: bookingId } },
+      { home: homeId, _id: { $ne: bookingId }, status: { $nin: ['Completed', 'completed'] } },
       { $set: { status: 'Applied' } }
     );
 
     res.redirect('/host-home-list');
   } catch (err) {
     console.error('[postSelectBooking Error]', err);
+    res.redirect('/host-home-list');
+  }
+};
+
+
+// ─── POST: Shortlist Applicant ──────────────────────────────────────────────
+exports.postShortlistApplicant = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+    const hostId = req.session.user._id;
+    const { createNotification } = require('../utils/notificationUtil');
+
+    const appDoc = await Booking.findById(applicationId).populate('home');
+    if (!appDoc) return res.redirect('/host-home-list');
+
+    if (!appDoc.home || (appDoc.home.owner && appDoc.home.owner.toString() !== hostId.toString() && appDoc.home.host && appDoc.home.host.toString() !== hostId.toString())) {
+      console.log('Unauthorized host attempt to shortlist application');
+      return res.redirect('/host-home-list');
+    }
+
+    appDoc.status = 'shortlisted';
+    await appDoc.save();
+
+    await createNotification({
+      app: req.app,
+      userId: appDoc.user || appDoc.student,
+      title: "Application Shortlisted 🌟",
+      message: `Your application for "${appDoc.home.title || appDoc.home.houseName}" has been shortlisted by the host!`,
+      type: "application_status",
+      relatedJob: appDoc.home._id,
+      relatedApplication: appDoc._id,
+    });
+
+    res.redirect('/host-home-list');
+  } catch (err) {
+    console.error('[postShortlistApplicant Error]', err);
+    res.redirect('/host-home-list');
+  }
+};
+
+// ─── POST: Schedule Interview ───────────────────────────────────────────────
+exports.postScheduleInterview = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+    const hostId = req.session.user._id;
+    const { date, time, location, notes } = req.body;
+    const { createNotification } = require('../utils/notificationUtil');
+
+    const appDoc = await Booking.findById(applicationId).populate('home');
+    if (!appDoc) return res.redirect('/host-home-list');
+
+    if (!appDoc.home || (appDoc.home.owner && appDoc.home.owner.toString() !== hostId.toString() && appDoc.home.host && appDoc.home.host.toString() !== hostId.toString())) {
+      return res.redirect('/host-home-list');
+    }
+
+    appDoc.status = 'interview';
+    appDoc.interviewDetails = {
+      date: date ? new Date(date) : new Date(),
+      time: time || '10:00 AM',
+      location: location || 'Parul University Campus',
+      notes: notes || '',
+    };
+    await appDoc.save();
+
+    await createNotification({
+      app: req.app,
+      userId: appDoc.user || appDoc.student,
+      title: "Interview Scheduled 📅",
+      message: `An interview has been scheduled for "${appDoc.home.title || appDoc.home.houseName}" on ${date || 'upcoming date'} at ${time || 'scheduled time'}.`,
+      type: "interview_scheduled",
+      relatedJob: appDoc.home._id,
+      relatedApplication: appDoc._id,
+    });
+
+    res.redirect('/host-home-list');
+  } catch (err) {
+    console.error('[postScheduleInterview Error]', err);
+    res.redirect('/host-home-list');
+  }
+};
+
+// ─── POST: Reject Applicant ──────────────────────────────────────────────────
+exports.postRejectApplicant = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+    const hostId = req.session.user._id;
+    const { createNotification } = require('../utils/notificationUtil');
+
+    const appDoc = await Booking.findById(applicationId).populate('home');
+    if (!appDoc) return res.redirect('/host-home-list');
+
+    if (!appDoc.home || (appDoc.home.owner && appDoc.home.owner.toString() !== hostId.toString() && appDoc.home.host && appDoc.home.host.toString() !== hostId.toString())) {
+      return res.redirect('/host-home-list');
+    }
+
+    appDoc.status = 'rejected';
+    await appDoc.save();
+
+    await createNotification({
+      app: req.app,
+      userId: appDoc.user || appDoc.student,
+      title: "Application Status Update",
+      message: `Your application for "${appDoc.home.title || appDoc.home.houseName}" was not selected at this time.`,
+      type: "application_status",
+      relatedJob: appDoc.home._id,
+      relatedApplication: appDoc._id,
+    });
+
+    res.redirect('/host-home-list');
+  } catch (err) {
+    console.error('[postRejectApplicant Error]', err);
     res.redirect('/host-home-list');
   }
 };

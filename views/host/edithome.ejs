@@ -148,14 +148,126 @@
             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
               Location (on campus)
             </label>
-            <input
-              type="text"
+            <select
               name="location"
-              value="<%= home.location || '' %>"
-              placeholder="e.g. Hostel Block A"
               required
-              class="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition duration-200 text-sm"
-            />
+              class="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-white text-slate-900 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition duration-200 text-sm"
+            >
+              <option value="">-- Select Campus Location --</option>
+              
+              <optgroup label="🏛️ Academic Blocks (A)">
+                <option value="A1 - Parul Institute of Engineering & Technology" <%= home.location === "A1 - Parul Institute of Engineering & Technology" ? "selected" : "" %>>A1 - Parul Institute of Engineering & Technology</option>
+                <option value="A2 - Parul Institute of Engineering & Technology (Diploma Studies)" <%= home.location === "A2 - Parul Institute of Engineering & Technology (Diploma Studies)" ? "selected" : "" %>>A2 - Parul Institute of Engineering & Technology (Diploma Studies)</option>
+                <option value="A3 - Parul Institute of Engineering & Technology (D Block)" <%= home.location === "A3 - Parul Institute of Engineering & Technology (D Block)" ? "selected" : "" %>>A3 - Parul Institute of Engineering & Technology (D Block)</option>
+                <option value="A4 - Parul Institute of Pharmacy" <%= home.location === "A4 - Parul Institute of Pharmacy" ? "selected" : "" %>>A4 - Parul Institute of Pharmacy</option>
+                <option value="A5 - Parul Institute of Engineering & Tech (Diploma & Gymnasium)" <%= home.location === "A5 - Parul Institute of Engineering & Tech (Diploma & Gymnasium)" ? "selected" : "" %>>A5 - Parul Institute of Engineering & Tech (Diploma & Gymnasium)</option>
+                <option value="A6 - Parul Institute of Nursing" <%= home.location === "A6 - Parul Institute of Nursing" ? "selected" : "" %>>A6 - Parul Institute of Nursing</option>
+                <option value="A7 - JNHMC Homoeopathic College & Physiotherapy" <%= home.location === "A7 - JNHMC Homoeopathic College & Physiotherapy" ? "selected" : "" %>>A7 - JNHMC Homoeopathic College & Physiotherapy</option>
+                <option value="A8 - Parul Institute of Pharmacy & Research" <%= home.location === "A8 - Parul Institute of Pharmacy & Research" ? "selected" : "" %>>A8 - Parul Institute of Pharmacy & Research</option>
+                <option value="A9 - Parul Polytechnic Institute" <%= home.location === "A9 - Parul Polytechnic Institute" ? "selected" : "" %>>A9 - Parul Polytechnic Institute</option>
+                <option value="A10 - School of Pharmacy" <%= home.location === "A10 - School of Pharmacy" ? "selected" : "" %>>A10 - School of Pharmacy</option>
+                <option value="A11 - Medical Library & Insights-Centre & PIPER" <%= home.location === "A11 - Medical Library & Insights-Centre & PIPER" ? "selected" : "" %>>A11 - Medical Library & Insights-Centre & PIPER</option>
+                <option value="A12 - Parul Institute of Medical Sciences & Symphony Hall" <%= home.location === "A12 - Parul Institute of Medical Sciences & Symphony Hall" ? "selected" : "" %>>A12 - Parul Institute of Medical Sciences & Symphony Hall</option>
+                <option value="A13 - Parul Institute of Ayurved" <%= home.location === "A13 - Parul Institute of Ayurved" ? "selected" : "" %>>A13 - Parul Institute of Ayurved</option>
+                <option value="A14 - Parul Institute of Business Administration" <%= home.location === "A14 - Parul Institute of Business Administration" ? "selected" : "" %>>A14 - Parul Institute of Business Administration</option>
+                <option value="A15 - Faculty of Management Studies" <%= home.location === "A15 - Faculty of Management Studies" ? "selected" : "" %>>A15 - Faculty of Management Studies</option>
+                <option value="A16 - Parul Institute of Architecture & Physiotherapy Research" <%= home.location === "A16 - Parul Institute of Architecture & Physiotherapy Research" ? "selected" : "" %>>A16 - Parul Institute of Architecture & Physiotherapy Research</option>
+                <option value="A17 - Parul Institute of Homeopathy & Research" <%= home.location === "A17 - Parul Institute of Homeopathy & Research" ? "selected" : "" %>>A17 - Parul Institute of Homeopathy & Research</option>
+                <option value="A18 - Parul Institute of Ayurved & Research" <%= home.location === "A18 - Parul Institute of Ayurved & Research" ? "selected" : "" %>>A18 - Parul Institute of Ayurved & Research</option>
+                <option value="A19 - Parul Institute of Tech & Hotel Management" <%= home.location === "A19 - Parul Institute of Tech & Hotel Management" ? "selected" : "" %>>A19 - Parul Institute of Tech & Hotel Management</option>
+                <option value="A20 - Vikram Sarabhai Center" <%= home.location === "A20 - Vikram Sarabhai Center" ? "selected" : "" %>>A20 - Vikram Sarabhai Center</option>
+                <option value="A21 - Parul Institute of Applied Sciences" <%= home.location === "A21 - Parul Institute of Applied Sciences" ? "selected" : "" %>>A21 - Parul Institute of Applied Sciences</option>
+                <option value="A22 - Parul Institute of Design, Fine Arts & Performing Arts" <%= home.location === "A22 - Parul Institute of Design, Fine Arts & Performing Arts" ? "selected" : "" %>>A22 - Parul Institute of Design, Fine Arts & Performing Arts</option>
+                <option value="A23 - Subhash Chandra Bose Bhawan (Law, Commerce, Arts, Agriculture)" <%= home.location === "A23 - Subhash Chandra Bose Bhawan (Law, Commerce, Arts, Agriculture)" ? "selected" : "" %>>A23 - Subhash Chandra Bose Bhawan (Law, Commerce, Arts, Agriculture)</option>
+                <option value="A24 - Bhagat Singh Bhawan (Computer Application & Engineering)" <%= home.location === "A24 - Bhagat Singh Bhawan (Computer Application & Engineering)" ? "selected" : "" %>>A24 - Bhagat Singh Bhawan (Computer Application & Engineering)</option>
+                <option value="A25 - C.V. Raman Centre - Center Of Excellence" <%= home.location === "A25 - C.V. Raman Centre - Center Of Excellence" ? "selected" : "" %>>A25 - C.V. Raman Centre - Center Of Excellence</option>
+                <option value="A26 - 24 Frames Studio" <%= home.location === "A26 - 24 Frames Studio" ? "selected" : "" %>>A26 - 24 Frames Studio</option>
+                <option value="A27 - Proposed Library Building" <%= home.location === "A27 - Proposed Library Building" ? "selected" : "" %>>A27 - Proposed Library Building</option>
+                <option value="A28 - Lakshya 2047: Center for Future Skills" <%= home.location === "A28 - Lakshya 2047: Center for Future Skills" ? "selected" : "" %>>A28 - Lakshya 2047: Center for Future Skills</option>
+                <option value="A29 - Parul Institute of Performing Arts" <%= home.location === "A29 - Parul Institute of Performing Arts" ? "selected" : "" %>>A29 - Parul Institute of Performing Arts</option>
+              </optgroup>
+
+              <optgroup label="🏢 Administrative Block (C)">
+                <option value="C1 - Student Section / Scholarship / Accounts / Central Library" <%= home.location === "C1 - Student Section / Scholarship / Accounts / Central Library" ? "selected" : "" %>>C1 - Student Section / Scholarship / Accounts / Central Library</option>
+                <option value="C2 - Admission Cell / Placement Cell / IQAC / MIS Cell" <%= home.location === "C2 - Admission Cell / Placement Cell / IQAC / MIS Cell" ? "selected" : "" %>>C2 - Admission Cell / Placement Cell / IQAC / MIS Cell</option>
+                <option value="C3 - Centre of International Relations / CEO Office / Alumni" <%= home.location === "C3 - Centre of International Relations / CEO Office / Alumni" ? "selected" : "" %>>C3 - Centre of International Relations / CEO Office / Alumni</option>
+                <option value="C4 - HR & Administration / Doctoral Studies / Cultural Affairs" <%= home.location === "C4 - HR & Administration / Doctoral Studies / Cultural Affairs" ? "selected" : "" %>>C4 - HR & Administration / Doctoral Studies / Cultural Affairs</option>
+                <option value="C5 - Office of Hostel Superintendent & Chief Rector" <%= home.location === "C5 - Office of Hostel Superintendent & Chief Rector" ? "selected" : "" %>>C5 - Office of Hostel Superintendent & Chief Rector</option>
+              </optgroup>
+
+              <optgroup label="🏠 Hostels (H)">
+                <option value="H1 - Shastri Bhawan - A" <%= home.location === "H1 - Shastri Bhawan - A" ? "selected" : "" %>>H1 - Shastri Bhawan - A</option>
+                <option value="H2 - Shastri Bhawan - B" <%= home.location === "H2 - Shastri Bhawan - B" ? "selected" : "" %>>H2 - Shastri Bhawan - B</option>
+                <option value="H3 - Shastri Bhawan - C" <%= home.location === "H3 - Shastri Bhawan - C" ? "selected" : "" %>>H3 - Shastri Bhawan - C</option>
+                <option value="H4 - Marie Curie Residence" <%= home.location === "H4 - Marie Curie Residence" ? "selected" : "" %>>H4 - Marie Curie Residence</option>
+                <option value="H5 - Sarojini Bhawan - A" <%= home.location === "H5 - Sarojini Bhawan - A" ? "selected" : "" %>>H5 - Sarojini Bhawan - A</option>
+                <option value="H6 - Sarojini Bhawan - B" <%= home.location === "H6 - Sarojini Bhawan - B" ? "selected" : "" %>>H6 - Sarojini Bhawan - B</option>
+                <option value="H7 - Sarojini Bhawan - C" <%= home.location === "H7 - Sarojini Bhawan - C" ? "selected" : "" %>>H7 - Sarojini Bhawan - C</option>
+                <option value="H8 - Indira Bhawan - A" <%= home.location === "H8 - Indira Bhawan - A" ? "selected" : "" %>>H8 - Indira Bhawan - A</option>
+                <option value="H9 - Indira Bhawan - B" <%= home.location === "H9 - Indira Bhawan - B" ? "selected" : "" %>>H9 - Indira Bhawan - B</option>
+                <option value="H10 - Indira Bhawan - C" <%= home.location === "H10 - Indira Bhawan - C" ? "selected" : "" %>>H10 - Indira Bhawan - C</option>
+                <option value="H11 - Albert Einstein Residence" <%= home.location === "H11 - Albert Einstein Residence" ? "selected" : "" %>>H11 - Albert Einstein Residence</option>
+                <option value="H12 - Kalam Bhawan - A" <%= home.location === "H12 - Kalam Bhawan - A" ? "selected" : "" %>>H12 - Kalam Bhawan - A</option>
+                <option value="H13 - Kalam Bhawan - B" <%= home.location === "H13 - Kalam Bhawan - B" ? "selected" : "" %>>H13 - Kalam Bhawan - B</option>
+                <option value="H14 - Kalam Bhawan - C" <%= home.location === "H14 - Kalam Bhawan - C" ? "selected" : "" %>>H14 - Kalam Bhawan - C</option>
+                <option value="H15 - Tagore Bhawan - A" <%= home.location === "H15 - Tagore Bhawan - A" ? "selected" : "" %>>H15 - Tagore Bhawan - A</option>
+                <option value="H16 - Tagore Bhawan - B" <%= home.location === "H16 - Tagore Bhawan - B" ? "selected" : "" %>>H16 - Tagore Bhawan - B</option>
+                <option value="H17 - Dhyan Bhawan" <%= home.location === "H17 - Dhyan Bhawan" ? "selected" : "" %>>H17 - Dhyan Bhawan</option>
+                <option value="H18 - Janki Bhawan" <%= home.location === "H18 - Janki Bhawan" ? "selected" : "" %>>H18 - Janki Bhawan</option>
+                <option value="H19 - Teresa Bhawan - A" <%= home.location === "H19 - Teresa Bhawan - A" ? "selected" : "" %>>H19 - Teresa Bhawan - A</option>
+                <option value="H20 - Teresa Bhawan - B" <%= home.location === "H20 - Teresa Bhawan - B" ? "selected" : "" %>>H20 - Teresa Bhawan - B</option>
+                <option value="H21 - Teresa Bhawan - C" <%= home.location === "H21 - Teresa Bhawan - C" ? "selected" : "" %>>H21 - Teresa Bhawan - C</option>
+                <option value="H22 - Teresa Bhawan - D" <%= home.location === "H22 - Teresa Bhawan - D" ? "selected" : "" %>>H22 - Teresa Bhawan - D</option>
+                <option value="H23 - Shakuntala Bhawan - A" <%= home.location === "H23 - Shakuntala Bhawan - A" ? "selected" : "" %>>H23 - Shakuntala Bhawan - A</option>
+                <option value="H24 - Shakuntala Bhawan - B" <%= home.location === "H24 - Shakuntala Bhawan - B" ? "selected" : "" %>>H24 - Shakuntala Bhawan - B</option>
+                <option value="H25 - Atal Bhawan - A1" <%= home.location === "H25 - Atal Bhawan - A1" ? "selected" : "" %>>H25 - Atal Bhawan - A1</option>
+                <option value="H26 - Atal Bhawan - A2" <%= home.location === "H26 - Atal Bhawan - A2" ? "selected" : "" %>>H26 - Atal Bhawan - A2</option>
+                <option value="H27 - Milkha Bhawan - A" <%= home.location === "H27 - Milkha Bhawan - A" ? "selected" : "" %>>H27 - Milkha Bhawan - A</option>
+                <option value="H28 - Kalpana Bhawan - A" <%= home.location === "H28 - Kalpana Bhawan - A" ? "selected" : "" %>>H28 - Kalpana Bhawan - A</option>
+                <option value="H29 - Kalpana Bhawan - B" <%= home.location === "H29 - Kalpana Bhawan - B" ? "selected" : "" %>>H29 - Kalpana Bhawan - B</option>
+                <option value="H30 - Sardar Bhawan - A" <%= home.location === "H30 - Sardar Bhawan - A" ? "selected" : "" %>>H30 - Sardar Bhawan - A</option>
+                <option value="H31 - Sardar Bhawan - B" <%= home.location === "H31 - Sardar Bhawan - B" ? "selected" : "" %>>H31 - Sardar Bhawan - B</option>
+                <option value="H32 - Atal Bhawan - B" <%= home.location === "H32 - Atal Bhawan - B" ? "selected" : "" %>>H32 - Atal Bhawan - B</option>
+                <option value="H33 - Azad Bhawan - A" <%= home.location === "H33 - Azad Bhawan - A" ? "selected" : "" %>>H33 - Azad Bhawan - A</option>
+                <option value="H34 - Tagore Bhawan - C" <%= home.location === "H34 - Tagore Bhawan - C" ? "selected" : "" %>>H34 - Tagore Bhawan - C</option>
+                <option value="H35 - Rani Laxmibai Bhawan - A" <%= home.location === "H35 - Rani Laxmibai Bhawan - A" ? "selected" : "" %>>H35 - Rani Laxmibai Bhawan - A</option>
+                <option value="H36 - Rani Laxmibai Bhawan - B" <%= home.location === "H36 - Rani Laxmibai Bhawan - B" ? "selected" : "" %>>H36 - Rani Laxmibai Bhawan - B</option>
+              </optgroup>
+
+              <optgroup label="🏥 Hospitals (E)">
+                <option value="E1 - Parul Ayurved Hospital" <%= home.location === "E1 - Parul Ayurved Hospital" ? "selected" : "" %>>E1 - Parul Ayurved Hospital</option>
+                <option value="E2 - Parul Sevashram Hospital" <%= home.location === "E2 - Parul Sevashram Hospital" ? "selected" : "" %>>E2 - Parul Sevashram Hospital</option>
+                <option value="E3 - Khemdas Ayurved Hospital" <%= home.location === "E3 - Khemdas Ayurved Hospital" ? "selected" : "" %>>E3 - Khemdas Ayurved Hospital</option>
+                <option value="E4 - Parul Institute of Homeopathy Hospital" <%= home.location === "E4 - Parul Institute of Homeopathy Hospital" ? "selected" : "" %>>E4 - Parul Institute of Homeopathy Hospital</option>
+                <option value="E5 - JNHMC Medical College Hospital" <%= home.location === "E5 - JNHMC Medical College Hospital" ? "selected" : "" %>>E5 - JNHMC Medical College Hospital</option>
+                <option value="E6 - Proposed Cancer Hospital" <%= home.location === "E6 - Proposed Cancer Hospital" ? "selected" : "" %>>E6 - Proposed Cancer Hospital</option>
+              </optgroup>
+
+              <optgroup label="💳 Bank & Transport (B & TS)">
+                <option value="B1 - Central Bank of India" <%= home.location === "B1 - Central Bank of India" ? "selected" : "" %>>B1 - Central Bank of India</option>
+                <option value="TS - Transport Office / Pick & Drop Point" <%= home.location === "TS - Transport Office / Pick & Drop Point" ? "selected" : "" %>>TS - Transport Office / Pick & Drop Point</option>
+              </optgroup>
+
+              <optgroup label="🅿️ Campus Parking (P)">
+                <option value="P1 - Visitor's Parking" <%= home.location === "P1 - Visitor's Parking" ? "selected" : "" %>>P1 - Visitor's Parking</option>
+                <option value="P2 - Staff 2-Wheeler Parking" <%= home.location === "P2 - Staff 2-Wheeler Parking" ? "selected" : "" %>>P2 - Staff 2-Wheeler Parking</option>
+                <option value="P3 - Student 2-Wheeler Parking" <%= home.location === "P3 - Student 2-Wheeler Parking" ? "selected" : "" %>>P3 - Student 2-Wheeler Parking</option>
+                <option value="P4 - Bus Parking" <%= home.location === "P4 - Bus Parking" ? "selected" : "" %>>P4 - Bus Parking</option>
+                <option value="P5 to P8 - Staff 4-Wheeler Parking" <%= home.location === "P5 to P8 - Staff 4-Wheeler Parking" ? "selected" : "" %>>P5 to P8 - Staff 4-Wheeler Parking</option>
+              </optgroup>
+              
+              <!-- Custom/Fallback option if home has a custom location not in preset list -->
+              <% if (home.location && ![
+                "A1 - Parul Institute of Engineering & Technology", "A2 - Parul Institute of Engineering & Technology (Diploma Studies)", "A3 - Parul Institute of Engineering & Technology (D Block)", "A4 - Parul Institute of Pharmacy", "A5 - Parul Institute of Engineering & Tech (Diploma & Gymnasium)", "A6 - Parul Institute of Nursing", "A7 - JNHMC Homoeopathic College & Physiotherapy", "A8 - Parul Institute of Pharmacy & Research", "A9 - Parul Polytechnic Institute", "A10 - School of Pharmacy", "A11 - Medical Library & Insights-Centre & PIPER", "A12 - Parul Institute of Medical Sciences & Symphony Hall", "A13 - Parul Institute of Ayurved", "A14 - Parul Institute of Business Administration", "A15 - Faculty of Management Studies", "A16 - Parul Institute of Architecture & Physiotherapy Research", "A17 - Parul Institute of Homeopathy & Research", "A18 - Parul Institute of Ayurved & Research", "A19 - Parul Institute of Tech & Hotel Management", "A20 - Vikram Sarabhai Center", "A21 - Parul Institute of Applied Sciences", "A22 - Parul Institute of Design, Fine Arts & Performing Arts", "A23 - Subhash Chandra Bose Bhawan (Law, Commerce, Arts, Agriculture)", "A24 - Bhagat Singh Bhawan (Computer Application & Engineering)", "A25 - C.V. Raman Centre - Center Of Excellence", "A26 - 24 Frames Studio", "A27 - Proposed Library Building", "A28 - Lakshya 2047: Center for Future Skills", "A29 - Parul Institute of Performing Arts",
+                "C1 - Student Section / Scholarship / Accounts / Central Library", "C2 - Admission Cell / Placement Cell / IQAC / MIS Cell", "C3 - Centre of International Relations / CEO Office / Alumni", "C4 - HR & Administration / Doctoral Studies / Cultural Affairs", "C5 - Office of Hostel Superintendent & Chief Rector",
+                "H1 - Shastri Bhawan - A", "H2 - Shastri Bhawan - B", "H3 - Shastri Bhawan - C", "H4 - Marie Curie Residence", "H5 - Sarojini Bhawan - A", "H6 - Sarojini Bhawan - B", "H7 - Sarojini Bhawan - C", "H8 - Indira Bhawan - A", "H9 - Indira Bhawan - B", "H10 - Indira Bhawan - C", "H11 - Albert Einstein Residence", "H12 - Kalam Bhawan - A", "H13 - Kalam Bhawan - B", "H14 - Kalam Bhawan - C", "H15 - Tagore Bhawan - A", "H16 - Tagore Bhawan - B", "H17 - Dhyan Bhawan", "H18 - Janki Bhawan", "H19 - Teresa Bhawan - A", "H20 - Teresa Bhawan - B", "H21 - Teresa Bhawan - C", "H22 - Teresa Bhawan - D", "H23 - Shakuntala Bhawan - A", "H24 - Shakuntala Bhawan - B", "H25 - Atal Bhawan - A1", "H26 - Atal Bhawan - A2", "H27 - Milkha Bhawan - A", "H28 - Kalpana Bhawan - A", "H29 - Kalpana Bhawan - B", "H30 - Sardar Bhawan - A", "H31 - Sardar Bhawan - B", "H32 - Atal Bhawan - B", "H33 - Azad Bhawan - A", "H34 - Tagore Bhawan - C", "H35 - Rani Laxmibai Bhawan - A", "H36 - Rani Laxmibai Bhawan - B",
+                "E1 - Parul Ayurved Hospital", "E2 - Parul Sevashram Hospital", "E3 - Khemdas Ayurved Hospital", "E4 - Parul Institute of Homeopathy Hospital", "E5 - JNHMC Medical College Hospital", "E6 - Proposed Cancer Hospital",
+                "B1 - Central Bank of India", "TS - Transport Office / Pick & Drop Point",
+                "P1 - Visitor's Parking", "P2 - Staff 2-Wheeler Parking", "P3 - Student 2-Wheeler Parking", "P4 - Bus Parking", "P5 to P8 - Staff 4-Wheeler Parking"
+              ].includes(home.location)) { %>
+                <option value="<%= home.location %>" selected><%= home.location %></option>
+              <% } %>
+            </select>
           </div>
 
           <!-- DESCRIPTION -->
@@ -343,12 +455,14 @@
           </script>
 
           <!-- SUBMIT -->
-          <div class="pt-4">
+          <div class="pt-6">
             <button
               type="submit"
-              class="w-full py-4 rounded-2xl font-heading text-sm font-bold uppercase tracking-wider text-white bg-gradient-to-r from-indigo-600 to-emerald-500 hover:shadow-indigo-500/20 hover:shadow-lg hover:-translate-y-0.5 transition duration-200 cursor-pointer"
+              style="background-color: #4f46e5 !important; color: #ffffff !important; display: flex; align-items: center; justify-content: center; gap: 10px;"
+              class="w-full py-4 px-6 rounded-2xl font-heading text-base font-extrabold uppercase tracking-wider shadow-lg hover:bg-indigo-700 transition duration-200 cursor-pointer border border-indigo-600"
             >
-              <%= editing ? "Update Task" : "Post Task" %>
+              <i class="fa-solid fa-paper-plane text-white text-base"></i>
+              <span><%= editing ? "Update Task Details" : "Post Task Now" %></span>
             </button>
           </div>
 

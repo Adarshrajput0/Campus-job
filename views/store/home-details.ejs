@@ -182,29 +182,57 @@
             </div>
           </div>
 
-          <!-- Application execution -->
-          <form action="/bookings" method="POST" class="space-y-4">
-            <input type="hidden" name="homeId" value="<%= home._id %>" />
+          <% 
+            let isTaskOwner = false;
+            if (user && home) {
+              const ownerId = home.owner ? (home.owner._id || home.owner).toString() : '';
+              const hostId = home.host ? (home.host._id || home.host).toString() : '';
+              const uId = user._id ? user._id.toString() : '';
+              if (uId && (uId === ownerId || uId === hostId)) {
+                isTaskOwner = true;
+              }
+            }
+          %>
 
-            <div>
-              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Preferred Start Date</label>
-              <input type="date" name="checkIn" required class="input-form-field" />
+          <% if (isTaskOwner) { %>
+            <div class="bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 rounded-2xl p-5 text-center shadow-sm">
+              <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mx-auto mb-3 font-bold text-base shadow">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+              <h4 class="font-heading text-sm font-extrabold text-slate-900 dark:text-white">You Hosted This Task</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                You posted this task. You cannot apply for your own task, but you can view applicants and manage task details in your Host Dashboard.
+              </p>
+              <a href="/host-home-list" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-heading font-bold text-xs uppercase tracking-wider transition shadow-md">
+                <i class="fa-solid fa-bars-progress"></i> Manage in Dashboard
+              </a>
             </div>
+          <% } else { %>
+            <!-- Application execution -->
+            <form action="/bookings" method="POST" class="space-y-4">
+              <input type="hidden" name="homeId" value="<%= home._id %>" />
 
-            <div>
-              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Preferred End Date</label>
-              <input type="date" name="checkOut" required class="input-form-field" />
-            </div>
+              <div>
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Preferred Start Date</label>
+                <input type="date" name="checkIn" required class="input-form-field" />
+              </div>
 
-            <div>
-              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Apply Count (Number of students)</label>
-              <input type="number" name="guests" min="1" max="<%= home.maxguest %>" value="1" required class="input-form-field" />
-            </div>
+              <div>
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Preferred End Date</label>
+                <input type="date" name="checkOut" required class="input-form-field" />
+              </div>
 
-            <button type="submit" class="elite-submit">
-              Apply For Gig <i class="fa-solid fa-paper-plane ml-2 text-[9px]"></i>
-            </button>
-          </form>
+              <div>
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Apply Count (Number of students)</label>
+                <input type="number" name="guests" min="1" max="<%= home.maxguest %>" value="1" required class="input-form-field" />
+              </div>
+
+              <button type="submit" class="elite-submit">
+                Apply For Gig <i class="fa-solid fa-paper-plane ml-2 text-[9px]"></i>
+              </button>
+            </form>
+          <% } %>
+
 
           <div class="h-px bg-slate-100"></div>
 

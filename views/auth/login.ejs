@@ -138,6 +138,19 @@
           <p class="text-sm text-slate-500 mt-1">Sign in to your Campus Jobs account.</p>
         </div>
 
+        <!-- Domain / Verification Errors Alert Banner -->
+        <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+        <div class="mb-6 p-4 bg-rose-50 border-2 border-rose-300 rounded-2xl flex items-start gap-3.5 text-rose-900 shadow-md">
+          <div class="w-9 h-9 rounded-xl bg-rose-100 border border-rose-300 flex items-center justify-center text-rose-600 flex-shrink-0 mt-0.5">
+            <i class="fa-solid fa-circle-exclamation text-lg"></i>
+          </div>
+          <div>
+            <h4 class="font-heading font-bold text-sm text-rose-950">🚫 Parul University Email Required</h4>
+            <p class="text-xs text-rose-800 mt-1 leading-relaxed"><%= errors[0] %></p>
+          </div>
+        </div>
+        <% } %>
+
         <!-- Clerk Sign-In Component -->
         <div id="clerk-loading" class="clerk-loading mb-2">
           <div class="skel h-11 w-full"></div>
@@ -177,10 +190,21 @@
   </div>
 
   <script>
+    const SIGN_OUT_CLERK = <%- typeof signOutClerk !== 'undefined' && signOutClerk ? 'true' : 'false' %>;
+
     window.addEventListener("load", async function () {
       try {
         const origin = window.location.origin;
         await Clerk.load();
+
+        // ── KEY FIX: If this page was reached after a domain-access-denied block,
+        // the user is still signed in to Clerk in the browser. If we mount the
+        // Clerk widget while they're signed in, Clerk auto-redirects to /sso-callback
+        // creating an infinite loop. So we MUST sign them out first.
+        if (SIGN_OUT_CLERK && Clerk.user) {
+          await Clerk.signOut();
+        }
+
         document.getElementById('clerk-loading').style.display = 'none';
         document.getElementById('clerk-sign-in').classList.remove('hidden');
         Clerk.mountSignIn(document.getElementById('clerk-sign-in'), {

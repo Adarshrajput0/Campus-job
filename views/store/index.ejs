@@ -1,818 +1,1175 @@
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-  href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
-  rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-<link rel="stylesheet" href="/css/output.css" />
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle %> • Campus Micro Job Portal</title>
 
-<%- include('../partials/head', { pageTitle: 'Campus Job Portal' }) %>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              dark: '#0F1117',
+              card: '#161B22',
+              border: '#1F2633'
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'DM Sans', 'sans-serif'],
+            heading: ['Outfit', 'Syne', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/output.css" />
 
   <style>
     :root {
-      --ink: #0a0a0f;
-      --ink-muted: #4a4a5a;
-      --ink-faint: #9090a8;
-      --surface: #ffffff;
-      --surface-off: #f5f5f7;
-      --surface-mid: #ededf2;
-      --accent: #5b4cff;
-      --accent-glow: rgba(91, 76, 255, 0.18);
-      --accent-tint: #f0eeff;
-      --green: #00c16a;
-      --green-tint: #e8faf2;
-      --amber: #f5a623;
-      --border: rgba(0, 0, 0, 0.07);
-      --border-hover: rgba(91, 76, 255, 0.25);
-      --radius-sm: 10px;
-      --radius-md: 16px;
-      --radius-lg: 24px;
-      --radius-xl: 32px;
-      --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05);
-      --shadow-hover: 0 16px 40px rgba(91, 76, 255, 0.13), 0 0 0 1px rgba(91, 76, 255, 0.18);
-      --shadow-btn: 0 8px 24px rgba(91, 76, 255, 0.3);
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
+      --bg-gradient: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.15), transparent 70%);
     }
 
     body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--surface-off);
-      color: var(--ink);
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-heading {
+      font-family: 'Outfit', sans-serif;
     }
 
-    .font-display {
-      font-family: 'Syne', sans-serif;
+    /* Subtle Grid Pattern Overlay */
+    .grid-bg-overlay {
+      background-image: 
+        linear-gradient(to right, rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+    .dark .grid-bg-overlay {
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
 
-    /* ─── Layout ─── */
-    .page-wrap {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 40px;
+    /* Gradient Text Highlight */
+    .text-gradient-purple {
+      background: linear-gradient(135deg, #6366f1 0%, #3b82f6 50%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    /* ─── Hero grid bg ─── */
-    .hero-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(ellipse 80% 60% at 30% 20%, black 30%, transparent 70%);
-      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 30% 20%, black 30%, transparent 70%);
+    /* Soft Elevated Cards */
+    .saas-card {
+      background-color: #ffffff;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .dark .saas-card {
+      background-color: #161B22;
+      border-color: #1F2633;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2);
+    }
+    .saas-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 30px -10px rgba(99, 102, 241, 0.12);
+      border-color: rgba(99, 102, 241, 0.3);
     }
 
-    /* ─── Orbs ─── */
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.5;
-      pointer-events: none;
-      z-index: 0;
+    /* Category Cards Lift */
+    .cat-card {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 32px -8px rgba(99, 102, 241, 0.2);
+      border-color: #6366f1;
     }
 
-    .orb-1 {
-      width: 600px;
-      height: 600px;
-      background: #c5beff;
-      top: -200px;
-      left: -150px;
-    }
-
-    .orb-2 {
-      width: 400px;
-      height: 400px;
-      background: #b8f5d8;
-      bottom: -100px;
-      right: -80px;
-    }
-
-    /* ─── Breadcrumb / eyebrow ─── */
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 6px 14px 6px 10px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--ink-muted);
-      box-shadow: var(--shadow-card);
-    }
-
-    .eyebrow-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 0 3px var(--green-tint);
-      animation: pulse-dot 2s infinite;
-    }
-
-    @keyframes pulse-dot {
-
-      0%,
-      100% {
-        box-shadow: 0 0 0 3px var(--green-tint);
-      }
-
-      50% {
-        box-shadow: 0 0 0 6px rgba(0, 193, 106, 0.1);
-      }
-    }
-
-    /* ─── Hero heading ─── */
-    .hero-h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(3rem, 6vw, 5.5rem);
-      font-weight: 800;
-      line-height: 1.02;
-      letter-spacing: -0.03em;
-      color: var(--ink);
-    }
-
-    .hero-h1 mark {
-      background: none;
-      -webkit-background-clip: unset;
-      color: var(--accent);
-      position: relative;
-    }
-
-    .hero-h1 mark::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 2px;
-      height: 3px;
-      background: var(--accent);
-      border-radius: 100px;
-      opacity: 0.35;
-    }
-
-    /* ─── CTA Buttons ─── */
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--ink);
-      color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
+    /* Pill Filter Styling */
+    .filter-tab {
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
       font-weight: 600;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-      padding: 14px 28px;
-      border-radius: var(--radius-md);
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .btn-primary:hover {
-      background: var(--accent);
-      box-shadow: var(--shadow-btn);
-      transform: translateY(-2px);
-    }
-
-    .btn-primary .arrow-icon {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 9px;
-      transition: transform 0.2s ease;
-    }
-
-    .btn-primary:hover .arrow-icon {
-      transform: translateX(2px);
-    }
-
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--surface);
-      color: var(--ink);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 14px 24px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-card);
-    }
-
-    .btn-ghost:hover {
-      border-color: var(--border-hover);
-      color: var(--accent);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(91, 76, 255, 0.08);
-    }
-
-    /* ─── Stats strip ─── */
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 24px 20px;
-      text-align: center;
-      box-shadow: var(--shadow-card);
-      transition: all 0.25s ease;
-    }
-
-    .stat-card:hover {
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-3px);
-    }
-
-    .stat-val {
-      font-family: 'Syne', sans-serif;
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--ink-faint);
-      margin-top: 6px;
-    }
-
-    /* ─── Section header ─── */
-    .section-rule {
-      display: inline-block;
-      width: 4px;
-      height: 22px;
-      background: var(--accent);
-      border-radius: 100px;
-      flex-shrink: 0;
-    }
-
-    /* ─── Filter pills ─── */
-    .pill-filter {
-      cursor: pointer;
-      font-size: 12.5px;
-      font-weight: 600;
-      padding: 8px 20px;
-      border-radius: 100px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--ink-muted);
-      transition: all 0.2s ease;
       white-space: nowrap;
-    }
-
-    .pill-filter:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .pill-filter.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-      box-shadow: 0 6px 18px rgba(91, 76, 255, 0.3);
-    }
-
-    /* ─── Job Card ─── */
-    .job-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow-card);
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-    }
-
-    .job-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: var(--radius-lg);
-      background: linear-gradient(135deg, rgba(91, 76, 255, 0.04) 0%, transparent 50%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    .job-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(91, 76, 255, 0.2);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .job-card:hover::before {
-      opacity: 1;
-    }
-
-    /* Card image */
-    .card-img-wrap {
-      position: relative;
-      height: 220px;
-      overflow: hidden;
-      background: var(--surface-mid);
-    }
-
-    .card-img-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .job-card:hover .card-img-wrap img {
-      transform: scale(1.06);
-    }
-
-    /* Price badge */
-    .price-badge {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(10, 10, 15, 0.88);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 100px;
-      letter-spacing: 0.01em;
-    }
-
-    /* Verified badge */
-    .verified-badge {
-      position: absolute;
-      bottom: 14px;
-      left: 14px;
-      background: var(--green);
-      color: #fff;
-      font-size: 9.5px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 6px;
-    }
-
-    /* Card body */
-    .card-body {
-      padding: 22px 24px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    .card-type {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--ink-faint);
-    }
-
-    .card-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      color: var(--ink);
-      margin-top: 4px;
-      line-height: 1.3;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .card-location {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-      color: var(--ink-faint);
-      margin-top: 4px;
-    }
-
-    .card-desc {
-      font-size: 13px;
-      color: var(--ink-muted);
-      line-height: 1.6;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      margin-top: 12px;
-      flex: 1;
-    }
-
-    /* Card footer */
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 14px;
-      margin-top: 16px;
-      border-top: 1px solid var(--surface-mid);
-    }
-
-    .rating-chip {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .helper-chip {
-      font-size: 11.5px;
-      font-weight: 500;
-      color: var(--ink-faint);
-      background: var(--surface-off);
-      padding: 4px 10px;
-      border-radius: 100px;
-    }
-
-    /* CTA area */
-    .card-cta {
-      padding: 0 24px 20px;
-      margin-top: 0;
-    }
-
-    .cta-apply {
-      display: block;
-      width: 100%;
-      text-align: center;
-      font-family: 'Syne', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 13px 20px;
-      border-radius: var(--radius-sm);
-      text-decoration: none;
-      transition: all 0.2s ease;
-      background: var(--accent-tint);
-      color: var(--accent);
-      border: 1px solid rgba(91, 76, 255, 0.18);
-    }
-
-    .cta-apply:hover {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 8px 20px rgba(91, 76, 255, 0.3);
-    }
-
-    .cta-edit {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-family: 'Syne', sans-serif;
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 12px;
-      border-radius: var(--radius-sm);
-      background: var(--ink);
-      color: #fff;
-      transition: all 0.2s ease;
-    }
-
-    .cta-edit:hover {
-      background: #1a1a2e;
-    }
-
-    .cta-delete {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-family: 'Syne', sans-serif;
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 12px;
-      border-radius: var(--radius-sm);
-      background: #fff5f5;
-      color: #d73a3a;
-      border: 1px solid #ffd0d0;
       transition: all 0.2s ease;
       cursor: pointer;
-      width: 100%;
+      border: 1px solid #e2e8f0;
+      background-color: #ffffff;
+      color: #64748b;
+    }
+    .dark .filter-tab {
+      border-color: #1F2633;
+      background-color: #161B22;
+      color: #94a3b8;
+    }
+    .filter-tab:hover {
+      border-color: #6366f1;
+      color: #6366f1;
+    }
+    .filter-tab.active {
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
     }
 
-    .cta-delete:hover {
-      background: #fee2e2;
-    }
-
-    /* ─── Empty state ─── */
-    .empty-state {
-      background: var(--surface);
-      border: 1px dashed var(--border);
-      border-radius: var(--radius-xl);
-      padding: 80px 40px;
-      text-align: center;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .empty-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 20px;
-      background: var(--surface-off);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      margin: 0 auto 20px;
-    }
-
-    /* ─── Fade-in animation ─── */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(24px);
-      animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes fadeUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Stagger delays */
-    .d-0 {
-      animation-delay: 0s;
-    }
-
-    .d-1 {
-      animation-delay: 0.1s;
-    }
-
-    .d-2 {
-      animation-delay: 0.18s;
-    }
-
-    .d-3 {
-      animation-delay: 0.26s;
-    }
-
-    .d-4 {
-      animation-delay: 0.34s;
-    }
-
-    /* ─── Scrollbar ─── */
+    /* Custom Scrollbar */
     ::-webkit-scrollbar {
-      width: 5px;
+      width: 6px;
+      height: 6px;
     }
-
     ::-webkit-scrollbar-track {
       background: transparent;
     }
-
     ::-webkit-scrollbar-thumb {
-      background: var(--surface-mid);
+      background: #cbd5e1;
       border-radius: 10px;
     }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #334155;
+    }
   </style>
+</head>
 
-  </head>
+<body class="bg-slate-50 dark:bg-[#0F1117] text-slate-800 dark:text-slate-200 min-h-screen relative selection:bg-indigo-500 selection:text-white transition-colors duration-300">
 
-  <body>
-    <!-- Background atmosphere -->
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="orb orb-1" aria-hidden="true"></div>
-    <div class="orb orb-2" aria-hidden="true"></div>
+  <!-- Background Ambient Glow & Grid -->
+  <div class="fixed inset-0 grid-bg-overlay pointer-events-none z-0"></div>
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] pointer-events-none z-0 opacity-40 dark:opacity-20 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-400 via-blue-200 to-transparent blur-3xl"></div>
 
-    <!-- NAVBAR HEADER -->
-    <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
+  <!-- NAVBAR HEADER -->
+  <%- include('../partials/header', { isLoggedIn: isLoggedIn, user: user }) %>
 
-      <main style="position:relative; z-index:1; padding-top: 120px; padding-bottom: 100px;">
-        <div class="page-wrap">
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="relative z-10 pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <!-- ── HERO ── -->
-          <section style="max-width: 860px; margin-bottom: 80px;" class="fade-up d-0">
+    <!-- ================================================== -->
+    <!-- 1. HERO SECTION -->
+    <!-- ================================================== -->
+    <section class="text-center pt-6 pb-12 sm:pb-16 max-w-4xl mx-auto">
+      
+      <!-- Eyebrow Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 shadow-sm mb-6 animate-pulse">
+        <span class="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400"></span>
+        <span class="text-xs font-bold tracking-wide text-indigo-700 dark:text-indigo-300 uppercase">
+          Parul University Campus Network
+        </span>
+      </div>
 
-            <div class="eyebrow">
-              <span class="eyebrow-dot"></span>
-              Verified campus gigs — live now
+      <!-- Main Heading -->
+      <h1 class="font-heading text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.15] sm:leading-[1.12]">
+        Find <span class="text-gradient-purple">Opportunities.</span><br />
+        Build <span class="text-gradient-purple">Skills.</span><br />
+        Earn on <span class="text-gradient-purple">Campus.</span>
+      </h1>
+
+      <!-- Supporting Text -->
+      <p class="mt-6 text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        Discover micro-jobs, build professional experience, and earn money while studying. Verified tasks hosted directly inside your university campus.
+      </p>
+
+      <!-- Search Bar -->
+      <div class="mt-8 max-w-2xl mx-auto relative group">
+        <div class="relative flex items-center bg-white dark:bg-[#161B22] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl shadow-indigo-500/5 focus-within:border-indigo-500 dark:focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all p-2">
+          <i class="fa-solid fa-magnifying-glass text-slate-400 dark:text-slate-500 text-lg ml-4 mr-3"></i>
+          <input
+            type="text"
+            id="task-search-input"
+            onkeyup="filterTasks()"
+            placeholder="Search tasks, skills, or categories..."
+            class="w-full bg-transparent text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none text-sm font-medium pr-2"
+          />
+          <button type="button" onclick="filterTasks()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-heading font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center gap-2 flex-shrink-0">
+            <span>Search</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Popular Category Quick Pills -->
+      <div class="mt-4 flex items-center justify-center gap-2 flex-wrap text-xs text-slate-500 dark:text-slate-400 font-medium">
+        <span class="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Popular:</span>
+        <button onclick="quickSearch('Coding')" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Coding</button>
+        <span>•</span>
+        <button onclick="quickSearch('Design')" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Design</button>
+        <span>•</span>
+        <button onclick="quickSearch('Tutoring')" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Tutoring</button>
+        <span>•</span>
+        <button onclick="quickSearch('Delivery')" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Delivery</button>
+        <span>•</span>
+        <button onclick="quickSearch('Events')" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Events</button>
+        <span>•</span>
+        <button onclick="quickSearch('Photography')" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Photography</button>
+      </div>
+
+      <!-- CTA Buttons -->
+      <div class="mt-8 flex items-center justify-center gap-4 flex-wrap">
+        <a href="#live-tasks" class="px-7 py-3.5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-heading font-bold text-sm hover:bg-indigo-600 dark:hover:bg-indigo-400 dark:hover:text-white transition-all shadow-lg hover:shadow-indigo-500/25 hover:-translate-y-0.5 flex items-center gap-2">
+          <span>Explore Tasks</span>
+          <i class="fa-solid fa-arrow-down text-xs"></i>
+        </a>
+        <a href="#how-it-works" class="px-7 py-3.5 rounded-2xl bg-white dark:bg-[#161B22] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-heading font-semibold text-sm hover:border-indigo-400 dark:hover:border-indigo-500 transition-all hover:-translate-y-0.5 shadow-sm">
+          How It Works
+        </a>
+      </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- 2. STATISTICS SECTION -->
+    <!-- ================================================== -->
+    <section class="py-6 mb-16 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+
+      <div class="saas-card rounded-3xl p-6 text-center group">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3 text-xl group-hover:scale-110 transition-transform">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div class="font-heading text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">100+</div>
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mt-1">Active Tasks</div>
+        <div class="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 rounded-full">
+          <i class="fa-solid fa-arrow-trend-up"></i> +14% this week
+        </div>
+      </div>
+
+      <div class="saas-card rounded-3xl p-6 text-center group">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3 text-xl group-hover:scale-110 transition-transform">
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+        </div>
+        <div class="font-heading text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">₹10K+</div>
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mt-1">Student Earnings</div>
+        <div class="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full">
+          Total Paid Out
+        </div>
+      </div>
+
+      <div class="saas-card rounded-3xl p-6 text-center group">
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-500 flex items-center justify-center mx-auto mb-3 text-xl group-hover:scale-110 transition-transform">
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <div class="font-heading text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">4.9★</div>
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mt-1">Community Rating</div>
+        <div class="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 px-2.5 py-0.5 rounded-full">
+          500+ Verified Reviews
+        </div>
+      </div>
+
+      <div class="saas-card rounded-3xl p-6 text-center group">
+        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 text-xl group-hover:scale-110 transition-transform">
+          <i class="fa-solid fa-shield-check"></i>
+        </div>
+        <div class="font-heading text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">98%</div>
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mt-1">Completion Rate</div>
+        <div class="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-2.5 py-0.5 rounded-full">
+          Verified Hosts & Students
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- 3. CATEGORY SECTION -->
+    <!-- ================================================== -->
+    <section class="py-8 mb-16">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Explore Categories
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Browse campus micro-jobs by your domain of expertise.
+          </p>
+        </div>
+      </div>
+
+      <!-- Categories Grid (8 Cards) -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        
+        <div onclick="filterByCategory('Coding')" class="cat-card saas-card rounded-3xl p-5 cursor-pointer bg-white dark:bg-[#161B22] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between h-36 group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              💻
             </div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">24 Tasks</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Coding & Tech</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Bug fixes, web dev, scripts</p>
+          </div>
+        </div>
 
-            <h1 class="hero-h1" style="margin-top: 22px;">
-              Empowering students<br>
-              with <mark>micro‑jobs.</mark>
-            </h1>
+        <div onclick="filterByCategory('Design')" class="cat-card saas-card rounded-3xl p-5 cursor-pointer bg-white dark:bg-[#161B22] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between h-36 group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              🎨
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">18 Tasks</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">Design & Media</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Posters, UI, branding</p>
+          </div>
+        </div>
 
-            <p
-              style="margin-top: 20px; font-size: 1.1rem; line-height: 1.7; color: var(--ink-muted); max-width: 540px;">
-              Discover tasks, build professional skills, and earn rewards —
-              all hosted right inside your university campus.
+        <div onclick="filterByCategory('Tutoring')" class="cat-card saas-card rounded-3xl p-5 cursor-pointer bg-white dark:bg-[#161B22] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between h-36 group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              📚
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">15 Tasks</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Tutoring & Prep</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Maths, coding, exam prep</p>
+          </div>
+        </div>
+
+        <div onclick="filterByCategory('Delivery')" class="cat-card saas-card rounded-3xl p-5 cursor-pointer bg-white dark:bg-[#161B22] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between h-36 group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              📦
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">32 Tasks</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Campus Delivery</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Notes, food, hostel errands</p>
+          </div>
+        </div>
+
+        <div onclick="filterByCategory('Photography')" class="cat-card saas-card rounded-3xl p-5 cursor-pointer bg-white dark:bg-[#161B22] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between h-36 group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              📸
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">12 Tasks</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">Photography</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Portraits, fest coverage</p>
+          </div>
+        </div>
+
+        <div onclick="filterByCategory('Events')" class="cat-card saas-card rounded-3xl p-5 cursor-pointer bg-white dark:bg-[#161B22] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between h-36 group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              🎉
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">10 Tasks</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Event Support</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Stage crew, registration</p>
+          </div>
+        </div>
+
+        <div onclick="filterByCategory('Writing')" class="cat-card saas-card rounded-3xl p-5 cursor-pointer bg-white dark:bg-[#161B22] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between h-36 group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              ✍️
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">14 Tasks</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">Writing & Proofing</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Reports, typing, editing</p>
+          </div>
+        </div>
+
+        <div onclick="filterByCategory('Marketing')" class="cat-card saas-card rounded-3xl p-5 cursor-pointer bg-white dark:bg-[#161B22] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between h-36 group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              📱
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">9 Tasks</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">Marketing</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Social media, promotion</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- 4. RECOMMENDED TASKS SECTION -->
+    <!-- ================================================== -->
+    <section class="py-8 mb-16">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+            <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Recommended For You
+            </h2>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Tasks matched with your skills and interests.
+          </p>
+        </div>
+        <a href="#live-tasks" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+          View All <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        </a>
+      </div>
+
+      <!-- Horizontal Cards Carousel Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Card 1 -->
+        <div class="saas-card rounded-3xl p-6 flex flex-col justify-between group relative overflow-hidden">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                💻 Coding
+              </span>
+              <button onclick="toggleBookmark(this)" class="text-slate-400 hover:text-rose-500 transition-colors text-sm" title="Bookmark task">
+                <i class="fa-regular fa-bookmark"></i>
+              </button>
+            </div>
+            <h3 class="font-heading text-lg font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+              React Website Bug Fix
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">
+              Fix CSS alignment and API state bugs on student portfolio website before submission.
             </p>
-
-            <div style="display:flex; flex-wrap:wrap; gap: 12px; margin-top: 32px; align-items:center;">
-              <a href="/homes" class="btn-primary">
-                Explore all gigs
-                <span class="arrow-icon"><i class="fa-solid fa-arrow-right"></i></span>
-              </a>
-              <a href="/smart-matches" class="btn-ghost">
-                🎯 &nbsp;Get AI matches
-              </a>
-            </div>
-
-          </section>
-
-          <!-- ── STATS STRIP ── -->
-          <section style="display:grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 80px;"
-            class="fade-up d-1">
-
-            <div class="stat-card">
-              <div class="stat-val" style="color:var(--ink);">100+</div>
-              <div class="stat-label">Active jobs</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-val" style="color:var(--green);">₹10k+</div>
-              <div class="stat-label">Earned by students</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-val" style="color:var(--accent);">4.9★</div>
-              <div class="stat-label">Avg trust score</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-val" style="color:var(--ink);">100%</div>
-              <div class="stat-label">Verified postings</div>
-            </div>
-
-          </section>
-
-          <!-- ── FILTER BAR ── -->
-          <div
-            style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px; margin-bottom: 36px;"
-            class="fade-up d-2">
-
-            <div style="display:flex; align-items:center; gap: 10px;">
-              <span class="section-rule"></span>
-              <h2 class="font-display" style="font-size: 1.5rem; font-weight: 800; letter-spacing:-0.025em; margin:0;">
-                Live postings
-              </h2>
-            </div>
-
-            <div style="display:flex; flex-wrap:wrap; gap: 8px;">
-              <button class="pill-filter active" onclick="setFilter(this)">All</button>
-              <button class="pill-filter" onclick="setFilter(this)">Delivery</button>
-              <button class="pill-filter" onclick="setFilter(this)">Tutoring</button>
-              <button class="pill-filter" onclick="setFilter(this)">Tech Support</button>
-              <button class="pill-filter" onclick="setFilter(this)">Errands</button>
-            </div>
-
           </div>
 
-          <!-- ── LISTINGS GRID ── -->
-          <% if (registeredHomes.length===0) { %>
-
-            <div class="empty-state fade-up d-3">
-              <div class="empty-icon">🔍</div>
-              <h3 class="font-display" style="font-size:1.2rem; font-weight:800; margin:0 0 8px;">
-                No postings live right now
-              </h3>
-              <p style="font-size:13.5px; color:var(--ink-muted); line-height:1.7; margin:0;">
-                Be the first on campus to post an opportunity, or check back shortly!
-              </p>
+          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div class="flex items-center justify-between text-xs mb-3">
+              <span class="font-heading font-extrabold text-xl text-slate-900 dark:text-white">₹500</span>
+              <span class="text-slate-400 flex items-center gap-1">
+                <i class="fa-solid fa-clock text-[10px]"></i> Due in 2 days
+              </span>
             </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 font-bold text-[10px] flex items-center justify-center">R</div>
+                <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">A24 - Engineering</span>
+              </div>
+              <a href="/homes" class="px-3.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-heading font-bold text-xs hover:bg-indigo-600 hover:text-white transition-all">
+                View Task
+              </a>
+            </div>
+          </div>
+        </div>
 
-            <% } else { %>
+        <!-- Card 2 -->
+        <div class="saas-card rounded-3xl p-6 flex flex-col justify-between group relative overflow-hidden">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
+                🎨 Design
+              </span>
+              <button onclick="toggleBookmark(this)" class="text-slate-400 hover:text-rose-500 transition-colors text-sm" title="Bookmark task">
+                <i class="fa-regular fa-bookmark"></i>
+              </button>
+            </div>
+            <h3 class="font-heading text-lg font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+              Tech Fest Poster Design
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">
+              Create 3 vibrant Instagram story posters for upcoming robotics competition event.
+            </p>
+          </div>
 
-              <ul
-                style="display:grid; grid-template-columns:repeat(3,1fr); gap: 28px; list-style:none; margin:0; padding:0;"
-                class="fade-up d-3">
-                <% registeredHomes.forEach(home=> { %>
+          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div class="flex items-center justify-between text-xs mb-3">
+              <span class="font-heading font-extrabold text-xl text-slate-900 dark:text-white">₹750</span>
+              <span class="text-slate-400 flex items-center gap-1">
+                <i class="fa-solid fa-clock text-[10px]"></i> Due Tomorrow
+              </span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 font-bold text-[10px] flex items-center justify-center">P</div>
+                <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">A22 - Fine Arts</span>
+              </div>
+              <a href="/homes" class="px-3.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 font-heading font-bold text-xs hover:bg-purple-600 hover:text-white transition-all">
+                View Task
+              </a>
+            </div>
+          </div>
+        </div>
 
-                  <li class="job-card">
+        <!-- Card 3 -->
+        <div class="saas-card rounded-3xl p-6 flex flex-col justify-between group relative overflow-hidden">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                📚 Tutoring
+              </span>
+              <button onclick="toggleBookmark(this)" class="text-slate-400 hover:text-rose-500 transition-colors text-sm" title="Bookmark task">
+                <i class="fa-regular fa-bookmark"></i>
+              </button>
+            </div>
+            <h3 class="font-heading text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              DBMS & SQL Exam Tutor
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">
+              Need 2 hours revision session covering normalization, SQL joins, and indexing before midterms.
+            </p>
+          </div>
 
-                    <!-- Image -->
-                    <div class="card-img-wrap">
-                      <img src="<%= home.photo %>" alt="<%= home.houseName %>">
-                      <span class="price-badge">₹ <%= home.price %></span>
-                      <span class="verified-badge">✓ Verified</span>
-                    </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div class="flex items-center justify-between text-xs mb-3">
+              <span class="font-heading font-extrabold text-xl text-slate-900 dark:text-white">₹600</span>
+              <span class="text-slate-400 flex items-center gap-1">
+                <i class="fa-solid fa-clock text-[10px]"></i> Due in 3 days
+              </span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 font-bold text-[10px] flex items-center justify-center">S</div>
+                <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Central Library</span>
+              </div>
+              <a href="/homes" class="px-3.5 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-heading font-bold text-xs hover:bg-emerald-600 hover:text-white transition-all">
+                View Task
+              </a>
+            </div>
+          </div>
+        </div>
 
-                    <!-- Body -->
-                    <div class="card-body">
-                      <span class="card-type">
-                        <%= home.propertytype %>
+      </div>
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- 5. LIVE TASKS & RIGHT SIDEBAR GRID SECTION -->
+    <!-- ================================================== -->
+    <section id="live-tasks" class="py-8 scroll-mt-24">
+
+      <!-- Section Title & Subtitle -->
+      <div class="mb-8">
+        <h2 class="font-heading text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          Live Tasks
+        </h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          Explore the latest opportunities available on campus.
+        </p>
+      </div>
+
+      <!-- Filters & Search Toolbar -->
+      <div class="saas-card rounded-3xl p-4 sm:p-5 mb-8">
+        
+        <!-- Category Filter Pills Bar -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-4 no-scrollbar border-b border-slate-100 dark:border-slate-800">
+          <button class="filter-tab active" onclick="setCategoryFilter('All', this)">All Tasks</button>
+          <button class="filter-tab" onclick="setCategoryFilter('Coding', this)">💻 Coding</button>
+          <button class="filter-tab" onclick="setCategoryFilter('Design', this)">🎨 Design</button>
+          <button class="filter-tab" onclick="setCategoryFilter('Delivery', this)">📦 Delivery</button>
+          <button class="filter-tab" onclick="setCategoryFilter('Tutoring', this)">📚 Tutoring</button>
+          <button class="filter-tab" onclick="setCategoryFilter('Events', this)">🎉 Events</button>
+        </div>
+
+        <!-- Additional Dropdowns Filter Toolbar -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          
+          <!-- Category Select -->
+          <select id="filter-category" onchange="filterTasks()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+            <option value="All">All Categories</option>
+            <option value="Delivery">Delivery</option>
+            <option value="Academic Help">Academic Help</option>
+            <option value="Coding">Coding</option>
+            <option value="Design">Design</option>
+            <option value="Tutoring">Tutoring</option>
+            <option value="Cleaning">Cleaning</option>
+            <option value="Tech Help">Tech Help</option>
+            <option value="Other">Other</option>
+          </select>
+
+          <!-- Payment Filter -->
+          <select id="filter-payment" onchange="filterTasks()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+            <option value="All">All Payment Ranges</option>
+            <option value="under300">Under ₹300</option>
+            <option value="300to1000">₹300 - ₹1,000</option>
+            <option value="above1000">Above ₹1,000</option>
+          </select>
+
+          <!-- Location Filter -->
+          <select id="filter-location" onchange="filterTasks()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+            <option value="All">All Locations</option>
+            <option value="Academic">Academic Blocks</option>
+            <option value="Hostel">Hostels</option>
+            <option value="Hospital">Hospitals</option>
+            <option value="Library">Library & Admin</option>
+          </select>
+
+          <!-- Sorting Dropdown -->
+          <select id="sort-select" onchange="sortTasks()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-indigo-600 dark:text-indigo-400 focus:outline-none focus:border-indigo-500">
+            <option value="recommended">Sort by: Recommended</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="rating">Highest Rating</option>
+          </select>
+
+        </div>
+
+      </div>
+
+      <!-- MAIN LAYOUT GRID WITH RIGHT SIDEBAR -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+        <!-- LEFT/CENTER COLUMN: 3-COLUMN TASK GRID (lg:col-span-3) -->
+        <div class="lg:col-span-3">
+
+          <% if (!registeredHomes || registeredHomes.length === 0) { %>
+            <!-- Empty state fallback -->
+            <div class="saas-card rounded-3xl p-12 text-center max-w-md mx-auto my-6">
+              <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+                🔍
+              </div>
+              <h3 class="font-heading text-xl font-bold text-slate-900 dark:text-white">No Live Tasks Found</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                Be the first host to post a campus opportunity!
+              </p>
+              <a href="/add-home" class="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 text-white font-heading font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-indigo-500 transition-all">
+                <i class="fa-solid fa-plus"></i> Post Task Now
+              </a>
+            </div>
+          <% } else { %>
+
+            <!-- Task Cards Grid -->
+            <div id="tasks-grid-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <% registeredHomes.forEach((home, idx) => { %>
+
+                <div 
+                  class="task-item-card saas-card rounded-3xl overflow-hidden flex flex-col justify-between group"
+                  data-title="<%= (home.houseName || home.title || '').toLowerCase() %>"
+                  data-type="<%= (home.propertytype || '').toLowerCase() %>"
+                  data-location="<%= (home.location || '').toLowerCase() %>"
+                  data-price="<%= home.price || 0 %>"
+                  data-rating="<%= home.rating || 5 %>"
+                >
+                  
+                  <!-- Thumbnail Image with Price Badge -->
+                  <div class="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img
+                      src="<%= home.photo || 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200' %>"
+                      alt="<%= home.houseName %>"
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+
+                    <!-- Featured Tag (first item highlight) -->
+                    <% if (idx === 0) { %>
+                      <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-wider bg-amber-500 text-white shadow-md">
+                        🔥 FEATURED
                       </span>
-                      <h3 class="card-title">
-                        <%= home.houseName %>
-                      </h3>
-                      <span class="card-location">
-                        <i class="fa-solid fa-location-dot" style="font-size:10px; color:var(--ink-faint);"></i>
-                        <%= home.location %>
-                      </span>
-                      <p class="card-desc">
-                        <%= home.description %>
-                      </p>
+                    <% } %>
 
-                      <!-- Footer -->
-                      <div class="card-footer">
-                        <div class="rating-chip">
-                          <i class="fa-solid fa-star" style="color:#f5a623; font-size:12px;"></i>
-                          <%= home.rating %> trust score
-                        </div>
-                        <span class="helper-chip">
-                          <%= home.maxguest %> helper<%= home.maxguest> 1 ? 's' : '' %> needed
+                    <!-- Category Badge -->
+                    <span class="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-900/80 backdrop-blur-md text-white border border-white/10">
+                      <%= home.propertytype || 'Task' %>
+                    </span>
+
+                    <!-- Price Badge -->
+                    <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-heading font-extrabold bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-slate-900 dark:text-white shadow-md border border-slate-200/50 dark:border-slate-700/50">
+                      ₹ <%= home.price %>
+                    </span>
+                  </div>
+
+                  <!-- Card Body -->
+                  <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div class="flex items-center justify-between gap-2 text-[11px] font-semibold text-slate-400 mb-1">
+                        <span class="truncate flex items-center gap-1">
+                          <i class="fa-solid fa-location-dot text-indigo-500 text-[10px]"></i>
+                          <%= home.location || 'Parul Campus' %>
+                        </span>
+                        <span class="text-amber-500 font-bold flex items-center gap-1">
+                          <i class="fa-solid fa-star text-[10px]"></i> <%= home.rating || 5.0 %>
                         </span>
                       </div>
+
+                      <h3 class="font-heading text-base font-bold text-slate-900 dark:text-white line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        <%= home.houseName || home.title %>
+                      </h3>
+
+                      <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                        <%= home.description %>
+                      </p>
                     </div>
 
-                    <!-- CTA -->
-                    <div class="card-cta">
-                      <% if (isLoggedIn && user && home.owner && home.owner.toString()===user._id.toString()) { %>
-                        <div style="display:flex; gap: 8px;">
-                          <a href="/edithome/<%= home._id %>?editing=true" class="cta-edit">
-                            <i class="fa-solid fa-pen" style="font-size:10px;"></i> Edit
-                          </a>
-                          <form action="/delete-home/<%= home._id %>" method="POST" style="flex:1;">
-                            <button type="submit" class="cta-delete">
-                              <i class="fa-solid fa-trash" style="font-size:10px;"></i> Delete
-                            </button>
-                          </form>
-                        </div>
-                        <% } else { %>
-                          <a href="<%= isLoggedIn ? '/homes/' + home._id : '/login' %>" class="cta-apply">
-                            View &amp; Apply →
-                          </a>
-                          <% } %>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                      <span><i class="fa-solid fa-users text-indigo-500 mr-1"></i> <%= home.maxguest || 1 %> Helpers</span>
+                      <span><i class="fa-regular fa-clock mr-1"></i> Due Soon</span>
                     </div>
+                  </div>
 
-                  </li>
+                  <!-- Card Footer Actions -->
+                  <div class="px-5 pb-5 pt-0 flex items-center gap-2">
+                    <a
+                      href="<%= isLoggedIn ? '/homes/' + home._id : '/login' %>"
+                      class="flex-1 text-center py-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white font-heading font-bold text-xs transition-all shadow-sm"
+                    >
+                      View Details
+                    </a>
+                    <% 
+                      let isTaskFav = false;
+                      if (user && user.favourites && Array.isArray(user.favourites)) {
+                        isTaskFav = user.favourites.some(f => (f && f._id ? f._id.toString() : (f ? f.toString() : '')) === home._id.toString());
+                      }
+                    %>
+                    <button
+                      onclick="toggleBookmark(this, '<%= home._id %>')"
+                      class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 hover:text-rose-500 flex items-center justify-center transition-colors flex-shrink-0"
+                      title="<%= isTaskFav ? 'Remove from Saved' : 'Save Task' %>"
+                    >
+                      <i class="<%= isTaskFav ? 'fa-solid fa-bookmark text-rose-500' : 'fa-regular fa-bookmark' %> text-xs"></i>
+                    </button>
+                  </div>
 
-                  <% }) %>
-              </ul>
 
-              <% } %>
+                </div>
 
-        </div><!-- /.page-wrap -->
-      </main>
+              <% }) %>
+            </div>
 
-      <script>
-        function setFilter(el) {
-          document.querySelectorAll('.pill-filter').forEach(p => p.classList.remove('active'));
-          el.classList.add('active');
+          <% } %>
+
+        </div>
+
+        <!-- ================================================== -->
+        <!-- 6. RIGHT SIDEBAR (Desktop Only) -->
+        <!-- ================================================== -->
+        <aside class="lg:col-span-1 space-y-6">
+
+          <!-- Widget 1: Upcoming Deadlines -->
+          <div class="saas-card rounded-3xl p-5">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-7 h-7 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs font-bold">
+                <i class="fa-solid fa-stopwatch"></i>
+              </div>
+              <h3 class="font-heading font-bold text-sm text-slate-900 dark:text-white">Upcoming Deadlines</h3>
+            </div>
+
+            <div class="space-y-3">
+              <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Website Testing</p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">QA & Feedback</p>
+                </div>
+                <span class="text-[10px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 px-2 py-0.5 rounded-full">
+                  Due in 2h
+                </span>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Notes Delivery</p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Shastri Bhawan H1</p>
+                </div>
+                <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 rounded-full">
+                  Tomorrow
+                </span>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Presentation Deck</p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Canva Design</p>
+                </div>
+                <span class="text-[10px] font-bold text-slate-500 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">
+                  In 3 days
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Widget 2: Trending Tasks -->
+          <div class="saas-card rounded-3xl p-5">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-7 h-7 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs font-bold">
+                🔥
+              </div>
+              <h3 class="font-heading font-bold text-sm text-slate-900 dark:text-white">Trending Tasks</h3>
+            </div>
+
+            <div class="space-y-2.5">
+              <a href="#live-tasks" onclick="quickSearch('React')" class="block p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors group">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">🔥 React Developer</span>
+                  <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full">₹1,200</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">8 applicants today</p>
+              </a>
+
+              <a href="#live-tasks" onclick="quickSearch('Poster')" class="block p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors group">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">🔥 Poster Design</span>
+                  <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full">₹500</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">12 applicants today</p>
+              </a>
+
+              <a href="#live-tasks" onclick="quickSearch('Assignment')" class="block p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors group">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">🔥 Assignment Help</span>
+                  <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full">₹400</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">15 applicants today</p>
+              </a>
+            </div>
+          </div>
+
+          <!-- Widget 3: Campus Leaderboard -->
+          <div class="saas-card rounded-3xl p-5">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-7 h-7 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-bold">
+                🏆
+              </div>
+              <h3 class="font-heading font-bold text-sm text-slate-900 dark:text-white">Campus Leaderboard</h3>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-sm">🥇</span>
+                  <div>
+                    <p class="text-xs font-bold text-slate-900 dark:text-white">Rahul Sharma</p>
+                    <p class="text-[10px] text-slate-400">14 tasks completed</p>
+                  </div>
+                </div>
+                <span class="font-heading font-extrabold text-xs text-amber-600 dark:text-amber-400">₹8,500</span>
+              </div>
+
+              <div class="flex items-center justify-between p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-sm">🥈</span>
+                  <div>
+                    <p class="text-xs font-bold text-slate-900 dark:text-white">Priya Patel</p>
+                    <p class="text-[10px] text-slate-400">11 tasks completed</p>
+                  </div>
+                </div>
+                <span class="font-heading font-extrabold text-xs text-slate-700 dark:text-slate-300">₹7,200</span>
+              </div>
+
+              <div class="flex items-center justify-between p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-sm">🥉</span>
+                  <div>
+                    <p class="text-xs font-bold text-slate-900 dark:text-white">Aman Verma</p>
+                    <p class="text-[10px] text-slate-400">9 tasks completed</p>
+                  </div>
+                </div>
+                <span class="font-heading font-extrabold text-xs text-slate-700 dark:text-slate-300">₹6,900</span>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- 7. HOW IT WORKS -->
+    <!-- ================================================== -->
+    <section id="how-it-works" class="py-16 scroll-mt-24">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-extrabold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase bg-indigo-50 dark:bg-indigo-950/60 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-800">
+          Simple & Fast
+        </span>
+        <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-3">
+          How Campus Job Works
+        </h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+          Start earning money and gaining experience in four quick steps.
+        </p>
+      </div>
+
+      <!-- Connected 4-Step Timeline -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+
+        <!-- Step 1 -->
+        <div class="saas-card rounded-3xl p-6 text-center relative group">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-heading font-black text-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+            1
+          </div>
+          <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white">Create Your Profile</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+            Add your skills, university branch, and interest categories.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="saas-card rounded-3xl p-6 text-center relative group">
+          <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-heading font-black text-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+            2
+          </div>
+          <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white">Find a Task</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+            Browse available micro-jobs matching your campus schedule.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="saas-card rounded-3xl p-6 text-center relative group">
+          <div class="w-14 h-14 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 font-heading font-black text-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+            3
+          </div>
+          <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white">Complete the Work</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+            Finish the assigned task and submit proof of completion.
+          </p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="saas-card rounded-3xl p-6 text-center relative group">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-heading font-black text-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+            4
+          </div>
+          <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white">Earn Rewards</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+            Receive payment after successful verification and build your rating.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- 8. TRUST AND VERIFICATION SECTION -->
+    <!-- ================================================== -->
+    <section class="py-12 my-8 saas-card rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden bg-gradient-to-br from-indigo-900 via-slate-900 to-blue-950 text-white border-0">
+      <div class="max-w-3xl mx-auto">
+        <span class="inline-block px-3 py-1 rounded-full bg-white/10 text-indigo-300 font-extrabold text-[10px] uppercase tracking-widest mb-3">
+          Campus Trust Protocol
+        </span>
+        <h2 class="font-heading text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+          Built for Safe & Seamless Campus Gigs
+        </h2>
+        <p class="text-xs sm:text-sm text-indigo-200/80 mt-3 leading-relaxed">
+          Every host and student is verified through official Parul University email authentication to guarantee transparency and safety.
+        </p>
+
+        <!-- Trust Badges Bar -->
+        <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+          <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-base flex-shrink-0"></i>
+            <div>
+              <p class="text-xs font-bold text-white">University Verified</p>
+              <p class="text-[10px] text-indigo-200/60">Official domain check</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+            <i class="fa-solid fa-id-card text-emerald-400 text-base flex-shrink-0"></i>
+            <div>
+              <p class="text-xs font-bold text-white">Student ID Verified</p>
+              <p class="text-[10px] text-indigo-200/60">Authenticated users</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+            <i class="fa-solid fa-lock text-emerald-400 text-base flex-shrink-0"></i>
+            <div>
+              <p class="text-xs font-bold text-white">Secure Payments</p>
+              <p class="text-[10px] text-indigo-200/60">Safe task settlement</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+            <i class="fa-solid fa-users-shield text-emerald-400 text-base flex-shrink-0"></i>
+            <div>
+              <p class="text-xs font-bold text-white">Trusted Community</p>
+              <p class="text-[10px] text-indigo-200/60">4.9★ rating standard</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================================================== -->
+  <!-- MOBILE BOTTOM FLOATING NAVIGATION BAR -->
+  <!-- ================================================== -->
+  <div class="md:hidden fixed bottom-0 left-0 w-full z-40 bg-white/90 dark:bg-[#0F1117]/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 px-6 py-2 flex items-center justify-between">
+    <a href="/" class="flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400">
+      <i class="fa-solid fa-house text-base"></i>
+      <span class="text-[9px] font-bold">Home</span>
+    </a>
+    <a href="/homes" class="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fa-solid fa-compass text-base"></i>
+      <span class="text-[9px] font-bold">Explore</span>
+    </a>
+    <a href="/add-home" class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/40 -mt-5 border-4 border-slate-50 dark:border-[#0F1117]" title="Post Task">
+      <i class="fa-solid fa-plus text-lg"></i>
+    </a>
+    <a href="/favourites" class="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fa-solid fa-bookmark text-base"></i>
+      <span class="text-[9px] font-bold">Saved</span>
+    </a>
+    <a href="/bookings" class="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fa-solid fa-user-gear text-base"></i>
+      <span class="text-[9px] font-bold">Dashboard</span>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F1117] py-12 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+          <i class="fa-solid fa-briefcase"></i>
+        </div>
+        <span class="font-heading font-extrabold text-sm text-slate-900 dark:text-white">Campus Job</span>
+        <span class="text-[11px] text-slate-400">© 2026 Parul University. All rights reserved.</span>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <a href="/homes" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Tasks</a>
+        <a href="#how-it-works" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">How It Works</a>
+        <a href="/profile" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Profile</a>
+        <a href="/login" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Sign In</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CLIENT-SIDE SEARCH & FILTER JS ENGINE -->
+  <script>
+    let activeCategory = 'All';
+
+    function quickSearch(query) {
+      const input = document.getElementById('task-search-input');
+      if (input) {
+        input.value = query;
+        filterTasks();
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function setCategoryFilter(category, btn) {
+      activeCategory = category;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const catSelect = document.getElementById('filter-category');
+      if (catSelect) catSelect.value = category === 'All' ? 'All' : category;
+      filterTasks();
+    }
+
+    function filterByCategory(cat) {
+      quickSearch(cat);
+    }
+
+    function filterTasks() {
+      const searchVal = (document.getElementById('task-search-input')?.value || '').toLowerCase().trim();
+      const catVal = (document.getElementById('filter-category')?.value || 'All').toLowerCase();
+      const payVal = document.getElementById('filter-payment')?.value || 'All';
+      const locVal = (document.getElementById('filter-location')?.value || 'All').toLowerCase();
+
+      const cards = document.querySelectorAll('.task-item-card');
+
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title') || '';
+        const type = card.getAttribute('data-type') || '';
+        const location = card.getAttribute('data-location') || '';
+        const price = parseFloat(card.getAttribute('data-price') || 0);
+
+        let matchesSearch = !searchVal || title.includes(searchVal) || type.includes(searchVal) || location.includes(searchVal);
+        let matchesCat = (catVal === 'all') || type.includes(catVal);
+        
+        let matchesPay = true;
+        if (payVal === 'under300') matchesPay = price < 300;
+        else if (payVal === '300to1000') matchesPay = price >= 300 && price <= 1000;
+        else if (payVal === 'above1000') matchesPay = price > 1000;
+
+        let matchesLoc = true;
+        if (locVal !== 'all') {
+          matchesLoc = location.includes(locVal);
         }
 
-        // Staggered card entrance
-        document.querySelectorAll('.job-card').forEach((card, i) => {
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(28px)';
-          card.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.16,1,0.3,1)';
-          setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-          }, 420 + i * 80);
+        if (matchesSearch && matchesCat && matchesPay && matchesLoc) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function sortTasks() {
+      const sortVal = document.getElementById('sort-select')?.value;
+      const container = document.getElementById('tasks-grid-container');
+      if (!container) return;
+
+      const cards = Array.from(container.children);
+      cards.sort((a, b) => {
+        const priceA = parseFloat(a.getAttribute('data-price') || 0);
+        const priceB = parseFloat(b.getAttribute('data-price') || 0);
+        const ratingA = parseFloat(a.getAttribute('data-rating') || 0);
+        const ratingB = parseFloat(b.getAttribute('data-rating') || 0);
+
+        if (sortVal === 'price-high') return priceB - priceA;
+        if (sortVal === 'price-low') return priceA - priceB;
+        if (sortVal === 'rating') return ratingB - ratingA;
+        return 0; // recommended default
+      });
+
+      cards.forEach(card => container.appendChild(card));
+    }
+
+    async function toggleBookmark(btn, taskId) {
+      if (!taskId) return;
+      const icon = btn.querySelector('i');
+      const isCurrentlySaved = icon && icon.classList.contains('fa-solid');
+      const endpoint = isCurrentlySaved ? `/favourites/delete/${taskId}` : '/favourites';
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ id: taskId })
         });
-      </script>
 
-      <%- include('../partials/chatbot-widget') %>
+        if (res.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
 
-  </body>
+        const data = await res.json();
+        if (data.success) {
+          if (data.isSaved) {
+            if (icon) {
+              icon.className = 'fa-solid fa-bookmark text-rose-500 text-xs';
+            }
+            btn.setAttribute('title', 'Remove from Saved');
+          } else {
+            if (icon) {
+              icon.className = 'fa-regular fa-bookmark text-xs';
+            }
+            btn.setAttribute('title', 'Save Task');
+          }
+        }
+      } catch (err) {
+        console.error('Error toggling bookmark:', err);
+      }
+    }
 
-  </html>
+  </script>
+
+  <%- include('../partials/chatbot-widget') %>
+
+</body>
+</html>
